@@ -1,0 +1,22 @@
+// Starting values from docs/prototype-plan.md. Tune only alongside measured checks.
+export const prototype = Object.freeze({
+  width: 160,
+  height: 200,
+  grainRadius: 0.65,
+  ridgeThickness: 2,
+  rubWidth: 3,
+  stepsPerSecond: 60,
+  collisionSubsteps: 2,
+  contactPasses: 3,
+  gravity: 160,
+  maxSpeed: 78,
+  sourceRate: 120,
+  sourceWidth: 12,
+  launchSpeed: 4,
+  freePourCap: 6000,
+  challengeId: 'first-offering-v2',
+  activePourSeconds: 40,
+  startingSupply: 4800,
+  leftTarget: 1800,
+  rightTarget: 3000,
+});

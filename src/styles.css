@@ -1,0 +1,62 @@
+:root {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: #e5dfce;
+  background: #101110;
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 280px;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 2rem 1.25rem;
+  background: radial-gradient(ellipse at 50% 38%, #262219 0%, #101110 62%);
+}
+
+main {
+  text-align: center;
+  max-width: 32rem;
+}
+
+.pyramid {
+  width: min(48vw, 12rem);
+  aspect-ratio: 1.1;
+  margin: 0 auto 2.5rem;
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  background: linear-gradient(105deg, #25251f, #080a09 50%, #141713);
+  border-bottom: 1px solid #8b7442;
+}
+
+.eyebrow,
+.note {
+  font-family: system-ui, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  color: #b5a984;
+}
+h1 {
+  font-size: clamp(2.25rem, 8vw, 3.75rem);
+  font-weight: 400;
+  margin: 0.65rem 0 1.25rem;
+}
+.status {
+  color: #c8bfab;
+  line-height: 1.5;
+}
+.note {
+  color: #9a9587;
+  margin-top: 3rem;
+}
