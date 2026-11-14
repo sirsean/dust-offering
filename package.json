@@ -15,6 +15,9 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node --test --test-isolation=none tests/*.test.js",
+    "test:browser": "playwright test",
+    "test:physics": "node scripts/physics-check.js",
+    "playtest": "node scripts/playtest.js",
     "check": "npm run lint && npm run format:check && npm test && npm run build",
     "deploy": "npm run build && node scripts/deploy.js --production",
     "deploy:branch": "npm run build && node scripts/deploy.js --branch",
@@ -22,6 +25,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.65.1",
     "eslint": "^10.15.0",
     "globals": "^17.14.0",
     "prettier": "^3.10.1",

@@ -2,23 +2,85 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#101110" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#111210" />
     <meta
       name="description"
-      content="Dust Offering. A browser prototype set at the Black Pyramid."
+      content="Draw a ridge. Rub a gap. Divide the dust at the Black Pyramid."
     />
     <title>Dust Offering</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   </head>
   <body>
-    <main>
-      <div class="pyramid" aria-hidden="true"></div>
-      <p class="eyebrow">At the Black Pyramid</p>
-      <h1>Dust Offering</h1>
-      <p class="status">The offering is taking shape.</p>
-      <p class="note">Prototype in preparation.</p>
+    <main class="app">
+      <header>
+        <h1>Dust Offering</h1>
+        <button id="sound" aria-pressed="false" aria-label="Enable sound">
+          Sound off
+        </button>
+      </header>
+      <nav class="modes" aria-label="Pour mode">
+        <button id="free" aria-pressed="true">Free Pour</button
+        ><button id="challenge" aria-pressed="false">Challenge</button>
+      </nav>
+      <div id="hud" class="hud" hidden>
+        <span id="supply"></span><span id="best"></span>
+      </div>
+      <div class="stage">
+        <canvas
+          id="field"
+          tabindex="0"
+          aria-label="Dust playfield. Draw a ridge to redirect dust. Select Rub to open a gap."
+        ></canvas>
+        <p id="hint" class="hint">
+          Draw a ridge to redirect the dust. Rub a gap to split it.
+        </p>
+      </div>
+      <div class="tools" aria-label="Drawing tools">
+        <button id="draw" aria-pressed="true" title="Draw (D)">Draw</button>
+        <button id="rub" aria-pressed="false" title="Rub (R)">Rub</button>
+        <button id="pour" title="Stop or resume pouring (Space)">
+          Stop pour
+        </button>
+        <button id="reset">Reset</button>
+      </div>
+      <p id="accessible-state" class="sr-only" aria-live="off"></p>
+      <p id="notice" class="notice" role="status" hidden></p>
     </main>
+    <dialog id="result" aria-labelledby="result-title">
+      <h2 id="result-title">Your offering</h2>
+      <p id="score" class="score"></p>
+      <dl class="results">
+        <div>
+          <dt>Left bowl</dt>
+          <dd id="result-left"></dd>
+        </div>
+        <div>
+          <dt>Right bowl</dt>
+          <dd id="result-right"></dd>
+        </div>
+        <div>
+          <dt>Best</dt>
+          <dd id="result-best"></dd>
+        </div>
+      </dl>
+      <p id="result-uncollected" class="muted"></p>
+      <button id="share">Share score</button>
+      <p id="share-status" class="muted" role="status"></p>
+      <textarea
+        id="manual-share"
+        readonly
+        aria-label="Score and challenge link for manual copying"
+        hidden
+      ></textarea>
+      <div class="result-actions">
+        <button id="again">Play again</button
+        ><button id="result-close">View board</button>
+      </div>
+    </dialog>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>

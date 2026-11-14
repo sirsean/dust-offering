@@ -1,34 +1,22 @@
-# Project status
+# Project status — playable prototype
 
-## Foundation — 2026-11-14
+The prototype implements the full plan and is ready for human gameplay evaluation. Free Pour, continuous Draw/Rub editing, accumulation, Stop/Resume, Reset, the finite challenge, scoring, saved best, shared challenge links, optional muted-by-default sound, reduced motion, and phone/desktop layouts are implemented.
 
-Repository and deployment scaffold prepared. The source prototype plan has been read and preserved in `prototype-plan.md`. Gameplay implementation has not begun.
+## Verification
 
-Included: Vite/vanilla JavaScript entry, holding screen, starting configuration, lint/format/build commands, Node tests for deployment targeting and starting invariants, Wrangler static assets, direct production/branch deployment and preview cleanup commands, prepared automation workflows, and repository instructions.
+- `npm run check` passes lint, formatting, 21 numerical/unit tests, and the production build. The Playwright suite passes 11 browser scenarios; its desktop duplicate of the touch-only case is intentionally skipped.
+- Numerical physics gate passes for 20°/35° transport in both directions, support removal within 0.2 seconds, and the three-width experiment across three fixed seeds. See [physics-results.md](physics-results.md) and `artifacts/physics-splits.jsonl`.
+- Exactly 4,800 unobstructed spawns in 2,400 steps; grain accounting, blocked/stopped supply, contact/collection behavior, deterministic replay, all specified score cases, best storage and sharing failures are tested.
+- Browser gameplay checks cover full challenges, live splits and widening, mouse and emulated touch, capture cancellation, reset/mode changes, narrow layouts and rotation, hidden-tab recovery, reduced motion, denied storage, and sound controls.
+- A real-time scripted challenge emitted all 4,800 grains in 40.05 seconds and scored 831 with no spill. A live cut-widening session increased the left-path share from 44.54% to 61.22%. See [playtest.md](playtest.md), screenshots and `artifacts/playtest-report.json`.
+- The retained-pile fixture holds all 6,000 grains. At that extreme, rendering is slower and simulation time can slow to preserve input. No grains are dropped for performance. Real phone hardware and human enjoyment are not yet evaluated.
 
-Verified:
+## Deployment and repository
 
-- `npm run check`: ESLint, formatting, five Node tests, and production build pass.
-- [Initial GitHub CI run](https://github.com/sirsean/dust-offering/actions/runs/43635999438) passed on the pushed scaffold. Both deployment steps skipped as intended while automation is deferred.
-- Production deployed with Wrangler to `https://dust-offering.sirsean.me` (Worker version `01d32658-4bf1-4fd2-a256-b1bf24054608`). HTTPS returns 200 and the HTML, JavaScript, CSS, and favicon exactly match the local build. Unknown paths return 404.
-- A separate `dust-offering-setup-check` Worker served `https://setup-check.dust-offering.sirsean.me` over HTTPS with the same build. Cloudflare provisioned its exact nested hostname and certificate. The temporary Worker was deleted after verification.
-- Headless Chromium checked the holding screen at 360 × 640 and 1440 × 900, with no JavaScript errors or page overflow. This was a desktop browser viewport check, not a touch-hardware test.
+Public repository: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. The implementation is developed on `prototype`, then integrated into `main` for the playtest release.
 
-## GitHub repository access
+Use direct Wrangler deployments from this environment. The owner has deferred automated GitHub deployments; leave the deployment secret unconfigured. GitHub Actions runs code and browser checks. Production is `npm run deploy`; previews are `npm run deploy:branch -- branch-name`; cleanup is `npm run deploy:branch:delete -- branch-name`. A Git push or branch deletion alone does not deploy or clean up a preview.
 
-The owner created the public [sirsean/dust-offering](https://github.com/sirsean/dust-offering) repository and granted the ChatGPT GitHub app access. The scaffold was successfully pushed to `main`; the local checkout at `/workspace/dust-offering` tracks `origin/main`. The repository access blocker is resolved.
+## Human evaluation next
 
-GitHub Actions runs lint, formatting, tests, and the production build. The owner has explicitly deferred automated GitHub deployments in favor of direct Wrangler deployment from this environment. Leave the Actions deployment secret unconfigured until requested. Prepared deployment and cleanup steps skip with a notice when that secret is absent.
-
-Production and branch deployments through Wrangler are verified. Run `npm run deploy` for production, `npm run deploy:branch -- branch-name` for a preview, and `npm run deploy:branch:delete -- branch-name` to clean it up. Deleting a Git branch alone does not clean up its preview while automation is deferred. The foundation is ready for prototype implementation.
-
-## Next implementation pass
-
-1. Create the DOM-independent scene and simulation state, seeded source, and fixed-step browser loop.
-2. Render a fixed logical 160 × 200 playfield with source, two bowls, spill gap, and Reset. Show that untouched dust goes to the center spill and that the layout fits a narrow phone.
-3. Add Draw/Rub, collision geometry, contacts, accumulation, and Stop/Resume. Build and measure the reproducible physics test scene.
-4. Pass the ramp, support-removal, and three-width split checks. Record configuration, seeds, and measurements before scoring or visual polish.
-
-## Deferred validation
-
-No physics, gameplay, phone, touch-hardware, or performance claims yet. Tests of starting configuration are guardrails for future code and do not establish the physics gate. The challenge, share action, saved best, and optional audio remain unimplemented.
+Prompt: “Get some dust into both bowls while the stream is running.” Observe discovery of a split, ability to correct it without coaching, and desire to keep experimenting. Then try Challenge. Prioritize real-thumb Rub sensitivity, the useful cut-width range, sound level, and large-pile frame rates on actual phones. Keep `first-offering-v2` stable once published; version physics/scoring changes before comparing new scores.

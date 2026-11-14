@@ -4,7 +4,7 @@
 
 Build a standalone, portrait-first browser game at the Black Pyramid: draw ridges, rub gaps, and guide falling dust into two offering bowls. The key experience is widening a gap while the stream runs and seeing the split change gradually.
 
-Read `docs/status.md`, `docs/architecture.md`, and `docs/prototype-plan.md` before substantive work. The plan is a snapshot of the user's Fringe Page; its source URL is in the file. Keep status, decisions, commands, and measured results current as the project changes. Do not silently change the core mechanic or expand into accounts, hosted leaderboards, or other backend services.
+Read `docs/status.md`, `docs/architecture.md`, and `docs/prototype-plan.md` before substantive work. The prototype is now playable; `docs/physics-results.md` and `docs/playtest.md` preserve its acceptance evidence and current limits. The plan is a snapshot of the user's Fringe Page; its source URL is in the file. Keep status, decisions, commands, and measured results current as the project changes. Do not silently change the core mechanic or expand into accounts, hosted leaderboards, or other backend services.
 
 ## Implementation conventions
 
@@ -33,7 +33,7 @@ The physics gate requires 20°/35° ramps in both directions, support removal dr
 
 ## Validation
 
-Use Node 24 and npm with the committed lockfile. Run `npm ci` on a clean checkout and `npm run check` before committing. This runs ESLint, Prettier, Node's test runner, and the production build. Add focused behavioral tests as each mechanic is implemented; do not substitute tests of constants for physics evidence.
+Use Node 24 and npm with the committed lockfile. Run `npm ci` on a clean checkout and `npm run check` before committing. This runs ESLint, Prettier, Node's test runner, and the production build. For gameplay changes, also run `npm run test:browser`; install Chromium with Playwright or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a system browser. `npm run playtest` (with Vite running) records a real-time gameplay run. Add focused behavioral tests as each mechanic is implemented; do not substitute tests of constants for physics evidence.
 
 Test contact/collection accounting, ramp transport, waking, gap splits, fixed-step emission, deterministic replay, and scoring. Preserve `initial supply = remaining + left + right + spill + on-face grains`, including sleepers. Check 4,800 successful spawns over 2,400 unobstructed steps; stop/block spends no supply and accrues no backlog. Test exact score, one-grain error, partial fill, overfill, total spill, and sharing failures. Manually cover fast strokes, reset, mode switches, resize, hidden tabs, and dust in flight after Stop.
 

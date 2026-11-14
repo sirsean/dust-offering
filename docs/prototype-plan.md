@@ -4,7 +4,7 @@ Source: https://chatgpt.com/space/page_ad5cbe9d6d2881919e3df3cfb9f08feb
 
 Snapshot read on 2026-11-14, source sequence 1. This is the implementation reference; consult the source for later revisions. Repository decisions and current progress live in `architecture.md` and `status.md`.
 
-+Build a portrait-first browser game where the player redirects falling dust across the face of the Black Pyramid. The player draws a ridge, watches dust pile up, and rubs a hole through the ridge to split the stream while it is still flowing. The first playable scene has one dust source, two bowls, and one drawing tool with Draw and Rub modes.
+Build a portrait-first browser game where the player redirects falling dust across the face of the Black Pyramid. The player draws a ridge, watches dust pile up, and rubs a hole through the ridge to split the stream while it is still flowing. The first playable scene has one dust source, two bowls, and one drawing tool with Draw and Rub modes.
 
 **The moment to prove** — I open a gap under my thumb, see dust trickle through that gap while the rest keeps following the ridge, and immediately want to try opening it a little wider.
 

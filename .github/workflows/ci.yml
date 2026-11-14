@@ -24,6 +24,16 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: Install browser for gameplay checks
+        run: npx playwright install --with-deps chromium
+      - run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: browser-failure-evidence
+          path: |
+            playwright-report/
+            test-results/
       - name: Check deployment credentials
         id: cloudflare
         if: github.repository == 'sirsean/dust-offering' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/heads/')
@@ -35,7 +45,7 @@ jobs:
           else
             echo 'configured=false' >> "$GITHUB_OUTPUT"
             echo '::notice::Cloudflare deployment skipped: configure the CLOUDFLARE_API_TOKEN Actions secret to enable automatic deployments.'
-            echo 'Checks passed. Automatic deployment is waiting for the `CLOUDFLARE_API_TOKEN` repository secret. Manual Wrangler deployment is available.' >> "$GITHUB_STEP_SUMMARY"
+            echo 'Code and browser checks passed. Automatic deployment is deferred; manual Wrangler deployment is available.' >> "$GITHUB_STEP_SUMMARY"
           fi
       - name: Deploy production
         if: steps.cloudflare.outputs.configured == 'true' && github.ref == 'refs/heads/main'
