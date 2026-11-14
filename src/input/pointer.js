@@ -1,4 +1,5 @@
-import { editableStone } from '../simulation/geometry.js';
+import { touchesStone } from '../simulation/geometry.js';
+import { prototype } from '../config/prototype.js';
 
 export function bindPointer(
   canvas,
@@ -20,16 +21,19 @@ export function bindPointer(
     for (const sample of samples.length ? samples : [event]) {
       const p = point(sample);
       brush(event.pointerId, p);
-      if (!editableStone(p.x, p.y) || !canEdit()) {
+      if (!canEdit()) {
         state.previous = null;
         continue;
       }
-      edit(state.previous ?? p, p, {
-        start: state.previous === null,
-        pointerId: event.pointerId,
-      });
+      const previous = state.previous ?? p;
+      if (touchesStone(previous, p, prototype.brushWidth / 2)) {
+        edit(previous, p, {
+          start: state.previous === null,
+          pointerId: event.pointerId,
+        });
+        changed();
+      }
       state.previous = p;
-      changed();
     }
   }
   function end(event) {

@@ -4,7 +4,7 @@ import { open, stroke } from './helpers.js';
 test('a visible trace remains after lifting, stacks with passes, fades, and clears on Reset', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v2');
+  await open(page, 'challenge=stone-offering-v3');
   const sample = () =>
     page.evaluate(() => ({
       strength: dust.sim.surface.strengthAt(80.5, 100.5),
@@ -35,7 +35,7 @@ test('a visible trace remains after lifting, stacks with passes, fades, and clea
   expect(layered.strength).toBeGreaterThan(once.strength * 2.5);
   expect(layered.color).toBeGreaterThan(once.color + 15);
   await page.screenshot({ path: test.info().outputPath('layered-trace.png') });
-  await page.clock.runFor(30000);
+  await page.clock.runFor(6000);
   const faded = await sample();
   expect(faded.strength).toBeLessThan(layered.strength * 0.55);
   expect(faded.strength).toBeGreaterThan(layered.strength * 0.45);
@@ -43,10 +43,88 @@ test('a visible trace remains after lifting, stacks with passes, fades, and clea
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.clock.runFor(100);
   expect((await sample()).color).toBeGreaterThan(bare.color + 20);
+  await page.clock.runFor(24000);
+  expect((await sample()).color).toBeLessThan(bare.color + 20);
   await page.locator('#reset').click();
   await page.clock.runFor(100);
   expect((await sample()).strength).toBe(0);
   expect((await sample()).color).toBe(bare.color);
+});
+
+test('brushing reaches the tip, bottom rim and side edges even when the finger ends beyond them', async ({
+  page,
+}) => {
+  await open(page, 'challenge=stone-offering-v3');
+  await page.clock.runFor(100);
+  const pixel = () =>
+    page.evaluate(() =>
+      [
+        ...dust.renderer.ctx.getImageData(
+          Math.round(80 * dust.renderer.scale),
+          Math.round(175 * dust.renderer.scale),
+          1,
+          1,
+        ).data,
+      ]
+        .slice(0, 3)
+        .reduce((a, b) => a + b, 0),
+    );
+  const bare = await pixel();
+  await stroke(page, [80, 160], [80, 188], 1);
+  await stroke(page, [80, 20], [80, 4], 1);
+  await stroke(page, [5, 175], [155, 175], 2);
+  await page.clock.runFor(100);
+  const field = await page.evaluate(() => ({
+    tip: dust.sim.surface.strengthAt(80, 6),
+    base: dust.sim.surface.strengthAt(80, 175.9),
+    left: dust.sim.surface.strengthAt(2, 175.5),
+    right: dust.sim.surface.strengthAt(158, 175.5),
+    outside: dust.sim.surface.strengthAt(80, 177),
+    bowl: dust.sim.surface.strengthAt(40, 181),
+  }));
+  expect(field.tip).toBeGreaterThan(0);
+  expect(field.base).toBeGreaterThan(0.6);
+  expect(field.left).toBeGreaterThan(0);
+  expect(field.right).toBeGreaterThan(0);
+  expect(field.outside).toBe(0);
+  expect(field.bowl).toBe(0);
+  expect(await pixel()).toBeGreaterThan(bare + 25);
+  await page.screenshot({
+    path: test.info().outputPath('full-stone-edges.png'),
+  });
+});
+
+test('an actual finger stroke guides falling material downhill while allowing it to drift', async ({
+  page,
+}) => {
+  await open(page, 'challenge=stone-offering-v3');
+  const seed = () =>
+    page.evaluate(() => {
+      dust.sim.config.stoneAdhesionRate = 0;
+      dust.sim.config.sandAdhesionRate = 0;
+      dust.sim.addGrain(70, 80, 0, 12);
+      dust.sim.emitted++;
+    });
+  await seed();
+  await page.clock.runFor(4000);
+  const bare = await page.evaluate(() => ({
+    x: dust.sim.grains[0].x,
+    y: dust.sim.grains[0].y,
+  }));
+  await page.locator('#reset').click();
+  for (let i = 0; i < 3; i++) await stroke(page, [65, 70], [105, 150]);
+  await seed();
+  await page.clock.runFor(4000);
+  const guided = await page.evaluate(() => ({
+    x: dust.sim.grains[0].x,
+    y: dust.sim.grains[0].y,
+    bond: dust.sim.grains[0].bond,
+  }));
+  expect(bare.x).toBe(70);
+  expect(guided.x).toBeGreaterThan(bare.x + 20);
+  expect(guided.y).toBeGreaterThan(130);
+  expect(guided.bond).toBe(null);
+  expect(Math.abs(guided.x - (65 + (guided.y - 70) / 2))).toBeGreaterThan(0.5);
 });
 
 test('two fingers leave independent traces, one can lift while the other continues, and Reset cancels both', async ({
@@ -54,7 +132,7 @@ test('two fingers leave independent traces, one can lift while the other continu
   context,
 }, info) => {
   test.skip(info.project.name !== 'phone', 'Touch-enabled viewport only');
-  await open(page, 'challenge=stone-offering-v2');
+  await open(page, 'challenge=stone-offering-v3');
   const rect = await page.locator('#field').boundingBox();
   const p = (x, y, id) => ({
     x: rect.x + (x / 160) * rect.width,
@@ -129,7 +207,7 @@ test('overlapping fingers add stickiness, and cancelling one does not cancel the
   context,
 }, info) => {
   test.skip(info.project.name !== 'phone', 'Touch-enabled viewport only');
-  await open(page, 'challenge=stone-offering-v2');
+  await open(page, 'challenge=stone-offering-v3');
   const rect = await page.locator('#field').boundingBox();
   const p = (x, y, id) => ({
     x: rect.x + (x / 160) * rect.width,

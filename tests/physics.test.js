@@ -180,12 +180,12 @@ test('collection interpolates the mouth crossing and counts a grain only once', 
 });
 
 test('stopped or obstructed emission spends no supply and resumes without a catch-up burst', () => {
-  const sim = new Simulation({ supply: 960 });
+  const sim = new Simulation({ supply: 960, inletBondSeconds: Infinity });
   sim.pouring = false;
   advance(sim, 120);
   assert.equal(sim.emitted, 0);
-  for (let i = 0; i < 9; i++)
-    sim.anchor(sim.addGrain(74.8 + i * 1.3, 14), 'stone');
+  for (let i = 0; i < 15; i++)
+    sim.anchor(sim.addGrain(71 + i * 1.3, 14), 'stone');
   sim.pouring = true;
   advance(sim, 120);
   assert.equal(sim.emitted, 0);

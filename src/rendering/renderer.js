@@ -1,5 +1,5 @@
 import { seededRandom } from '../simulation/random.js';
-import { insideStone } from '../simulation/geometry.js';
+import { insideStone, stone as stoneShape } from '../simulation/geometry.js';
 import { challenge } from '../config/challenge.js';
 
 export class Renderer {
@@ -35,9 +35,9 @@ export class Renderer {
     c.fillRect(0, 0, 160, 200);
     c.fillStyle = '#46483b';
     c.beginPath();
-    c.moveTo(80, 6);
-    c.lineTo(159, 176);
-    c.lineTo(1, 176);
+    c.moveTo(stoneShape.x, stoneShape.top);
+    c.lineTo(stoneShape.x + stoneShape.halfWidth, stoneShape.bottom);
+    c.lineTo(stoneShape.x - stoneShape.halfWidth, stoneShape.bottom);
     c.closePath();
     c.fill();
     const stone = c.createLinearGradient(12, 80, 140, 130);
@@ -161,7 +161,7 @@ export class Renderer {
         data[pixel + 1] = 179;
         data[pixel + 2] = 151;
         data[pixel + 3] = Math.round(
-          255 * 0.5 * Math.sqrt(strength / surface.config.traceMaxStrength),
+          255 * 0.52 * Math.min(1, strength / 3) ** 0.75,
         );
       });
       this.treatmentContext.putImageData(this.treatmentPixels, 0, 0);
@@ -170,7 +170,16 @@ export class Renderer {
     }
     // Functional feedback stays visible under reduced motion as well: this
     // coating is the same decaying strength field used by the adhesion solver.
-    this.ctx.drawImage(this.treatmentCanvas, 0, 0, 160, 200);
+    const c = this.ctx;
+    c.save();
+    c.beginPath();
+    c.moveTo(stoneShape.x, stoneShape.top);
+    c.lineTo(stoneShape.x + stoneShape.halfWidth, stoneShape.bottom);
+    c.lineTo(stoneShape.x - stoneShape.halfWidth, stoneShape.bottom);
+    c.closePath();
+    c.clip();
+    c.drawImage(this.treatmentCanvas, 0, 0, 160, 200);
+    c.restore();
   }
 
   draw(sim, mode = 'free') {

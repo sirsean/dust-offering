@@ -44,6 +44,8 @@ async function state() {
     sand: dust.sim.grains.filter((g) => g.bond === 'sand').length,
     ground: dust.sim.spill,
     restingGround: dust.sim.grains.filter((g) => g.missed && g.sleeping).length,
+    aboveY36: dust.sim.grains.filter((g) => g.y < 36).length,
+    aboveY60: dust.sim.grains.filter((g) => g.y < 60).length,
     remaining: Number.isFinite(dust.sim.remaining) ? dust.sim.remaining : null,
   }));
 }
@@ -52,7 +54,7 @@ const report = stressOnly
   ? JSON.parse(await readFile('artifacts/stone-playtest-report.json', 'utf8'))
   : {
       date: new Date().toISOString(),
-      revision: '0.3.0 / stone-offering-v2',
+      revision: '0.4.0 / stone-offering-v3',
       browser: browser.version(),
       node: process.version,
       viewport: '390 × 844, Linux headless Chromium, emulated touch',
@@ -133,11 +135,12 @@ try {
     await stroke([62, 70], [55, 140]);
     await stroke([62, 70], [55, 140]);
     report.layeredTraces = await traces();
-    assert.ok(report.layeredTraces.left > report.twoFingerTraces.left * 2.5);
+    assert.ok(report.layeredTraces.left > report.twoFingerTraces.left * 2);
     await page.screenshot({ path: 'artifacts/stone-layered-traces.png' });
     await page.waitForTimeout(6000);
     report.decayedTraces = await traces();
-    assert.ok(report.decayedTraces.left < report.layeredTraces.left * 0.9);
+    assert.ok(report.decayedTraces.left < report.layeredTraces.left * 0.55);
+    await page.screenshot({ path: 'artifacts/stone-faded-traces.png' });
     console.log(
       JSON.stringify({
         phase: 'two fingers, layering and decay',
@@ -147,14 +150,49 @@ try {
       }),
     );
     await page.locator('#challenge').click();
+    for (let i = 0; i < 3; i++) await stroke([65, 70], [105, 150]);
+    await page.evaluate(() => {
+      dust.sim.config.stoneAdhesionRate = 0;
+      dust.sim.config.sandAdhesionRate = 0;
+      for (let i = 0; i < 7; i++) {
+        dust.sim.addGrain(65.5 + i * 1.5, 80, 0, 12);
+        dust.sim.emitted++;
+      }
+    });
+    const guidance = () =>
+      page.evaluate(() => ({
+        x:
+          dust.sim.grains.reduce((sum, g) => sum + g.x, 0) /
+          dust.sim.grains.length,
+        y:
+          dust.sim.grains.reduce((sum, g) => sum + g.y, 0) /
+          dust.sim.grains.length,
+        retained: dust.sim.grains.length,
+        attached: dust.sim.attachedCount,
+      }));
+    report.guidanceBefore = await guidance();
+    await page.waitForTimeout(4000);
+    report.guidanceAfter = await guidance();
+    assert.ok(report.guidanceAfter.x > report.guidanceBefore.x + 10);
+    assert.ok(report.guidanceAfter.y > report.guidanceBefore.y + 35);
+    assert.equal(report.guidanceAfter.retained, 7);
+    assert.equal(report.guidanceAfter.attached, 0);
+    await page.screenshot({ path: 'artifacts/stone-guidance.png' });
+    console.log(
+      JSON.stringify({
+        phase: 'downhill guidance control',
+        before: report.guidanceBefore,
+        after: report.guidanceAfter,
+      }),
+    );
+    await page.locator('#challenge').click();
     await page.locator('#pour').click();
     const started = performance.now();
     for (let i = 0; i < 3; i++) {
       await page.waitForTimeout(10000);
-      await stroke([80, 28], [80, 65], 12);
       console.log(
         JSON.stringify({
-          phase: 'gentle challenge shaping',
+          phase: 'unattended challenge drainage',
           state: await state(),
         }),
       );

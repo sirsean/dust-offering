@@ -24,11 +24,11 @@ test('each brush pass adds surface strength, including repeated taps, with a bou
 test('strength halves over time, a new pass adds to the decayed value, and old traces expire', () => {
   const field = new SurfaceTreatment(prototype);
   field.paint(point, point);
-  field.advanceTo(30);
+  field.advanceTo(6);
   assert.equal(field.strengthAt(point.x, point.y), 0.5);
   field.paint(point, point);
   assert.equal(field.strengthAt(point.x, point.y), 1.5);
-  field.advanceTo(60);
+  field.advanceTo(12);
   assert.equal(field.strengthAt(point.x, point.y), 0.75);
   field.advanceTo(600);
   assert.equal(field.strengthAt(point.x, point.y), 0);
@@ -59,18 +59,22 @@ test('a continuous pass coats its full path similarly with sparse or dense point
   assert.equal(dense.strengthAt(80.5, 150.5), before);
 });
 
-test('treatment stays on editable stone and cannot coat the source or bowls', () => {
+test('treatment reaches all visible stone edges, without coating the surrounding space or bowls', () => {
   const field = new SurfaceTreatment(prototype);
   for (const p of [
-    { x: 80, y: 14 },
     { x: 40, y: 181 },
     { x: 10, y: 60 },
   ])
     field.paint(p, p);
   assert.equal(field.snapshot().cells.length, 0);
-  field.paint({ x: 80, y: 26 }, { x: 80, y: 169 });
-  assert.equal(field.strengthAt(80, 14), 0);
-  assert.equal(field.strengthAt(80, 25.9), 0);
+  field.paint({ x: 80, y: 6 }, { x: 80, y: 180 });
+  assert.ok(field.strengthAt(80, 6) > 0);
+  assert.ok(field.strengthAt(80, 14) > 0);
+  assert.ok(field.strengthAt(80, 175.9) > 0.3);
+  field.paint({ x: 1, y: 176 }, { x: 159, y: 176 });
+  assert.ok(field.strengthAt(1, 176) > 0);
+  assert.ok(field.strengthAt(159, 176) > 0);
+  assert.equal(field.strengthAt(80, 176.1), 0);
   assert.equal(field.strengthAt(80, 181), 0);
   assert.ok(field.strengthAt(80, 100) > 0);
 });
@@ -90,18 +94,38 @@ test('pruning the visual coating does not change later adhesion field values', (
   assert.deepEqual(a.snapshot(), b.snapshot());
 });
 
+test('orientation follows stroke slopes rather than finger direction, blends at crossings, and decays with strength', () => {
+  const a = new SurfaceTreatment(prototype),
+    b = new SurfaceTreatment(prototype);
+  const start = { x: 60.5, y: 80.5 },
+    end = { x: 100.5, y: 120.5 };
+  a.paint(start, end);
+  b.paint(end, start);
+  const down = a.sampleAt(point.x, point.y),
+    up = b.sampleAt(point.x, point.y);
+  assert.ok(down.x > 0.7 && down.y > 0.7 && down.coherence > 0.99);
+  assert.ok(Math.abs(down.x - up.x) < 1e-6 && Math.abs(down.y - up.y) < 1e-6);
+  a.advanceTo(6);
+  const faded = a.sampleAt(point.x, point.y);
+  assert.equal(faded.strength, down.strength / 2);
+  assert.equal(faded.coherence, down.coherence);
+  b.paint({ x: 100.5, y: 80.5 }, { x: 60.5, y: 120.5 });
+  const crossing = b.sampleAt(point.x, point.y);
+  assert.ok(crossing.strength > down.strength * 1.99);
+  assert.ok(crossing.coherence < 0.001);
+});
+
 test('coated stone catches a grain sooner, and fully decayed coating behaves like bare stone', () => {
   function scene(passes, aged = false) {
     const sim = new Simulation({ sourceRate: 0, sandAdhesionRate: 0 });
-    for (let i = 0; i < passes; i++)
-      sim.brush({ x: 80.5, y: 70 }, { x: 80.5, y: 155 });
+    for (let i = 0; i < passes; i++) sim.brush(point, point);
     assert.equal(sim.grains.length, 0);
     if (aged) {
       sim.steps = 36000;
       sim.surface.advanceTo(sim.time);
     }
     const grain = sim.addGrain(80.5, 100.5);
-    grain.threshold = 0.3;
+    grain.threshold = 0.06;
     advance(sim, 120);
     return { sim, grain };
   }
@@ -120,12 +144,12 @@ test('traces decay while the pour is paused, survive Begin, and clear completely
   game.edit(point, point);
   assert.equal(game.sim.surface.strengthAt(point.x, point.y), 1);
   assert.equal(game.sim.grains.length, 0);
-  advance(game.sim, 1800);
+  advance(game.sim, 360);
   assert.equal(game.sim.surface.strengthAt(point.x, point.y), 0.5);
   game.begin();
   assert.equal(game.sim.surface.strengthAt(point.x, point.y), 0.5);
   game.togglePour();
-  advance(game.sim, 1800);
+  advance(game.sim, 360);
   assert.equal(game.sim.surface.strengthAt(point.x, point.y), 0.25);
   game.reset();
   assert.deepEqual(game.sim.surface.snapshot(), { time: 0, cells: [] });

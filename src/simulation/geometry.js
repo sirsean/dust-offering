@@ -1,10 +1,47 @@
+// Shared with the renderer so the interactive stone includes its visible rim.
+export const stone = Object.freeze({
+  x: 80,
+  top: 6,
+  bottom: 176,
+  halfWidth: 79,
+});
+
 export function insideStone(x, y) {
-  if (y < 8 || y > 174) return false;
-  return Math.abs(x - 80) <= ((y - 8) * 76) / 166;
+  if (y < stone.top || y > stone.bottom) return false;
+  return (
+    Math.abs(x - stone.x) <=
+    ((y - stone.top) * stone.halfWidth) / (stone.bottom - stone.top)
+  );
 }
 
 export function editableStone(x, y) {
-  return y >= 26 && y <= 169 && insideStone(x, y);
+  return insideStone(x, y);
+}
+
+// Clip a swept contact against the three triangle half-planes, expanded by
+// its radius. This lets a finger centred just outside still brush the edge.
+export function touchesStone(a, b, radius = 0) {
+  const slope = stone.halfWidth / (stone.bottom - stone.top);
+  const sidePadding = radius * Math.hypot(1, slope);
+  let enter = 0,
+    exit = 1;
+  for (const [nx, ny, limit] of [
+    [0, 1, stone.bottom + radius],
+    [1, -slope, stone.x - slope * stone.top + sidePadding],
+    [-1, -slope, -stone.x - slope * stone.top + sidePadding],
+  ]) {
+    const distance = nx * a.x + ny * a.y - limit;
+    const travel = nx * (b.x - a.x) + ny * (b.y - a.y);
+    if (Math.abs(travel) < 1e-9) {
+      if (distance > 0) return false;
+      continue;
+    }
+    const t = -distance / travel;
+    if (travel < 0) enter = Math.max(enter, t);
+    else exit = Math.min(exit, t);
+    if (enter > exit) return false;
+  }
+  return true;
 }
 
 export function stoneRoughness(x, y) {

@@ -1,34 +1,55 @@
-# Sticky-trace physics checks
+# Downhill guidance and inlet drainage
 
-Current model: `stone-offering-v2`, revision 0.3.0. The [previous slow-sand measurements](archive/stone-v1/physics-results.md) and original ridge measurements remain archived. All defaults live in `src/config/prototype.js`.
+Current model: revision 0.4.0, `stone-offering-v3`. Configuration lives in `src/config/prototype.js`. Earlier evidence remains in [archive/stone-v2/](archive/stone-v2/physics-results.md) and the older archive directories.
 
-## Trace behavior
+## Trace response
 
-| Parameter                        | Value                                      |
-| -------------------------------- | ------------------------------------------ |
-| Field                            | 160 × 200 cells, one logical unit per cell |
-| Brush diameter                   | 8 logical units, soft radial kernel        |
-| Strength per pass / maximum      | approximately 1 / 6                        |
-| Strength half-life               | 30 seconds of simulation time              |
-| Negligible-strength cutoff       | 0.002                                      |
-| Stone exposure multiplier        | `1 + 8 × strength`                         |
-| Base stone / sand exposure rates | 0.025 / 1.6 per second                     |
-| Release cooldown                 | 2.5 seconds, unchanged                     |
+| Parameter                    | Value                                                 |
+| ---------------------------- | ----------------------------------------------------- |
+| Interactive triangle         | Full visible outer face: (80,6), (159,176), (1,176)   |
+| Grid / finger diameter       | One-unit cells / 8 units                              |
+| Strength per pass / maximum  | Approximately 1 / 6                                   |
+| Strength half-life           | 6 seconds, previously 30                              |
+| Guidance fraction            | `0.85 × coherence × strength / (1 + strength)`        |
+| Cross-axis / along-axis drag | 9 / 0.35 per second, multiplied by grip               |
+| Stone capture multiplier     | `1 + 8 × strength × (1 − 0.9 × coherence)`            |
+| Source width / lanes         | 18 / 12, previously 12 / 8                            |
+| Inlet attachment             | None above y=45; linear ramp to full strength at y=72 |
+| Upper-bond lifetime          | 2.5 seconds, followed by release and cooldown         |
 
-The numerical suite verifies repeated taps/passes, the cap, exact half-life, adding to a decayed trace, complete expiry, sparse/dense input equivalence, protected regions, and renderer-independent decay. A controlled falling grain remains loose on bare stone, attaches on a three-pass trace, and behaves exactly like the bare-stone control after that trace fully expires. Coating creates no grains or collision geometry. Existing bonds are not dissolved by fading.
+Motion remains capped at 16 units/s, with gravity 12 units/s² and emission 24 grains/s. The 60 Hz solver uses two substeps and three contact passes. Maximum travel per substep remains 0.1333 units, below the 0.65-unit grain radius. Supply and targets remain 960 and 360 / 600.
 
-The slow source and motion remain unchanged: 16-unit/s speed cap, gravity 12, launch speed 3 downward and ±0.65 sideways, and 24 grains/s. The unobstructed source emits all 960 challenge grains in 2,400 steps. The 60 Hz solver uses two substeps and three contact passes; maximum travel per substep is 0.1333 units, below the 0.65-unit grain radius.
+`npm run test:physics` saves reproducible guidance, adhesion and inlet measurements to stdout. Current raw evidence is [stone-physics.jsonl](../artifacts/stone-physics.jsonl).
 
-## Gathering and brushing
+## Loose downhill guidance
 
-`npm run test:physics` reproduces the experiment in `src/config/adhesion-scene.js`: gather for 25 seconds, brush from (78,28) to (90,115), pour ten more seconds, then settle twenty. A matching unbrushed control runs alongside each seed. The brush now coats its path as well as releasing sand. Raw results: [stone-physics.jsonl](../artifacts/stone-physics.jsonl).
+A single grain starts at (70,80) with downward speed 12. Draw a slope from (65,70) to (105,150), then simulate four seconds. Adhesion is disabled in this control to isolate guidance from permanent bonds.
 
-| Seed | Stone / sand bonds before brush | Bonds released | Retained before / immediately after | Ground grains below y=190 after settling | Emitted / accounted |
-| ---- | ------------------------------- | -------------- | ----------------------------------- | ---------------------------------------- | ------------------- |
-| 48   | 42 / 161                        | 62             | 541 / 541                           | 134                                      | 838 / 838           |
-| 2026 | 41 / 137                        | 61             | 503 / 503                           | 123                                      | 840 / 840           |
-| 914  | 42 / 130                        | 63             | 489 / 489                           | 106                                      | 840 / 840           |
+| Coating                                              | Final x | Final y |
+| ---------------------------------------------------- | ------- | ------- |
+| Bare stone                                           | 70.00   | 143.35  |
+| One pass                                             | 86.13   | 140.06  |
+| Three passes                                         | 95.58   | 136.70  |
+| Six passes                                           | 96.34   | 136.19  |
+| Three uphill passes on the same slope                | 95.58   | 136.70  |
+| Three mirrored left-sloping passes, starting at x=90 | 64.42   | 136.70  |
 
-The brush preserves mass while releasing dependent attachments. All seeds retain visible ground piles. Natural deposits can block the source, reducing actual emission without consuming supply or creating a backlog. Subsequent flow differs from the unbrushed controls because of the changed deposits and stone treatment.
+Every grain remains loose, continues downward and respects the speed cap. Three passes produce stronger lateral guidance than one, but the grain ends 2.77 units away from the slope's centre line. There is no collision rail. Separate tests verify crossing-orientation blending and downward drainage through horizontal traces. A stationary coated spot still increases actual stone capture; fully expired coating returns to bare-stone behavior.
 
-The suite also checks weak stone versus stronger sand attachment, physical deflection, release cascades and cooldown, continuous brush displacement, sleeping/waking, persistent ground piles, interpolated collection, pause/block/cap behavior, and deterministic replay including trace state. Both accounting equations hold: `emitted = left + right + grains.length` and `emitted = left + right + spill + faceCount`. Challenge adds remaining supply to either side to recover 960. Scores and sharing use the new identifier so earlier physics are not compared.
+## Unattended inlet comparison
+
+Run the same seeds for two minutes without brushing. The baseline uses the actual 0.3.0 source at commit `7475680`; raw results are [stone-inlet-baseline.jsonl](../artifacts/stone-inlet-baseline.jsonl). Baseline reproduction: export that commit's `src/` and `package.json` with `git archive`, import its `Simulation` with Node, and step 7,200 times per seed, sampling at steps 3,600 and 7,200. Current reproduction is included in `npm run test:physics`.
+
+| Seed | Grains above y=36 after 60s, old → new | Grains above y=60 after 60s, old → new | Grains above y=60 after 120s, old → new | Current emitted / accounted after 120s |
+| ---- | -------------------------------------- | -------------------------------------- | --------------------------------------- | -------------------------------------- |
+| 48   | 190 → 44                               | 350 → 91                               | 351 → 211                               | 2,880 / 2,880                          |
+| 2026 | 206 → 44                               | 336 → 124                              | 341 → 183                               | 2,880 / 2,880                          |
+| 914  | 197 → 44                               | 354 → 83                               | 358 → 185                               | 2,880 / 2,880                          |
+
+The tip count falls by about 78% and remains at 44 grains across all three runs and both sample times. The upper area remains capable of accumulating sand farther below the inlet, but its 60-second count is about 71% lower on average. No source clearing is needed for the current runs to emit every scheduled grain. Lower-face deposits and literal ground piles remain present; no grain is deleted to obtain these results.
+
+## Deposits and conservation
+
+The existing 25-second gather / brush / ten-second pour / twenty-second settle experiment releases 48, 47 and 40 bonds for seeds 48, 2026 and 914. Immediately before and after brushing, retained counts remain 505 / 505, 512 / 512 and 519 / 519. All three runs emit and account for 840 grains and leave at least 130 grains visible below y=190 after settling.
+
+The 38-test numerical/unit suite also covers full supply, weak stone versus stronger sand capture, dependent release, weathering and unsupported sleeping sand, continuous edge strokes, field decay independent of rendering, deterministic replay with orientation state, persistent missed piles, interpolated collection, pause/block/cap behavior, challenge scoring, isolated bests and sharing. Both accounting equations remain true: `emitted = left + right + grains.length` and `emitted = left + right + spill + faceCount`.

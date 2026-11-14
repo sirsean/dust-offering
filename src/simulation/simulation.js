@@ -13,6 +13,7 @@ export class Simulation {
     this.config = { ...prototype, ...options };
     this.random = seededRandom(this.config.seed);
     this.surface = new SurfaceTreatment(this.config);
+    this.traceSample = {};
     this.grains = [];
     this.steps = 0;
     this.nextId = 0;
@@ -53,6 +54,7 @@ export class Simulation {
       vx,
       vy,
       bond: null,
+      bondExpires: Infinity,
       parent: null,
       children: new Set(),
       threshold: -Math.log(Math.max(1e-9, 1 - this.random())),
@@ -97,7 +99,7 @@ export class Simulation {
       let x;
       let available = false;
       for (let attempt = 0; attempt < this.config.sourceLanes; attempt++) {
-        const lane = (this.emitted * 3 + attempt) % this.config.sourceLanes;
+        const lane = (this.emitted * 5 + attempt) % this.config.sourceLanes;
         x =
           this.config.sourceX -
           this.config.sourceWidth / 2 +
@@ -128,6 +130,10 @@ export class Simulation {
   anchor(grain, bond, parent = null) {
     grain.parent?.children.delete(grain);
     grain.bond = bond;
+    grain.bondExpires =
+      grain.y < this.config.inletBlendY
+        ? this.time + this.config.inletBondSeconds
+        : Infinity;
     grain.parent = parent;
     parent?.children.add(grain);
     grain.vx = 0;
@@ -146,6 +152,7 @@ export class Simulation {
       current.parent?.children.delete(current);
       if (current.bond) released++;
       current.bond = null;
+      current.bondExpires = Infinity;
       current.parent = null;
       current.sleeping = false;
       current.quiet = 0;
@@ -329,22 +336,36 @@ export class Simulation {
       !editableStone(grain.x, grain.y)
     )
       return;
+    // Let the inlet drain. Both kinds of bond taper in below the source;
+    // transient upper bonds shed their descendants instead of growing a plug.
+    const inlet = Math.max(
+      0,
+      Math.min(
+        1,
+        (grain.y - this.config.inletClearY) /
+          Math.max(1e-6, this.config.inletBlendY - this.config.inletClearY),
+      ),
+    );
+    if (!inlet) return;
     if (
       grain.candidate?.bond &&
       Math.hypot(grain.vx, grain.vy) < this.config.adhesionSpeed
     ) {
-      grain.sandExposure += this.config.sandAdhesionRate * dt;
+      grain.sandExposure += this.config.sandAdhesionRate * inlet * dt;
       if (grain.sandExposure >= grain.threshold) {
         this.anchor(grain, 'sand', grain.candidate);
         return;
       }
     } else grain.sandExposure *= 0.99;
+    const trace = this.surface.sampleAt(grain.x, grain.y, this.traceSample);
     grain.stoneExposure +=
       this.config.stoneAdhesionRate *
+      inlet *
       stoneRoughness(grain.x, grain.y) *
       (1 +
         this.config.traceAdhesionGain *
-          this.surface.strengthAt(grain.x, grain.y)) *
+          trace.strength *
+          (1 - this.config.traceSlideCaptureReduction * trace.coherence)) *
       dt;
     if (grain.stoneExposure >= grain.threshold) this.anchor(grain, 'stone');
   }
@@ -357,21 +378,58 @@ export class Simulation {
     }
   }
 
+  wakeStone() {
+    for (const grain of this.grains)
+      if (!grain.bond && !grain.missed) {
+        grain.sleeping = false;
+        grain.quiet = 0;
+      }
+  }
+
+  flow(grain, dt) {
+    const c = this.config;
+    const trace = this.surface.sampleAt(grain.x, grain.y, this.traceSample);
+    const grip = (trace.coherence * trace.strength) / (1 + trace.strength);
+    const guide = c.traceGuideGain * grip;
+    // Gravity projected along the stroke, with residual downward acceleration
+    // across it. Even a horizontal trace cannot carry sand uphill or suspend it.
+    grain.vx += c.gravity * guide * trace.x * trace.y * dt;
+    grain.vy += c.gravity * (1 - guide + guide * trace.y * trace.y) * dt;
+    if (grip > 0) {
+      const along =
+        (grain.vx * trace.x + grain.vy * trace.y) *
+        Math.exp(-c.traceAlongDrag * grip * dt);
+      const across =
+        (-grain.vx * trace.y + grain.vy * trace.x) *
+        Math.exp(-c.traceCrossDrag * grip * dt);
+      grain.vx = along * trace.x - across * trace.y;
+      grain.vy = along * trace.y + across * trace.x;
+    }
+  }
+
   step() {
     this.emit();
     const c = this.config;
     const dt = 1 / c.stepsPerSecond / c.collisionSubsteps;
+    let weathered = false;
     for (const grain of this.grains) {
+      if (grain.bond && this.time >= grain.bondExpires) {
+        this.release(grain);
+        weathered = true;
+      }
       grain.frameX = grain.x;
       grain.frameY = grain.y;
     }
+    // Sleeping loose grains can rest above an upper bond without belonging
+    // to its attachment tree. Wake them too when that support weathers away.
+    if (weathered) this.wakeStone();
     for (let substep = 0; substep < c.collisionSubsteps; substep++) {
       for (const grain of this.grains) {
         grain.px = grain.x;
         grain.py = grain.y;
         grain.candidate = null;
         if (grain.bond || grain.sleeping) continue;
-        grain.vy += c.gravity * dt;
+        this.flow(grain, dt);
         this.capSpeed(grain);
         grain.x += grain.vx * dt;
         grain.y += grain.vy * dt;
@@ -452,24 +510,21 @@ export class Simulation {
         this.capSpeed(grain);
       }
     });
-    for (const grain of this.grains)
-      if (!grain.bond && !grain.missed) {
-        grain.sleeping = false;
-        grain.quiet = 0;
-      }
+    this.wakeStone();
     this.lastBrushReleased = released;
     return released;
   }
 
   snapshot() {
     return this.grains.map(
-      ({ id, x, y, vx, vy, bond, parent, missed, sleeping }) => ({
+      ({ id, x, y, vx, vy, bond, bondExpires, parent, missed, sleeping }) => ({
         id,
         x,
         y,
         vx,
         vy,
         bond,
+        bondExpires,
         parent: parent?.id ?? null,
         missed,
         sleeping,

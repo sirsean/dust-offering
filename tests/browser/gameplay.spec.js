@@ -6,7 +6,7 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
 }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page, 'challenge=stone-offering-v2');
+  await open(page, 'challenge=stone-offering-v3');
   await expect(page.locator('.tools button')).toHaveCount(2);
   await expect(
     page.getByRole('button', { name: 'Draw', exact: true }),
@@ -89,9 +89,9 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   page,
 }) => {
   await page.addInitScript(() =>
-    localStorage.setItem('dust-offering:best:stone-offering-v1', '999'),
+    localStorage.setItem('dust-offering:best:stone-offering-v2', '999'),
   );
-  await open(page, 'challenge=stone-offering-v2');
+  await open(page, 'challenge=stone-offering-v3');
   await expect(page.locator('#best')).toHaveText('Best —');
   await expect(page.locator('#pour')).toHaveText('Begin');
   await page.clock.runFor(1000);
@@ -116,12 +116,12 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   expect(score).toBeLessThanOrEqual(1000);
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v2'),
+      localStorage.getItem('dust-offering:best:stone-offering-v3'),
     ),
   ).toBe(String(score));
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v1'),
+      localStorage.getItem('dust-offering:best:stone-offering-v2'),
     ),
   ).toBe('999');
   await page.evaluate(() => {
@@ -140,7 +140,7 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   });
   await page.locator('#share').click();
   await expect(page.locator('#manual-share')).toHaveValue(
-    /challenge=stone-offering-v2/,
+    /challenge=stone-offering-v3/,
   );
   await expect(page.locator('#result-uncollected')).toContainText(
     'on the ground',
@@ -198,7 +198,7 @@ test('touch strokes cancel cleanly and release deposited sand without modes', as
   expect(await page.evaluate(() => dust.renderer.brushes.size)).toBe(0);
 });
 
-test('rotation and hidden recovery preserve bonded sand and ground piles; source and bowls are protected', async ({
+test('rotation and hidden recovery preserve sand, piles and traces; bowls and space outside the stone are protected', async ({
   page,
 }) => {
   await open(page);
@@ -220,7 +220,7 @@ test('rotation and hidden recovery preserve bonded sand and ground piles; source
   expect(
     await page.evaluate(() => JSON.stringify(dust.sim.surface.snapshot())),
   ).toBe(coating);
-  await stroke(page, [75, 14], [85, 14]);
+  await stroke(page, [50, 30], [55, 30]);
   await stroke(page, [30, 181], [60, 181]);
   expect(
     await page.evaluate(() => JSON.stringify(dust.sim.surface.snapshot())),
@@ -257,7 +257,7 @@ test('narrow phones and landscape fit, controls remain accessible, storage denia
       },
     }),
   );
-  await open(page, 'challenge=stone-offering-v2');
+  await open(page, 'challenge=stone-offering-v3');
   for (const viewport of [
     { width: 320, height: 568 },
     { width: 360, height: 640 },

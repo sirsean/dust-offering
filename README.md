@@ -1,8 +1,8 @@
 # Dust Offering
 
-A quiet sand-on-stone browser prototype at the Black Pyramid. Let sand gather, then brush it with fingers, a pen, or a mouse. Grains cling lightly to the stone and more strongly to other sand. Your stroke loosens sand and leaves a visible sticky trace that catches later grains. Repeated passes make that part of the stone stickier; traces gradually fade. Missed sand stays visible in piles below the stone.
+A quiet sand-on-stone browser prototype at the Black Pyramid. Let sand gather, then brush it with fingers, a pen, or a mouse. Grains cling lightly to the stone and more strongly to other sand. Your stroke loosens sand and leaves a visible trace that gently guides later grains downhill. Repeated passes strengthen the grip across the stroke; sand can still slide along it and drift away. Missed sand stays visible in piles below the stone.
 
-**Current revision: 0.3.0, `stone-offering-v2`.** Multiple fingers can brush independently, and overlapping strokes build stickiness. A trace loses half its strength every 30 seconds of simulation time. Maximum grain speed and pour density remain about five times lower than the original prototype. Free Pour opens by default; Pause pour and Reset are always available. Optional Challenge, local bests, sharing, and muted-by-default sound remain available.
+**Current revision: 0.4.0, `stone-offering-v3`.** Multiple fingers can brush the entire triangle independently, including the tip and bottom rim. Traces visibly fade with a six-second strength half-life. The pour is 50% wider, and weaker, temporary upper attachments help the inlet drain. Maximum grain speed and pour density remain about five times lower than the original prototype. Free Pour opens by default; Pause pour and Reset are always available. Optional Challenge, local bests, sharing, and muted-by-default sound remain available.
 
 - Play: <https://dust-offering.sirsean.me>
 - [Current direction](docs/stone-sand-plan.md) · [Architecture](docs/architecture.md) · [Status](docs/status.md)
@@ -35,12 +35,12 @@ Use the configured Cloudflare environment token for direct Wrangler deployment:
 
 ```sh
 npm run deploy
-npm run deploy:branch -- sticky-traces
-npm run deploy:branch:delete -- sticky-traces
+npm run deploy:branch -- downhill-traces
+npm run deploy:branch:delete -- downhill-traces
 ```
 
 GitHub Actions runs code and browser checks. Automated deployments remain deferred by the owner; no Actions deployment secret is required for direct deployment. Deleting a branch alone does not remove its manually deployed preview. See the deployment runbook for writable cache/config directories in restricted environments.
 
 ## Continue development
 
-Follow [AGENTS.md](AGENTS.md) and the current sand-on-stone plan. Preserve the literal grains on both stone and ground, bond-release behavior, seeded replay, and accounting. Trace brightness and adhesion must use the same decaying field. Each active pointer owns its own stroke. The next evaluation is how the slow material and layered traces feel under real fingers.
+Follow [AGENTS.md](AGENTS.md) and the current sand-on-stone plan. Preserve the literal grains on both stone and ground, bond-release behavior, seeded replay, and accounting. Trace brightness, adhesion and downhill guidance use the same decaying field. Each active pointer owns its own stroke. The next evaluation is how the loose directional grip and faster fading feel under real fingers.

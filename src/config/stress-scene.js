@@ -7,7 +7,13 @@ export function fillStressScene(sim) {
     const y = 27 + (row * 1.3 * Math.sqrt(3)) / 2;
     for (let column = 0; column < 119 && sim.grains.length < 6000; column++) {
       const x = 3 + column * 1.3 + (row % 2) * 0.65;
-      if (editableStone(x, y)) sim.anchor(sim.addGrain(x, y), 'stone');
+      if (editableStone(x, y)) {
+        const grain = sim.addGrain(x, y);
+        sim.anchor(grain, 'stone');
+        // This artificial retained-load fixture stays fixed until brushed;
+        // natural inlet weathering is measured in separate flowing scenes.
+        grain.bondExpires = Infinity;
+      }
     }
   }
   sim.emitted = sim.grains.length;

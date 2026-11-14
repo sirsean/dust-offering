@@ -53,6 +53,65 @@ export function measureSand(seed) {
     accounted: sim.left + sim.right + sim.grains.length,
   };
 }
-if (process.argv[1]?.endsWith('physics-check.js'))
+export function measureGuidance(passes, reverse = false, mirror = false) {
+  const sim = new Simulation({
+    sourceRate: 0,
+    stoneAdhesionRate: 0,
+    sandAdhesionRate: 0,
+  });
+  const a = { x: mirror ? 95 : 65, y: 70 },
+    b = { x: mirror ? 55 : 105, y: 150 };
+  for (let i = 0; i < passes; i++) sim.brush(reverse ? b : a, reverse ? a : b);
+  const grain = sim.addGrain(mirror ? 90 : 70, 80, 0, 12);
+  sim.emitted++;
+  for (let i = 0; i < 240; i++) sim.step();
+  return {
+    kind: 'guidance',
+    passes,
+    reverse,
+    mirror,
+    seconds: 4,
+    x: grain.x,
+    y: grain.y,
+    vx: grain.vx,
+    vy: grain.vy,
+    bond: grain.bond,
+    accounted: sim.left + sim.right + sim.grains.length,
+  };
+}
+
+export function measureInlet(seed) {
+  const sim = new Simulation({ seed });
+  const measurements = [];
+  for (let i = 0; i < 7200; i++) {
+    sim.step();
+    if (i === 3599 || i === 7199)
+      measurements.push({
+        kind: 'inlet',
+        seed,
+        seconds: sim.time,
+        emitted: sim.emitted,
+        aboveY36: sim.grains.filter((g) => g.y < 36).length,
+        aboveY60: sim.grains.filter((g) => g.y < 60).length,
+        upperBonds: sim.grains.filter((g) => g.y < 60 && g.bond).length,
+        attached: sim.attachedCount,
+        left: sim.left,
+        right: sim.right,
+        spill: sim.spill,
+        accounted: sim.left + sim.right + sim.grains.length,
+      });
+  }
+  return measurements;
+}
+
+if (process.argv[1]?.endsWith('physics-check.js')) {
   for (const seed of scene.seeds)
-    console.log(JSON.stringify(measureSand(seed)));
+    console.log(JSON.stringify({ kind: 'adhesion', ...measureSand(seed) }));
+  for (const passes of [0, 1, 3, 6])
+    console.log(JSON.stringify(measureGuidance(passes)));
+  console.log(JSON.stringify(measureGuidance(3, true)));
+  console.log(JSON.stringify(measureGuidance(3, false, true)));
+  for (const seed of scene.seeds)
+    for (const sample of measureInlet(seed))
+      console.log(JSON.stringify(sample));
+}
