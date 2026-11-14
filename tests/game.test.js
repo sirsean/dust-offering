@@ -6,7 +6,7 @@ import { bestScore, saveBest } from '../src/game/storage.js';
 import { challengeUrl, shareScore, shareText } from '../src/game/share.js';
 
 test('new 960-grain challenge scores exact targets, single errors, underfill, overfill and total spill', () => {
-  assert.equal(challenge.id, 'stone-offering-v1');
+  assert.equal(challenge.id, 'stone-offering-v2');
   for (const [left, right, expected] of [
     [360, 600, 1000],
     [359, 600, 998],
@@ -76,14 +76,14 @@ test('bests are isolated from the old physics, preserve ties and tolerate denied
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
   };
-  saveBest(storage, 'first-offering-v2', 999);
+  saveBest(storage, 'stone-offering-v1', 999);
   assert.equal(bestScore(storage, challenge.id), null);
   assert.deepEqual(saveBest(storage, challenge.id, 979), {
     best: 979,
     saved: true,
   });
   assert.equal(saveBest(storage, challenge.id, 500).best, 979);
-  assert.equal(bestScore(storage, 'first-offering-v2'), 999);
+  assert.equal(bestScore(storage, 'stone-offering-v1'), 999);
   const denied = {
     getItem() {
       throw Error();
@@ -105,7 +105,7 @@ test('sharing uses the new challenge and handles native, cancellation, clipboard
   const base = 'https://dust-offering.sirsean.me/?debug#test';
   assert.equal(
     challengeUrl(base),
-    'https://dust-offering.sirsean.me/?challenge=stone-offering-v1',
+    'https://dust-offering.sirsean.me/?challenge=stone-offering-v2',
   );
   assert.match(shareText(result, base), /340 \/ 360/);
   assert.equal(
@@ -135,7 +135,7 @@ test('sharing uses the new challenge and handles native, cancellation, clipboard
     ).status,
     'copied',
   );
-  assert.match(copied, /stone-offering-v1/);
+  assert.match(copied, /stone-offering-v2/);
   assert.equal(
     (
       await shareScore(result, base, {

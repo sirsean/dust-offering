@@ -2,9 +2,9 @@
 
 ## Current direction
 
-The owner's latest gameplay feedback supersedes the original ridge prototype. Read `docs/stone-sand-plan.md`, `docs/status.md`, and `docs/architecture.md` before substantive work. The intended experience is quiet, slow sand accumulating on a stone triangle. There is **one finger action**: brush through that sand, dislodge it, and shape the deposits that later sand runs over. Do not reintroduce Draw/Rub modes or invisible player-drawn barriers.
+The owner's latest gameplay feedback supersedes the original ridge prototype. Read `docs/stone-sand-plan.md`, `docs/status.md`, and `docs/architecture.md` before substantive work. The intended experience is quiet, slow sand accumulating on a stone triangle. There is **one brush action**, available to multiple fingers: brush through that sand, dislodge it, and shape the deposits that later sand runs over. Do not reintroduce Draw/Rub modes or invisible player-drawn barriers.
 
-Sand adheres weakly to rough stone and more strongly to other attached sand. Some stays on the stone; missed sand remains physically present in piles at the bottom. Relaxed Free Pour is the default. Challenge is optional and must be versioned when its physics, supply, targets, or scoring conditions change. Historical v2 measurements and the superseded plan are retained for provenance, not as acceptance gates for the new mechanic.
+Sand adheres weakly to rough stone and more strongly to other attached sand. Brushing also leaves a visible sticky surface trace: repeated passes stack its strength, and it decays over time. Visual brightness and adhesion must read the same field. Some sand stays on the stone; missed sand remains physically present in piles at the bottom. Relaxed Free Pour is the default. Challenge is optional and must be versioned when its physics, supply, targets, or scoring conditions change. Historical measurements and superseded plans are provenance, not current gates.
 
 ## Code and simulation
 
@@ -19,15 +19,15 @@ Sand adheres weakly to rough stone and more strongly to other attached sand. Som
 
 ## Interaction and feel
 
-Use Pointer Events for touch, pen, and mouse, capture one active pointer, interpolate fast strokes, and end on up/cancel/lost capture. Brush only the stone, protecting the source and bowl mouths. Show a contact footprint, keep controls at least 44 CSS pixels tall, and apply `touch-action: none` only to the canvas.
+Use Pointer Events for touch, pen, and mouse. Capture and track every active pointer independently, including each previous stroke point. Releasing, cancelling or losing capture for one finger must not interrupt the others or connect their paths. Interpolate fast strokes and deposit trace strength by distance rather than event frequency. Brush only the stone, protecting the source and bowl mouths. Show each contact footprint, keep controls at least 44 CSS pixels tall, and apply `touch-action: none` only to the canvas.
 
-Preserve all grains, bonds, piles, counts and supply through resize/rotation; suspend stepping while hidden and reset the frame clock on return. Stopping the pour only stops new emission. No countdown, rushing cues, or catch-up bursts. Sound starts muted. Reduced motion removes decorative trails while retaining necessary sand movement.
+Preserve all grains, bonds, piles, counts, supply and traces through resize/rotation; suspend stepping while hidden and reset the frame clock on return. Stopping the pour only stops new emission; traces still decay. Trace time follows simulation time and freezes when hidden or finished. Reset/mode changes clear all traces and active contacts. No countdown, rushing cues, or catch-up bursts. Sound starts muted. Reduced motion removes decorative trails while retaining necessary sand movement and functional sticky traces.
 
 ## Verification
 
 Use Node 24 and the npm lockfile. Run `npm ci` on clean checkouts and `npm run check` before committing. For gameplay changes run `npm run test:browser`; install Chromium using Playwright or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a system browser. `npm run playtest` runs the real-time scripted player with Vite running.
 
-Test the slow speed bound, full unobstructed supply, weak stone adhesion versus stronger sand adhesion, contact deflection by real deposits, mass-preserving brushing, bond-release cascades, continuous strokes, persistent missed-sand piles, sleeping/waking, deterministic replay, collection, score/storage/sharing, and reset/mode/resize/hidden recovery. Keep numerical evidence and browser screenshots for the current design. Report emulated touch and real hardware separately; automated play cannot prove human enjoyment.
+Test the slow speed bound, full unobstructed supply, weak stone adhesion versus stronger sand adhesion, contact deflection by real deposits, mass-preserving brushing, bond-release cascades, continuous strokes, trace stacking/decay/adhesion/visible feedback, independent simultaneous touches and partial lift/cancellation, persistent missed-sand piles, sleeping/waking, deterministic replay, collection, score/storage/sharing, and reset/mode/resize/hidden recovery. Keep numerical evidence and browser screenshots for the current design. Report emulated touch and real hardware separately; automated play cannot prove human enjoyment.
 
 ## Repository and deployment
 

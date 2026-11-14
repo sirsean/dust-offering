@@ -1,5 +1,6 @@
 {
-  "date": "2026-11-14T21:55:22.450Z",
+  "date": "2026-11-14T22:39:33.702Z",
+  "revision": "0.3.0 / stone-offering-v2",
   "browser": "156.0.8078.79",
   "node": "v24.22.1",
   "viewport": "390 × 844, Linux headless Chromium, emulated touch",
@@ -24,53 +25,72 @@
     "right": 41,
     "retained": 540,
     "face": 438,
-    "attached": 153,
-    "stone": 35,
-    "sand": 118,
+    "attached": 155,
+    "stone": 36,
+    "sand": 119,
     "ground": 102,
     "restingGround": 62,
     "remaining": null
   },
   "rested": {
     "emitted": 605,
-    "left": 82,
-    "right": 89,
-    "retained": 434,
-    "face": 268,
-    "attached": 260,
-    "stone": 58,
-    "sand": 202,
-    "ground": 166,
-    "restingGround": 166,
+    "left": 73,
+    "right": 82,
+    "retained": 450,
+    "face": 282,
+    "attached": 270,
+    "stone": 60,
+    "sand": 210,
+    "ground": 168,
+    "restingGround": 160,
     "remaining": null
   },
-  "pourWallSeconds": 40.010702159999994,
+  "traceContacts": 2,
+  "twoFingerTraces": {
+    "left": 0.960524859533222,
+    "right": 0.9605248595332219,
+    "middle": 0,
+    "contacts": 0
+  },
+  "layeredTraces": {
+    "left": 2.796856026928017,
+    "right": 0.9189166855665126,
+    "middle": 0,
+    "contacts": 0
+  },
+  "decayedTraces": {
+    "left": 2.430121105689738,
+    "right": 0.7984246634312422,
+    "middle": 0,
+    "contacts": 0
+  },
+  "pourWallSeconds": 40.141728572999995,
   "challenge": {
     "emitted": 960,
-    "left": 109,
-    "right": 134,
-    "retained": 717,
-    "face": 459,
-    "attached": 417,
-    "stone": 74,
-    "sand": 343,
-    "ground": 258,
-    "restingGround": 258,
+    "left": 135,
+    "right": 179,
+    "retained": 646,
+    "face": 433,
+    "attached": 394,
+    "stone": 83,
+    "sand": 311,
+    "ground": 213,
+    "restingGround": 213,
     "remaining": 0
   },
   "result": {
-    "score": 253,
-    "left": 109,
-    "right": 134,
-    "spill": 258,
-    "onFace": 459
+    "score": 327,
+    "left": 135,
+    "right": 179,
+    "spill": 213,
+    "onFace": 433
   },
   "fullFaceFrames": {
     "retained": 6000,
-    "meanMilliseconds": 18.762264150943377,
-    "p95Milliseconds": 33.39999999999418
+    "meanMilliseconds": 21.775182481751802,
+    "p95Milliseconds": 33.40000000000873
   },
-  "brushPointerMilliseconds": 64.46904700000596,
+  "brushPointerMilliseconds": 86.64034499999252,
   "stressAfterBrush": {
     "emitted": 6000,
     "left": 0,
@@ -84,5 +104,5 @@
     "restingGround": 0,
     "remaining": null
   },
-  "stressDate": "2026-11-14T21:57:05.965Z"
+  "stressDate": "2026-11-14T22:41:26.574Z"
 }

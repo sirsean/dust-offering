@@ -4,8 +4,7 @@ export function bindPointer(
   canvas,
   { edit, changed, brush, canEdit = () => true },
 ) {
-  let active = null;
-  let previous = null;
+  const pointers = new Map();
   function point(event) {
     const rect = canvas.getBoundingClientRect();
     return {
@@ -13,37 +12,36 @@ export function bindPointer(
       y: ((event.clientY - rect.top) / rect.height) * 200,
     };
   }
-  function protectedPoint(p) {
-    return !editableStone(p.x, p.y);
-  }
   function move(event) {
-    if (event.pointerId !== active) return;
+    const state = pointers.get(event.pointerId);
+    if (!state) return;
     event.preventDefault();
-    const events = event.getCoalescedEvents?.() ?? [];
-    for (const sample of events.length ? events : [event]) {
+    const samples = event.getCoalescedEvents?.() ?? [];
+    for (const sample of samples.length ? samples : [event]) {
       const p = point(sample);
-      brush(p);
-      if (protectedPoint(p) || !canEdit()) {
-        previous = null;
+      brush(event.pointerId, p);
+      if (!editableStone(p.x, p.y) || !canEdit()) {
+        state.previous = null;
         continue;
       }
-      edit(previous ?? p, p);
-      previous = p;
+      edit(state.previous ?? p, p, {
+        start: state.previous === null,
+        pointerId: event.pointerId,
+      });
+      state.previous = p;
       changed();
     }
   }
   function end(event) {
-    if (event.pointerId !== active) return;
-    active = null;
-    previous = null;
-    brush(null);
+    if (!pointers.delete(event.pointerId)) return;
+    brush(event.pointerId, null);
     if (canvas.hasPointerCapture(event.pointerId))
       canvas.releasePointerCapture(event.pointerId);
   }
   canvas.addEventListener('pointerdown', (event) => {
-    if (active !== null || event.button !== 0) return;
-    active = event.pointerId;
-    canvas.setPointerCapture(active);
+    if (pointers.has(event.pointerId) || event.button !== 0) return;
+    pointers.set(event.pointerId, { previous: null });
+    canvas.setPointerCapture(event.pointerId);
     move(event);
   });
   canvas.addEventListener('pointermove', move);
@@ -52,7 +50,7 @@ export function bindPointer(
   canvas.addEventListener('lostpointercapture', end);
   return {
     cancel() {
-      if (active !== null) end({ pointerId: active });
+      for (const pointerId of [...pointers.keys()]) end({ pointerId });
     },
   };
 }

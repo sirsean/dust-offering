@@ -1,8 +1,8 @@
 # Dust Offering
 
-A quiet sand-on-stone browser prototype at the Black Pyramid. Let sand gather, then brush it with a finger, pen, or mouse. Grains cling lightly to the stone and more strongly to other sand. Your stroke loosens and redistributes that material; later grains follow the deposits themselves. Missed sand stays visible in piles below the stone.
+A quiet sand-on-stone browser prototype at the Black Pyramid. Let sand gather, then brush it with fingers, a pen, or a mouse. Grains cling lightly to the stone and more strongly to other sand. Your stroke loosens sand and leaves a visible sticky trace that catches later grains. Repeated passes make that part of the stone stickier; traces gradually fade. Missed sand stays visible in piles below the stone.
 
-**Current revision: 0.2.0, `stone-offering-v1`.** Maximum grain speed and pour density are about five times lower than the original prototype. There are no separate drawing tools. Free Pour opens by default; Pause pour and Reset are always available. Optional Challenge, local bests, sharing, muted-by-default sound, and responsive touch/desktop controls remain available.
+**Current revision: 0.3.0, `stone-offering-v2`.** Multiple fingers can brush independently, and overlapping strokes build stickiness. A trace loses half its strength every 30 seconds of simulation time. Maximum grain speed and pour density remain about five times lower than the original prototype. Free Pour opens by default; Pause pour and Reset are always available. Optional Challenge, local bests, sharing, and muted-by-default sound remain available.
 
 - Play: <https://dust-offering.sirsean.me>
 - [Current direction](docs/stone-sand-plan.md) · [Architecture](docs/architecture.md) · [Status](docs/status.md)
@@ -27,7 +27,7 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-Browser tests start Vite if necessary. With Vite running, `npm run playtest` simulates real-time gathering, brushing, persistent ground piles, the new challenge, and a retained-material stress scene. It takes roughly two minutes and saves evidence in `artifacts/`. A system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
+Browser tests start Vite if necessary. With Vite running, `npm run playtest` simulates real-time gathering, brushing, two-finger traces, layering and decay, persistent ground piles, the challenge, and a retained-material stress scene. It takes roughly two minutes and saves evidence in `artifacts/`. A system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
 
 ## Deploy
 
@@ -35,12 +35,12 @@ Use the configured Cloudflare environment token for direct Wrangler deployment:
 
 ```sh
 npm run deploy
-npm run deploy:branch -- stone-sand
-npm run deploy:branch:delete -- stone-sand
+npm run deploy:branch -- sticky-traces
+npm run deploy:branch:delete -- sticky-traces
 ```
 
 GitHub Actions runs code and browser checks. Automated deployments remain deferred by the owner; no Actions deployment secret is required for direct deployment. Deleting a branch alone does not remove its manually deployed preview. See the deployment runbook for writable cache/config directories in restricted environments.
 
 ## Continue development
 
-Follow [AGENTS.md](AGENTS.md) and the current sand-on-stone plan. Preserve the literal grains on both stone and ground, bond-release behavior, seeded replay, and accounting. Relaxed pace and natural finger shaping take priority over the old drawn-ridge split experiment. The next evaluation is how the slower material feels under a real thumb.
+Follow [AGENTS.md](AGENTS.md) and the current sand-on-stone plan. Preserve the literal grains on both stone and ground, bond-release behavior, seeded replay, and accounting. Trace brightness and adhesion must use the same decaying field. Each active pointer owns its own stroke. The next evaluation is how the slow material and layered traces feel under real fingers.

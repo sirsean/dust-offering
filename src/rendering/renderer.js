@@ -6,7 +6,8 @@ export class Renderer {
   constructor(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d', { alpha: false });
-    this.brush = null;
+    this.brushes = new Map();
+    this.treatmentSurface = null;
     this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     this.observer = new ResizeObserver(() => this.resize());
     this.observer.observe(canvas);
@@ -134,10 +135,49 @@ export class Renderer {
     }
   }
 
+  drawTreatment(surface) {
+    if (this.treatmentSurface !== surface) {
+      this.treatmentSurface = surface;
+      this.treatmentCanvas = document.createElement('canvas');
+      this.treatmentCanvas.width = surface.columns;
+      this.treatmentCanvas.height = surface.rows;
+      this.treatmentContext = this.treatmentCanvas.getContext('2d');
+      this.treatmentPixels = this.treatmentContext.createImageData(
+        surface.columns,
+        surface.rows,
+      );
+      this.treatmentVersion = -1;
+      this.treatmentTime = -Infinity;
+    }
+    if (
+      this.treatmentVersion !== surface.version ||
+      surface.time - this.treatmentTime >= 0.1
+    ) {
+      const data = this.treatmentPixels.data;
+      data.fill(0);
+      surface.visitVisibleCells((index, strength) => {
+        const pixel = index * 4;
+        data[pixel] = 166;
+        data[pixel + 1] = 179;
+        data[pixel + 2] = 151;
+        data[pixel + 3] = Math.round(
+          255 * 0.5 * Math.sqrt(strength / surface.config.traceMaxStrength),
+        );
+      });
+      this.treatmentContext.putImageData(this.treatmentPixels, 0, 0);
+      this.treatmentVersion = surface.version;
+      this.treatmentTime = surface.time;
+    }
+    // Functional feedback stays visible under reduced motion as well: this
+    // coating is the same decaying strength field used by the adhesion solver.
+    this.ctx.drawImage(this.treatmentCanvas, 0, 0, 160, 200);
+  }
+
   draw(sim, mode = 'free') {
     const c = this.ctx;
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
     c.drawImage(this.background, 0, 0, 160, 200);
+    this.drawTreatment(sim.surface);
     this.drawBowls(sim, mode);
     if (!this.reducedMotion.matches) {
       c.strokeStyle = '#e6d5a524';
@@ -205,18 +245,12 @@ export class Renderer {
         199,
       );
     }
-    if (this.brush) {
+    for (const point of this.brushes.values()) {
       c.fillStyle = '#e8d5a414';
       c.strokeStyle = '#e1d2ad';
       c.lineWidth = 0.35;
       c.beginPath();
-      c.arc(
-        this.brush.x,
-        this.brush.y,
-        sim.config.brushWidth / 2,
-        0,
-        Math.PI * 2,
-      );
+      c.arc(point.x, point.y, sim.config.brushWidth / 2, 0, Math.PI * 2);
       c.fill();
       c.stroke();
     }

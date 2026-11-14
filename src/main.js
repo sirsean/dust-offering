@@ -28,7 +28,7 @@ let accumulator = 0;
 let lastTime = null;
 let lastUI = 0;
 let noticeTimer;
-const hintKey = 'dust-offering:hint:stone-v1';
+const hintKey = 'dust-offering:hint:sticky-traces-v1';
 $('#hint').hidden = readStored(storage, hintKey) === 'seen';
 
 function notice(text) {
@@ -40,13 +40,14 @@ function notice(text) {
   }, 5000);
 }
 const pointer = bindPointer($('#field'), {
-  edit: (a, b) => game.edit(a, b),
+  edit: (a, b, stroke) => game.edit(a, b, stroke),
   changed: () => {
     $('#hint').hidden = true;
     writeStored(storage, hintKey, 'seen');
   },
-  brush: (point) => {
-    renderer.brush = point;
+  brush: (id, point) => {
+    if (point) renderer.brushes.set(id, point);
+    else renderer.brushes.delete(id);
   },
   canEdit: () => game.phase !== 'finished',
 });

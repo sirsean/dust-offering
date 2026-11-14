@@ -1,21 +1,22 @@
-# Project status — slow sand on stone
+# Project status — sticky traces and multi-touch
 
-Revision 0.2.0 implements the owner's latest feedback. Grains move at a much gentler pace over a textured stone triangle, weakly attach to stone, and bind more strongly to other sand. A single brush action releases and redistributes actual material. Draw/Rub tool modes and their generated barriers are removed. Missed sand stays in the simulation and forms visible bottom piles.
+Revision 0.3.0 adds the owner's latest feedback to the slow sand-on-stone model. Brushing leaves a visible sage trace that increases stone adhesion. Repeated passes and overlapping fingers add strength, and the coating fades with a 30-second half-life. Each active pointer brushes independently. Brushing still loosens and redistributes existing sand; the slow motion, source rate and persistent bottom piles are preserved.
 
-Current design: [stone-sand-plan.md](stone-sand-plan.md). The original ridge specification and v2 measurements are historical; they do not describe the current mechanic.
+Current design: [stone-sand-plan.md](stone-sand-plan.md). Architecture and tuning: [architecture.md](architecture.md), [physics-results.md](physics-results.md). Real-time simulated play and screenshots: [playtest.md](playtest.md), `artifacts/stone-*`.
 
-## Behavior and evidence
+## Behavior and checks
 
-- Local validation passes: 25 numerical/unit tests, lint, formatting, production build, and 11 browser scenarios. The desktop duplicate of the touch-only case is intentionally skipped.
-- Maximum speed 78 → 16 units/s; gravity 160 → 12; emission 120 → 24 grains/s; launch speed 22 → 3 units/s. The slow, sparse pour is the default.
-- The single 8-unit brush has no effect on blank stone, releases attached descendants, pushes existing grains aside and delays their reattachment. Incoming sand follows physical deposits rather than drawn rails.
-- Literal missed grains remain on the ground, participate in contacts, and survive a paused pour. Reset clears both stone and ground.
-- The optional `stone-offering-v1` challenge uses 960 grains and targets 360 / 600, with extra settling/rescue time. Old bests remain stored under their old identifier and are not compared with this model.
-- Numerical checks cover speed, adhesion contrast, dependent release, conservation, persistent piles, source blocking, seeded replay, scoring and sharing. Browser checks cover the new mouse/touch action, the slower pour, piles, full challenge, reset, storage, sound, rotation, source/bowl protection and hidden recovery.
-- Current measurements and simulated play are recorded in [physics-results.md](physics-results.md), [playtest.md](playtest.md), and `artifacts/stone-*`. Physical-phone relaxation and tactile response still need the owner's evaluation.
+- Traces use the same strength field for visible brightness and actual adhesion. Strength stacks to six; the stone exposure multiplier is `1 + 8 × strength`. Fading affects future capture without dissolving existing deposits.
+- Touch, pen and mouse share one action. Each finger has its own captured path and footprint. A partial lift/cancel affects only that finger, with no connecting line between contacts.
+- Reset and mode changes clear traces and contacts. Resize preserves the field. Source pause still allows fading and settling; hidden pages and finished challenges freeze simulation time.
+- The optional `stone-offering-v2` challenge retains 960 grains and targets 360 / 600, with no countdown or time penalty. Earlier bests remain isolated under their previous identifiers.
+- Verification covers 32 numerical/unit tests and 15 browser scenarios across emulated phone and desktop. Three desktop duplicates of touch-only cases are intentionally skipped. Lint, formatting and production build are required before release.
+- Real hardware feel still needs the owner's evaluation. The automated player verifies visible response, layering, decay, material release, conservation, challenge completion and retained-material performance.
 
-## Work and deployment
+## Repository and deployment
 
-Public repo: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `stone-sand`, then integrated into `main` for the next playtest. Historical v2 source is commit `bef6b51`; its reports and screenshots are under `docs/archive/v2/` and `artifacts/archive/v2/`.
+Public repo: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `sticky-traces`, then integrated into `main`. Preview: <https://sticky-traces.dust-offering.sirsean.me>.
 
-Use direct Wrangler deployments. Automated GitHub deployments remain deferred and no deployment secret should be configured until requested. CI runs code/browser checks. `npm run deploy` publishes production; `npm run deploy:branch -- stone-sand` publishes a branch preview; use `npm run deploy:branch:delete -- branch-name` for cleanup.
+Revision 0.2.0 source is commit `4f31c72`; its reports and screenshots are under `docs/archive/stone-v1/` and `artifacts/archive/stone-v1/`. Original ridge source is commit `bef6b51`, with evidence under the respective `archive/v2/` directories.
+
+Use direct Wrangler deployment. Automated GitHub deployments remain deferred; no deployment secret should be configured until requested. CI runs code/browser checks. `npm run deploy` publishes production, and `npm run deploy:branch -- sticky-traces` publishes the isolated preview. See [deployment.md](deployment.md) for environment-specific writable paths.

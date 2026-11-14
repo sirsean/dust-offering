@@ -101,17 +101,14 @@ test('brushing releases a complete dependent chain, preserves every grain and de
   conserved(sim);
 });
 
-test('one stroke pushes real material aside; brushing empty stone creates nothing', () => {
+test('one stroke pushes real material aside; brushing empty stone creates a surface trace but no grains', () => {
   const brushed = new Simulation({ stoneAdhesionRate: 0, sandAdhesionRate: 0 });
-  const untouched = new Simulation({
-    stoneAdhesionRate: 0,
-    sandAdhesionRate: 0,
-  });
   brushed.brush({ x: 60, y: 70 }, { x: 100, y: 140 });
   assert.equal(brushed.grains.length, 0);
+  assert.ok(brushed.surface.strengthAt(80, 105) > 0);
   advance(brushed, 180);
-  advance(untouched, 180);
-  assert.deepEqual(brushed.snapshot(), untouched.snapshot());
+  assert.equal(brushed.emitted, 72);
+  conserved(brushed);
   const sim = new Simulation({ sourceRate: 0 });
   const g = seedGrain(sim, 80, 100);
   sim.anchor(g, 'stone');
@@ -227,6 +224,7 @@ test('identical seeds and brush strokes at identical steps reproduce the full st
     }
     return {
       grains: sim.snapshot(),
+      surface: sim.surface.snapshot(),
       left: sim.left,
       right: sim.right,
       spill: sim.spill,

@@ -1,42 +1,34 @@
-# Sand-on-stone physics checks
+# Sticky-trace physics checks
 
-This is the current `stone-offering-v1` model. The old drawn-ridge experiment is archived separately. Full parameters are in `src/config/prototype.js`; the current direction is documented in `stone-sand-plan.md`.
+Current model: `stone-offering-v2`, revision 0.3.0. The [previous slow-sand measurements](archive/stone-v1/physics-results.md) and original ridge measurements remain archived. All defaults live in `src/config/prototype.js`.
 
-## Pace and material
+## Trace behavior
 
-| Parameter                    | Current                                        | Original prototype              |
-| ---------------------------- | ---------------------------------------------- | ------------------------------- |
-| Maximum speed                | 16 units/s                                     | 78                              |
-| Gravity                      | 12 units/s²                                    | 160                             |
-| Downward launch speed        | 3 units/s                                      | 22                              |
-| Sideways launch              | ±0.65 units/s                                  | ±4                              |
-| Emission                     | 24 grains/s                                    | 120                             |
-| Finger diameter              | 8 units                                        | separate Draw/Rub tools         |
-| Field / stepping             | 160 × 200, 60 Hz, 2 substeps, 3 contact passes | same logical field              |
-| Grain radius                 | 0.65 units                                     | 0.65                            |
-| Stone / sand attachment rate | 0.025 / 1.6 per second of eligible exposure    | no adhesion                     |
-| Low-speed sand attachment    | below 7 units/s, sustained contact             | —                               |
-| Brush release cooldown       | 2.5 seconds                                    | —                               |
-| Retained cap                 | 6,000, including missed sand on the ground     | ground misses used to disappear |
+| Parameter                        | Value                                      |
+| -------------------------------- | ------------------------------------------ |
+| Field                            | 160 × 200 cells, one logical unit per cell |
+| Brush diameter                   | 8 logical units, soft radial kernel        |
+| Strength per pass / maximum      | approximately 1 / 6                        |
+| Strength half-life               | 30 seconds of simulation time              |
+| Negligible-strength cutoff       | 0.002                                      |
+| Stone exposure multiplier        | `1 + 8 × strength`                         |
+| Base stone / sand exposure rates | 0.025 / 1.6 per second                     |
+| Release cooldown                 | 2.5 seconds, unchanged                     |
 
-The maximum integration travel is 0.1333 units per substep, below one grain radius. Speed is capped after contact feedback as well as before integration. The source uses eight seeded lanes to avoid obstructing itself at the lower launch speed. An unobstructed 24-grain/s source emits exactly 960 grains in 2,400 steps; natural deposits can obstruct it without building a catch-up burst.
+The numerical suite verifies repeated taps/passes, the cap, exact half-life, adding to a decayed trace, complete expiry, sparse/dense input equivalence, protected regions, and renderer-independent decay. A controlled falling grain remains loose on bare stone, attaches on a three-pass trace, and behaves exactly like the bare-stone control after that trace fully expires. Coating creates no grains or collision geometry. Existing bonds are not dissolved by fading.
 
-## Reproducible adhesion and brush experiment
+The slow source and motion remain unchanged: 16-unit/s speed cap, gravity 12, launch speed 3 downward and ±0.65 sideways, and 24 grains/s. The unobstructed source emits all 960 challenge grains in 2,400 steps. The 60 Hz solver uses two substeps and three contact passes; maximum travel per substep is 0.1333 units, below the 0.65-unit grain radius.
 
-`src/config/adhesion-scene.js` specifies seeds 48, 2026 and 914. Let material accumulate for 25 seconds, brush from (78,28) to (90,115), pour another ten seconds and settle for twenty. Run a matching unbrushed control for each seed. Raw evidence is [stone-physics.jsonl](../artifacts/stone-physics.jsonl), reproduced by `npm run test:physics`.
+## Gathering and brushing
 
-| Seed | Stone bonds before brush | Sand bonds before brush | Bonds released | Retained grains before / immediately after | Ground grains below y=190 after settling |
-| ---- | ------------------------ | ----------------------- | -------------- | ------------------------------------------ | ---------------------------------------- |
-| 48   | 42                       | 161                     | 62             | 541 / 541                                  | 131                                      |
-| 2026 | 41                       | 137                     | 61             | 503 / 503                                  | 119                                      |
-| 914  | 42                       | 130                     | 63             | 489 / 489                                  | 105                                      |
+`npm run test:physics` reproduces the experiment in `src/config/adhesion-scene.js`: gather for 25 seconds, brush from (78,28) to (90,115), pour ten more seconds, then settle twenty. A matching unbrushed control runs alongside each seed. The brush now coats its path as well as releasing sand. Raw results: [stone-physics.jsonl](../artifacts/stone-physics.jsonl).
 
-All three runs form substantially more sand bonds than bare-stone bonds. The brush changes existing material without adding/deleting grains. Subsequent flow differs from the unbrushed controls; there is no artificial path selection. Treatment runs each emit and account for 840 grains. The control can emit slightly fewer when its unbrushed source becomes obstructed.
+| Seed | Stone / sand bonds before brush | Bonds released | Retained before / immediately after | Ground grains below y=190 after settling | Emitted / accounted |
+| ---- | ------------------------------- | -------------- | ----------------------------------- | ---------------------------------------- | ------------------- |
+| 48   | 42 / 161                        | 62             | 541 / 541                           | 134                                      | 838 / 838           |
+| 2026 | 41 / 137                        | 61             | 503 / 503                           | 123                                      | 840 / 840           |
+| 914  | 42 / 130                        | 63             | 489 / 489                           | 106                                      | 840 / 840           |
 
-## Behavioral coverage
+The brush preserves mass while releasing dependent attachments. All seeds retain visible ground piles. Natural deposits can block the source, reducing actual emission without consuming supply or creating a backlog. Subsequent flow differs from the unbrushed controls because of the changed deposits and stone treatment.
 
-Tests show weak capture on bare stone, faster capture against bound sand, fixed positions after attachment, and physical deflection by a bank made of grains. Releasing a root removes bonds from a full dependent chain outside the immediate brush footprint. A continuous fast stroke cannot leave gaps in its physical action. Brush impulses and subsequent motion obey the slow velocity cap.
-
-Misses persist in all three ground pockets. Resting grains remain present across further simulation steps. Bowl crossings are interpolated and counted once; a grain later entering a bowl transfers from the missed count rather than being counted twice. Source pause/block/full-cap behavior and deterministic replay preserve mass. The 6,000-grain fixture remains accounted for when brushed.
-
-Both mass equations are checked: `emitted = left + right + retained`, and `emitted = left + right + spill + faceCount`. For Challenge, `remaining + emitted = 960`. The new targets 360 / 600 preserve the 3:5 ratio, with a new identifier and extra settling time. The old ramp/split gate is not applicable to this user-directed change in mechanic.
+The suite also checks weak stone versus stronger sand attachment, physical deflection, release cascades and cooldown, continuous brush displacement, sleeping/waking, persistent ground piles, interpolated collection, pause/block/cap behavior, and deterministic replay including trace state. Both accounting equations hold: `emitted = left + right + grains.length` and `emitted = left + right + spill + faceCount`. Challenge adds remaining supply to either side to recover 960. Scores and sharing use the new identifier so earlier physics are not compared.

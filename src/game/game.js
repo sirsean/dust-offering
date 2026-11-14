@@ -39,9 +39,9 @@ export class Game {
       this.sim.pouring = !this.sim.pouring;
   }
 
-  edit(a, b) {
+  edit(a, b, stroke) {
     if (this.phase === 'finished') return;
-    this.sim.brush(a, b);
+    this.sim.brush(a, b, stroke);
     this.quietSteps = 0;
     this.exhaustedSteps = 0;
     this.canFinish = false;

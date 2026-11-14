@@ -6,11 +6,13 @@ import {
   stoneRoughness,
 } from './geometry.js';
 import { seededRandom } from './random.js';
+import { SurfaceTreatment } from './surface-treatment.js';
 
 export class Simulation {
   constructor(options = {}) {
     this.config = { ...prototype, ...options };
     this.random = seededRandom(this.config.seed);
+    this.surface = new SurfaceTreatment(this.config);
     this.grains = [];
     this.steps = 0;
     this.nextId = 0;
@@ -338,7 +340,12 @@ export class Simulation {
       }
     } else grain.sandExposure *= 0.99;
     grain.stoneExposure +=
-      this.config.stoneAdhesionRate * stoneRoughness(grain.x, grain.y) * dt;
+      this.config.stoneAdhesionRate *
+      stoneRoughness(grain.x, grain.y) *
+      (1 +
+        this.config.traceAdhesionGain *
+          this.surface.strengthAt(grain.x, grain.y)) *
+      dt;
     if (grain.stoneExposure >= grain.threshold) this.anchor(grain, 'stone');
   }
 
@@ -409,9 +416,11 @@ export class Simulation {
         }
       }
     this.steps++;
+    this.surface.advanceTo(this.time);
   }
 
-  brush(a, b) {
+  brush(a, b, stroke) {
+    this.surface.paint(a, b, stroke);
     const radius = this.config.brushWidth / 2;
     const length = Math.hypot(b.x - a.x, b.y - a.y);
     const tx = length > 1e-6 ? (b.x - a.x) / length : 0;

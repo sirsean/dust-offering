@@ -52,6 +52,7 @@ const report = stressOnly
   ? JSON.parse(await readFile('artifacts/stone-playtest-report.json', 'utf8'))
   : {
       date: new Date().toISOString(),
+      revision: '0.3.0 / stone-offering-v2',
       browser: browser.version(),
       node: process.version,
       viewport: '390 × 844, Linux headless Chromium, emulated touch',
@@ -88,6 +89,61 @@ try {
         before: report.beforeBrush,
         after: report.afterBrush,
         rested: report.rested,
+      }),
+    );
+    await page.locator('#reset').click();
+    await page.locator('#pour').click();
+    const rect = await page.locator('#field').boundingBox();
+    const point = (x, y, id) => ({
+      x: rect.x + (x / 160) * rect.width,
+      y: rect.y + (y / 200) * rect.height,
+      id,
+    });
+    const touch = await context.newCDPSession(page);
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [point(62, 70, 1), point(98, 70, 2)],
+    });
+    report.traceContacts = await page.evaluate(
+      () => dust.renderer.brushes.size,
+    );
+    assert.equal(report.traceContacts, 2);
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [point(55, 140, 1), point(105, 140, 2)],
+    });
+    await touch.send('Input.dispatchTouchEvent', {
+      type: 'touchEnd',
+      touchPoints: [],
+    });
+    const traces = () =>
+      page.evaluate(() => ({
+        left: dust.sim.surface.strengthAt(59, 100),
+        right: dust.sim.surface.strengthAt(101, 100),
+        middle: dust.sim.surface.strengthAt(80, 100),
+        contacts: dust.renderer.brushes.size,
+      }));
+    report.twoFingerTraces = await traces();
+    assert.ok(
+      report.twoFingerTraces.left > 0.8 && report.twoFingerTraces.right > 0.8,
+    );
+    assert.equal(report.twoFingerTraces.middle, 0);
+    assert.equal(report.twoFingerTraces.contacts, 0);
+    await page.screenshot({ path: 'artifacts/stone-traces.png' });
+    await stroke([62, 70], [55, 140]);
+    await stroke([62, 70], [55, 140]);
+    report.layeredTraces = await traces();
+    assert.ok(report.layeredTraces.left > report.twoFingerTraces.left * 2.5);
+    await page.screenshot({ path: 'artifacts/stone-layered-traces.png' });
+    await page.waitForTimeout(6000);
+    report.decayedTraces = await traces();
+    assert.ok(report.decayedTraces.left < report.layeredTraces.left * 0.9);
+    console.log(
+      JSON.stringify({
+        phase: 'two fingers, layering and decay',
+        once: report.twoFingerTraces,
+        layered: report.layeredTraces,
+        afterSixSeconds: report.decayedTraces,
       }),
     );
     await page.locator('#challenge').click();

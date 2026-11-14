@@ -12,3 +12,11 @@ This specification records the owner's gameplay feedback after the first offerin
 Starting tuning: maximum speed 16 units/s (previously 78), gravity 12 units/s² (160), downward launch 3 units/s (22), emission 24 grains/s (120), lateral launch ±0.65 units/s (±4). Finger diameter 8 logical units. Keep these adjustable and measure the resulting adhesion and brush response before handoff.
 
 For the optional 40-second active pour, derive a new supply of 960 grains and targets 360 / 600 (3:5). Slow settling and rescue time is additional. Weak stone attachment, stronger sand attachment, bond release, visible persistent ground piles, conservation and responsive touch are the new readiness criteria. The original v2 gate is historical.
+
+## Sticky traces and multi-touch — revision 0.3.0
+
+The next feedback adds a visible trace wherever fingers brush the stone. That trace increases local stone adhesion, stacks with repeated brushing, and decays gradually. Multiple fingers must work independently and add strength where their paths overlap. Brushing still releases and pushes sand already present.
+
+Use an 8-unit soft footprint, approximately one strength unit per pass and a cap of six. Stone attachment exposure is multiplied by `1 + 8 × strength`. Trace strength halves every 30 seconds of simulation time. Pausing the pour still allows fading and settling; hidden pages and finished challenges freeze both. Decay changes future attachment, without dissolving existing bonds. Reset and mode changes clear the coating; resize preserves it.
+
+Render the field as a light sage trace under the warm sand, with stronger coating visibly brighter. Keep it visible after lifting and under reduced motion. Dose by travelled distance rather than pointer-event frequency. Protect the source and bowls. Give each pointer its own captured stroke, previous point, footprint and cancellation lifecycle. No finger may connect to another finger's path. The changed adhesion uses challenge identifier `stone-offering-v2`, retaining the same slow motion, supply and targets.
