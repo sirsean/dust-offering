@@ -24,13 +24,26 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: Check deployment credentials
+        id: cloudflare
+        if: github.repository == 'sirsean/dust-offering' && github.event_name != 'pull_request' && startsWith(github.ref, 'refs/heads/')
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -n "$CLOUDFLARE_API_TOKEN" ]; then
+            echo 'configured=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'configured=false' >> "$GITHUB_OUTPUT"
+            echo '::notice::Cloudflare deployment skipped: configure the CLOUDFLARE_API_TOKEN Actions secret to enable automatic deployments.'
+            echo 'Checks passed. Automatic deployment is waiting for the `CLOUDFLARE_API_TOKEN` repository secret. Manual Wrangler deployment is available.' >> "$GITHUB_STEP_SUMMARY"
+          fi
       - name: Deploy production
-        if: github.repository == 'sirsean/dust-offering' && github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+        if: steps.cloudflare.outputs.configured == 'true' && github.ref == 'refs/heads/main'
         run: node scripts/deploy.js --production
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - name: Deploy branch preview
-        if: github.repository == 'sirsean/dust-offering' && github.event_name != 'pull_request' && github.ref != 'refs/heads/main'
+        if: steps.cloudflare.outputs.configured == 'true' && github.ref != 'refs/heads/main'
         run: node scripts/deploy.js --branch "$DEPLOY_BRANCH"
         env:
           DEPLOY_BRANCH: ${{ github.ref_name }}

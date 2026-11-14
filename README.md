@@ -28,7 +28,7 @@ The current page is a small holding screen used to verify the build and hosting.
 
 ## Deploy
 
-Pushing `main` publishes production after checks pass. Pushing another branch publishes a branch preview under `dust-offering.sirsean.me`. Deleting the branch removes its preview. See [deployment instructions](docs/deployment.md) for credentials, commands, and hostname mapping.
+With the `CLOUDFLARE_API_TOKEN` GitHub Actions secret configured, pushing `main` publishes production after checks pass, pushing another branch publishes a preview under `dust-offering.sirsean.me`, and deleting the branch removes its preview. Without the secret, CI checks still run and deployment steps show a notice. Manual Wrangler deployment is available. See [deployment instructions](docs/deployment.md) for credentials, commands, and hostname mapping.
 
 ## Build next
 

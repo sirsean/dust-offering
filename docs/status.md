@@ -13,11 +13,13 @@ Verified:
 - A separate `dust-offering-setup-check` Worker served `https://setup-check.dust-offering.sirsean.me` over HTTPS with the same build. Cloudflare provisioned its exact nested hostname and certificate. The temporary Worker was deleted after verification.
 - Headless Chromium checked the holding screen at 360 × 640 and 1440 × 900, with no JavaScript errors or page overflow. This was a desktop browser viewport check, not a touch-hardware test.
 
-## GitHub provisioning blocker
+## GitHub repository access
 
-The scaffold is in `/workspace/dust-offering`, with `main` as the initial branch. The connected GitHub integration cannot create repositories: GraphQL `createRepository` returned a permissions error and REST `POST /user/repos` returned HTTP 403, “Resource not accessible by integration.” No browser-control connection is available as a fallback.
+The owner created the empty public `sirsean/dust-offering` repository. The scaffold is in `/workspace/dust-offering`, on `main`, with its HTTPS origin set to that repository.
 
-The owner has been asked to create the empty public `sirsean/dust-offering` repository. Once it exists and is accessible, push this checkout, configure the `CLOUDFLARE_API_TOKEN` Actions secret through the authorized secret API if permitted, and verify the main/branch/cleanup workflows. Workflow files are prepared, but automated GitHub deployment has not yet been exercised. Manual production and branch deployment through Wrangler work.
+Publishing is still blocked by GitHub app access: `git push` and the GitHub plugin's file-write endpoint both return HTTP 403. The connected GitHub app reports no installation for the `sirsean` account. The owner has been asked to grant the ChatGPT GitHub app access to this repository. Once accessible, push the local commits and verify CI.
+
+The connection also cannot manage Actions secrets (the repository public-key endpoint returns HTTP 403). CI is configured to run checks and show an explicit notice if the `CLOUDFLARE_API_TOKEN` secret is absent. Automatic production/preview deployment and cleanup become active when an owner adds that secret. Manual production and branch deployments through Wrangler are already verified and are sufficient to begin implementation. GitHub workflows have not yet run.
 
 ## Next implementation pass
 

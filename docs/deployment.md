@@ -12,7 +12,7 @@ Workers static assets serve `dist/` directly; there is no server handler or data
 
 ## Automatic deployments
 
-`.github/workflows/ci.yml` runs `npm ci` and `npm run check` on every push and pull request. Successful pushes in this repository deploy:
+`.github/workflows/ci.yml` runs `npm ci` and `npm run check` on every push and pull request. Once the `CLOUDFLARE_API_TOKEN` repository secret is configured, successful pushes in this repository deploy:
 
 | Ref          | Destination                              |
 | ------------ | ---------------------------------------- |
@@ -20,7 +20,9 @@ Workers static assets serve `dist/` directly; there is no server handler or data
 | `branch-1`   | `branch-1.dust-offering.sirsean.me`      |
 | Other branch | `<branch-slug>.dust-offering.sirsean.me` |
 
-Pull requests run checks only. Public fork pull requests do not receive Cloudflare credentials. Automatic deployment requires the repository's GitHub Actions secret `CLOUDFLARE_API_TOKEN`; no secret goes into the browser build. Account and zone IDs are identifiers, not credentials. Keep write access to branches limited to trusted collaborators, since branch pushes execute workflows with the deployment secret. See `status.md` for provisioning progress.
+Pull requests run checks only. Public fork pull requests do not receive Cloudflare credentials. Automatic deployment requires the repository's GitHub Actions secret `CLOUDFLARE_API_TOKEN`; no secret goes into the browser build. If that secret is missing, deployment and cleanup steps are skipped with an explicit notice and workflow summary; code checks still run. Account and zone IDs are identifiers, not credentials. Keep write access to branches limited to trusted collaborators, since branch pushes execute workflows with the deployment secret. See `status.md` for provisioning progress.
+
+To enable automatic deployment, an owner can add the tested Cloudflare token as a repository Actions secret at <https://github.com/sirsean/dust-offering/settings/secrets/actions/new>, then rerun the workflow or push a commit. Enter the token in GitHub's secret field, never in chat or source. This setup's GitHub integration currently cannot manage Actions secrets. Manual Wrangler deployments use the environment's existing token and need no GitHub secret.
 
 Each preview has a separate Worker named `dust-offering-<branch-slug>` and an exact Workers Custom Domain. Cloudflare manages its DNS and TLS certificate, including the deeper branch hostname. There is no wildcard Worker, shared preview bundle, or dependency on a wildcard certificate. First visits can wait for DNS/certificate provisioning.
 
