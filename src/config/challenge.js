@@ -10,5 +10,4 @@ export const challenge = Object.freeze({
   sourceY: 14,
   collectionY: 181,
   supply: prototype.startingSupply,
-  startingRidges: Object.freeze([]),
 });

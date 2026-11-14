@@ -1,3 +1,5 @@
+import { editableStone } from '../simulation/geometry.js';
+
 export function bindPointer(
   canvas,
   { edit, changed, brush, canEdit = () => true },
@@ -12,7 +14,7 @@ export function bindPointer(
     };
   }
   function protectedPoint(p) {
-    return p.x < 4 || p.x > 156 || p.y < 26 || p.y > 169;
+    return !editableStone(p.x, p.y);
   }
   function move(event) {
     if (event.pointerId !== active) return;

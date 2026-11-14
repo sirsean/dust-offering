@@ -1,22 +1,21 @@
-# Project status — playable prototype
+# Project status — slow sand on stone
 
-The prototype implements the full plan and is ready for human gameplay evaluation. Free Pour, continuous Draw/Rub editing, accumulation, Stop/Resume, Reset, the finite challenge, scoring, saved best, shared challenge links, optional muted-by-default sound, reduced motion, and phone/desktop layouts are implemented.
+Revision 0.2.0 implements the owner's latest feedback. Grains move at a much gentler pace over a textured stone triangle, weakly attach to stone, and bind more strongly to other sand. A single brush action releases and redistributes actual material. Draw/Rub tool modes and their generated barriers are removed. Missed sand stays in the simulation and forms visible bottom piles.
 
-## Verification
+Current design: [stone-sand-plan.md](stone-sand-plan.md). The original ridge specification and v2 measurements are historical; they do not describe the current mechanic.
 
-- `npm run check` passes lint, formatting, 21 numerical/unit tests, and the production build. The Playwright suite passes 11 browser scenarios; its desktop duplicate of the touch-only case is intentionally skipped.
-- Numerical physics gate passes for 20°/35° transport in both directions, support removal within 0.2 seconds, and the three-width experiment across three fixed seeds. See [physics-results.md](physics-results.md) and `artifacts/physics-splits.jsonl`.
-- Exactly 4,800 unobstructed spawns in 2,400 steps; grain accounting, blocked/stopped supply, contact/collection behavior, deterministic replay, all specified score cases, best storage and sharing failures are tested.
-- Browser gameplay checks cover full challenges, live splits and widening, mouse and emulated touch, capture cancellation, reset/mode changes, narrow layouts and rotation, hidden-tab recovery, reduced motion, denied storage, and sound controls.
-- A real-time scripted challenge emitted all 4,800 grains in 40.05 seconds and scored 831 with no spill. A live cut-widening session increased the left-path share from 44.54% to 61.22%. See [playtest.md](playtest.md), screenshots and `artifacts/playtest-report.json`.
-- The retained-pile fixture holds all 6,000 grains. At that extreme, rendering is slower and simulation time can slow to preserve input. No grains are dropped for performance. Real phone hardware and human enjoyment are not yet evaluated.
+## Behavior and evidence
 
-## Deployment and repository
+- Local validation passes: 25 numerical/unit tests, lint, formatting, production build, and 11 browser scenarios. The desktop duplicate of the touch-only case is intentionally skipped.
+- Maximum speed 78 → 16 units/s; gravity 160 → 12; emission 120 → 24 grains/s; launch speed 22 → 3 units/s. The slow, sparse pour is the default.
+- The single 8-unit brush has no effect on blank stone, releases attached descendants, pushes existing grains aside and delays their reattachment. Incoming sand follows physical deposits rather than drawn rails.
+- Literal missed grains remain on the ground, participate in contacts, and survive a paused pour. Reset clears both stone and ground.
+- The optional `stone-offering-v1` challenge uses 960 grains and targets 360 / 600, with extra settling/rescue time. Old bests remain stored under their old identifier and are not compared with this model.
+- Numerical checks cover speed, adhesion contrast, dependent release, conservation, persistent piles, source blocking, seeded replay, scoring and sharing. Browser checks cover the new mouse/touch action, the slower pour, piles, full challenge, reset, storage, sound, rotation, source/bowl protection and hidden recovery.
+- Current measurements and simulated play are recorded in [physics-results.md](physics-results.md), [playtest.md](playtest.md), and `artifacts/stone-*`. Physical-phone relaxation and tactile response still need the owner's evaluation.
 
-Public repository: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. The implementation is developed on `prototype`, then integrated into `main` for the playtest release.
+## Work and deployment
 
-Use direct Wrangler deployments from this environment. The owner has deferred automated GitHub deployments; leave the deployment secret unconfigured. GitHub Actions runs code and browser checks. Production is `npm run deploy`; previews are `npm run deploy:branch -- branch-name`; cleanup is `npm run deploy:branch:delete -- branch-name`. A Git push or branch deletion alone does not deploy or clean up a preview.
+Public repo: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `stone-sand`, then integrated into `main` for the next playtest. Historical v2 source is commit `bef6b51`; its reports and screenshots are under `docs/archive/v2/` and `artifacts/archive/v2/`.
 
-## Human evaluation next
-
-Prompt: “Get some dust into both bowls while the stream is running.” Observe discovery of a split, ability to correct it without coaching, and desire to keep experimenting. Then try Challenge. Prioritize real-thumb Rub sensitivity, the useful cut-width range, sound level, and large-pile frame rates on actual phones. Keep `first-offering-v2` stable once published; version physics/scoring changes before comparing new scores.
+Use direct Wrangler deployments. Automated GitHub deployments remain deferred and no deployment secret should be configured until requested. CI runs code/browser checks. `npm run deploy` publishes production; `npm run deploy:branch -- stone-sand` publishes a branch preview; use `npm run deploy:branch:delete -- branch-name` for cleanup.

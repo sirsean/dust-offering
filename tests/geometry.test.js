@@ -1,23 +1,32 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { clipDisk, nearestPoint, Ridges } from '../src/simulation/geometry.js';
-import { prototype } from '../src/config/prototype.js';
+import {
+  editableStone,
+  insideStone,
+  interpolate,
+  stoneRoughness,
+} from '../src/simulation/geometry.js';
 
-test('rubbing clips only affected pieces and leaves a physical opening between rounded caps', () => {
-  const segment = { ax: 0, ay: 0, bx: 20, by: 0 };
-  assert.deepEqual(clipDisk(segment, 10, 0, 3), [
-    { ax: 0, ay: 0, bx: 7, by: 0 },
-    { ax: 13, ay: 0, bx: 20, by: 0 },
-  ]);
-  assert.deepEqual(nearestPoint(25, 5, segment), { x: 20, y: 0 });
-  const ridges = new Ridges(prototype);
-  ridges.add({ x: 0, y: 0 }, { x: 20, y: 0 });
-  ridges.rub(10, 0, 1.5);
-  const left = Math.max(
-    ...ridges.segments.filter((s) => s.bx < 10).map((s) => s.bx),
-  );
-  const right = Math.min(
-    ...ridges.segments.filter((s) => s.ax > 10).map((s) => s.ax),
-  );
-  assert.equal(right - left - prototype.ridgeThickness, 3);
+test('only the actual stone face is editable, protecting the source and bowls', () => {
+  assert.equal(insideStone(80, 8), true);
+  assert.equal(insideStone(10, 30), false);
+  assert.equal(editableStone(80, 14), false);
+  assert.equal(editableStone(80, 50), true);
+  assert.equal(editableStone(40, 181), false);
+  assert.equal(editableStone(20, 70), false);
+  assert.equal(stoneRoughness(80, 100), stoneRoughness(80, 100));
+  assert.notEqual(stoneRoughness(80, 100), stoneRoughness(90, 100));
+});
+
+test('a fast stroke is sampled continuously along its full path', () => {
+  const points = [{ x: 50, y: 60 }];
+  interpolate(points[0], { x: 110, y: 150 }, 2, (p) => points.push(p));
+  assert.deepEqual(points.at(-1), { x: 110, y: 150 });
+  for (let i = 1; i < points.length; i++)
+    assert.ok(
+      Math.hypot(
+        points[i].x - points[i - 1].x,
+        points[i].y - points[i - 1].y,
+      ) <= 2.000001,
+    );
 });

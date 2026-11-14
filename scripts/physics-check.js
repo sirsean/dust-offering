@@ -1,58 +1,58 @@
 import { Simulation } from '../src/simulation/simulation.js';
-import { physicsScene as scene } from '../src/config/physics-scene.js';
+import { adhesionScene as scene } from '../src/config/adhesion-scene.js';
 
-export function measureSplit(width, seed, overrides = {}) {
-  const sim = new Simulation({
-    sourceX: scene.sourceX,
-    sourceY: scene.sourceY,
-    seed,
-    ...overrides,
-  });
-  sim.ridges.add(scene.rampStart, scene.rampEnd);
-  const cutY =
-    scene.rampStart.y +
-    (scene.cutX - scene.rampStart.x) * Math.tan(Math.PI / 9);
-  sim.ridges.rub(scene.cutX, cutY, width / 2);
-  const classified = new Set();
-  let gap = 0;
-  let end = 0;
-  sim.onMove = (grain) => {
-    if (classified.has(grain.id)) return;
-    const below =
-      (grain.y -
-        scene.rampStart.y -
-        (grain.x - scene.rampStart.x) * Math.tan(Math.PI / 9)) *
-      Math.cos(Math.PI / 9);
-    let path;
-    if (grain.x > scene.rampEnd.x + 2) path = 'end';
-    else if (
-      below > 4 &&
-      grain.x > scene.cutX - width - 5 &&
-      grain.x < scene.rampEnd.x - 3
-    )
-      path = 'gap';
-    if (path) {
-      classified.add(grain.id);
-      if (sim.steps >= scene.warmupSteps) {
-        if (path === 'gap') gap++;
-        else end++;
-      }
-    }
+export function measureSand(seed) {
+  const sim = new Simulation({ seed });
+  const control = new Simulation({ seed });
+  for (let i = 0; i < scene.gatherSteps; i++) {
+    sim.step();
+    control.step();
+  }
+  const before = {
+    attached: sim.attachedCount,
+    stone: sim.grains.filter((g) => g.bond === 'stone').length,
+    sand: sim.grains.filter((g) => g.bond === 'sand').length,
+    retained: sim.grains.length,
+    ground: sim.spill,
   };
-  for (let i = 0; i < scene.warmupSteps + scene.sampleSteps; i++) sim.step();
+  const released = sim.brush(scene.brushStart, scene.brushEnd);
+  const after = { attached: sim.attachedCount, retained: sim.grains.length };
+  for (let i = 0; i < scene.flowSteps; i++) {
+    sim.step();
+    control.step();
+  }
+  sim.pouring = false;
+  control.pouring = false;
+  for (let i = 0; i < scene.settleSteps; i++) {
+    sim.step();
+    control.step();
+  }
   return {
     seed,
-    width,
-    gap,
-    end,
-    fraction: gap / (gap + end),
-    retained: sim.grains.length,
+    secondsBeforeBrush: scene.gatherSteps / 60,
+    before,
+    released,
+    after,
+    settled: {
+      attached: sim.attachedCount,
+      retained: sim.grains.length,
+      ground: sim.spill,
+      visibleGroundGrains: sim.grains.filter((g) => g.missed && g.y > 190)
+        .length,
+      left: sim.left,
+      right: sim.right,
+    },
+    unbrushedControl: {
+      left: control.left,
+      right: control.right,
+      ground: control.spill,
+      attached: control.attachedCount,
+      emitted: control.emitted,
+    },
     emitted: sim.emitted,
+    accounted: sim.left + sim.right + sim.grains.length,
   };
 }
-
-if (process.argv[1]?.endsWith('physics-check.js')) {
+if (process.argv[1]?.endsWith('physics-check.js'))
   for (const seed of scene.seeds)
-    for (const width of scene.widths)
-      console.log(JSON.stringify(measureSplit(width, seed)));
-}
+    console.log(JSON.stringify(measureSand(seed)));

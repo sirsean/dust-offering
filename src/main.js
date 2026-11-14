@@ -24,12 +24,12 @@ try {
   storage = null;
 }
 let best = bestScore(storage, challenge.id);
-let tool = 'draw';
 let accumulator = 0;
 let lastTime = null;
 let lastUI = 0;
 let noticeTimer;
-$('#hint').hidden = readStored(storage, 'dust-offering:hint') === 'seen';
+const hintKey = 'dust-offering:hint:stone-v1';
+$('#hint').hidden = readStored(storage, hintKey) === 'seen';
 
 function notice(text) {
   clearTimeout(noticeTimer);
@@ -39,17 +39,11 @@ function notice(text) {
     $('#notice').hidden = true;
   }, 5000);
 }
-function selectTool(value) {
-  tool = value;
-  renderer.tool = value;
-  $('#draw').setAttribute('aria-pressed', value === 'draw');
-  $('#rub').setAttribute('aria-pressed', value === 'rub');
-}
 const pointer = bindPointer($('#field'), {
-  edit: (a, b) => game.edit(a, b, tool),
+  edit: (a, b) => game.edit(a, b),
   changed: () => {
     $('#hint').hidden = true;
-    writeStored(storage, 'dust-offering:hint', 'seen');
+    writeStored(storage, hintKey, 'seen');
   },
   brush: (point) => {
     renderer.brush = point;
@@ -73,7 +67,7 @@ function syncUI() {
         : scored && sim.remaining === 0
           ? 'Finish'
           : sim.pouring
-            ? 'Stop pour'
+            ? 'Pause pour'
             : 'Resume';
   $('#pour').textContent = label;
   $('#pour').disabled =
@@ -81,10 +75,8 @@ function syncUI() {
     game.phase === 'running' &&
     sim.remaining === 0 &&
     !game.canFinish;
-  $('#draw').disabled = game.phase === 'finished';
-  $('#rub').disabled = game.phase === 'finished';
   $('#accessible-state').textContent =
-    `Left bowl ${sim.left}${scored ? ` of ${challenge.leftTarget}` : ''}. Right bowl ${sim.right}${scored ? ` of ${challenge.rightTarget}` : ''}. Spilled ${sim.spill}. ${scored ? `${sim.remaining} grains remaining.` : ''}`;
+    `Left bowl ${sim.left}${scored ? ` of ${challenge.leftTarget}` : ''}. Right bowl ${sim.right}${scored ? ` of ${challenge.rightTarget}` : ''}. ${sim.attachedCount} grains attached to stone or sand. ${sim.spill} grains on the ground or falling toward it. ${scored ? `${sim.remaining} grains remaining.` : ''}`;
   $('#field').setAttribute(
     'aria-description',
     $('#accessible-state').textContent,
@@ -115,13 +107,11 @@ function showResult() {
     `${result.right.toLocaleString()} / ${challenge.rightTarget.toLocaleString()}`;
   $('#result-best').textContent = String(best ?? result.score);
   $('#result-uncollected').textContent =
-    `${result.spill.toLocaleString()} spilled · ${result.onFace.toLocaleString()} on the face. No time penalty.`;
+    `${result.spill.toLocaleString()} on the ground · ${result.onFace.toLocaleString()} on the stone. No time penalty.`;
   $('#share-status').textContent = '';
   $('#manual-share').hidden = true;
   $('#result').showModal();
 }
-$('#draw').onclick = () => selectTool('draw');
-$('#rub').onclick = () => selectTool('rub');
 $('#free').onclick = () => reset('free');
 $('#challenge').onclick = () => reset('challenge');
 $('#reset').onclick = () => reset();
@@ -184,8 +174,6 @@ document.addEventListener('keydown', (event) => {
     event.altKey
   )
     return;
-  if (event.key.toLowerCase() === 'd') selectTool('draw');
-  if (event.key.toLowerCase() === 'r') selectTool('rub');
   if (event.code === 'Space') {
     event.preventDefault();
     $('#pour').click();

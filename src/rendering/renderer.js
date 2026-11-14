@@ -1,4 +1,5 @@
 import { seededRandom } from '../simulation/random.js';
+import { insideStone } from '../simulation/geometry.js';
 import { challenge } from '../config/challenge.js';
 
 export class Renderer {
@@ -6,7 +7,6 @@ export class Renderer {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d', { alpha: false });
     this.brush = null;
-    this.tool = 'draw';
     this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
     this.observer = new ResizeObserver(() => this.resize());
     this.observer.observe(canvas);
@@ -27,31 +27,110 @@ export class Renderer {
     c.scale(this.scale, this.scale);
     c.fillStyle = '#111310';
     c.fillRect(0, 0, 160, 200);
-    const haze = c.createRadialGradient(28, 85, 0, 40, 95, 125);
-    haze.addColorStop(0, '#292419');
+    const haze = c.createRadialGradient(42, 90, 0, 65, 100, 130);
+    haze.addColorStop(0, '#28271d');
     haze.addColorStop(1, '#111310');
     c.fillStyle = haze;
     c.fillRect(0, 0, 160, 200);
-    const beam = c.createLinearGradient(8, 0, 38, 0);
-    beam.addColorStop(0, '#3c2f1200');
-    beam.addColorStop(0.45, '#a36d1926');
-    beam.addColorStop(1, '#3c2f1200');
-    c.fillStyle = beam;
-    c.fillRect(0, 0, 45, 190);
-    c.fillStyle = '#11150f';
+    c.fillStyle = '#46483b';
     c.beginPath();
     c.moveTo(80, 6);
-    c.lineTo(158, 178);
-    c.lineTo(2, 178);
+    c.lineTo(159, 176);
+    c.lineTo(1, 176);
     c.closePath();
     c.fill();
-    c.strokeStyle = '#9a793e25';
-    c.lineWidth = 0.4;
-    c.stroke();
+    const stone = c.createLinearGradient(12, 80, 140, 130);
+    stone.addColorStop(0, '#363a30');
+    stone.addColorStop(0.55, '#2b3027');
+    stone.addColorStop(1, '#20271f');
+    c.fillStyle = stone;
+    c.beginPath();
+    c.moveTo(80, 8);
+    c.lineTo(156, 174);
+    c.lineTo(4, 174);
+    c.closePath();
+    c.fill();
     const random = seededRandom(480);
-    for (let i = 0; i < 2200; i++) {
-      c.fillStyle = i % 3 ? '#c8b48207' : '#00000014';
-      c.fillRect(random() * 160, random() * 200, 0.22, 0.22);
+    for (let i = 0; i < 5000; i++) {
+      const x = random() * 160;
+      const y = random() * 174;
+      if (!insideStone(x, y)) continue;
+      c.fillStyle = i % 3 ? '#b3b3980d' : '#050a0780';
+      c.fillRect(x, y, 0.25 + random() * 0.45, 0.15 + random() * 0.35);
+    }
+    c.save();
+    c.beginPath();
+    c.moveTo(80, 8);
+    c.lineTo(156, 174);
+    c.lineTo(4, 174);
+    c.closePath();
+    c.clip();
+    c.lineWidth = 0.18;
+    for (let i = 0; i < 95; i++) {
+      const x = random() * 160,
+        y = random() * 174;
+      c.strokeStyle = i % 2 ? '#b6b39b0e' : '#080e0a38';
+      c.beginPath();
+      c.moveTo(x, y);
+      c.lineTo(x + random() * 7 - 3.5, y + random() * 9);
+      c.stroke();
+    }
+    c.restore();
+    c.fillStyle = '#292b22';
+    c.fillRect(0, 198, 160, 2);
+    c.strokeStyle = '#77755b';
+    c.lineWidth = 0.3;
+    c.beginPath();
+    c.moveTo(0, 198);
+    c.lineTo(160, 198);
+    c.stroke();
+  }
+
+  drawBowls(sim, mode) {
+    const c = this.ctx;
+    for (const [mouth, count, target] of [
+      [sim.config.leftMouth, sim.left, challenge.leftTarget],
+      [sim.config.rightMouth, sim.right, challenge.rightTarget],
+    ]) {
+      const x = (mouth[0] + mouth[1]) / 2;
+      const half = (mouth[1] - mouth[0]) / 2;
+      c.fillStyle = '#292b23';
+      c.fillRect(mouth[0] + 1, 191, mouth[1] - mouth[0] - 2, 9);
+      c.save();
+      c.beginPath();
+      c.moveTo(x - half, 181);
+      c.quadraticCurveTo(x - 20, 194, x, 194);
+      c.quadraticCurveTo(x + 20, 194, x + half, 181);
+      c.closePath();
+      c.fillStyle = '#303327';
+      c.fill();
+      c.clip();
+      const fill = Math.min(count / (mode === 'challenge' ? target : 480), 1);
+      const y = 193 - fill * 12;
+      c.fillStyle = '#a59058';
+      c.beginPath();
+      c.moveTo(x - half - 1, y + 2);
+      c.quadraticCurveTo(x, y - 3, x + half + 1, y + 2);
+      c.lineTo(x + half + 1, 195);
+      c.lineTo(x - half - 1, 195);
+      c.closePath();
+      if (count) c.fill();
+      c.restore();
+      c.strokeStyle = '#a29c7b';
+      c.lineWidth = 0.7;
+      c.beginPath();
+      c.ellipse(x, 181, half, 3, 0, 0, Math.PI * 2);
+      c.stroke();
+      if (mode === 'challenge') {
+        c.strokeStyle = '#dac38c';
+        c.lineWidth = 0.8;
+        c.beginPath();
+        c.moveTo(x - half - 2, 180);
+        c.lineTo(x - half + 2, 180);
+        c.moveTo(x + half - 2, 180);
+        c.lineTo(x + half + 2, 180);
+        c.stroke();
+      }
     }
   }
 
@@ -59,31 +138,22 @@ export class Renderer {
     const c = this.ctx;
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
     c.drawImage(this.background, 0, 0, 160, 200);
-    c.strokeStyle = '#73725a';
-    c.lineWidth = sim.config.ridgeThickness;
-    c.lineCap = 'round';
-    c.beginPath();
-    for (const segment of sim.ridges.segments) {
-      c.moveTo(segment.ax, segment.ay);
-      c.lineTo(segment.bx, segment.by);
-    }
-    c.stroke();
-    c.strokeStyle = '#bbb18b';
-    c.lineWidth = 0.35;
-    c.stroke();
+    this.drawBowls(sim, mode);
     if (!this.reducedMotion.matches) {
-      c.strokeStyle = '#e6c88638';
-      c.lineWidth = 0.5;
+      c.strokeStyle = '#e6d5a524';
+      c.lineWidth = 0.4;
       c.beginPath();
       for (const grain of sim.grains)
-        if (Math.abs(grain.vx) + Math.abs(grain.vy) > 10) {
-          c.moveTo(grain.x - grain.vx * 0.02, grain.y - grain.vy * 0.02);
+        if (
+          !grain.bond &&
+          !grain.sleeping &&
+          Math.hypot(grain.vx, grain.vy) > 6
+        ) {
+          c.moveTo(grain.x - grain.vx * 0.045, grain.y - grain.vy * 0.045);
           c.lineTo(grain.x, grain.y);
         }
       c.stroke();
     }
-    // Reuse a small circular sprite. A single enormous arc path becomes an
-    // expensive tessellation at the 6,000-grain cap on phone-sized canvases.
     if (!this.grainSprite || this.spriteRadius !== sim.config.grainRadius) {
       this.spriteRadius = sim.config.grainRadius;
       const diameter = Math.ceil(sim.config.grainRadius * this.scale * 2 + 2);
@@ -91,7 +161,7 @@ export class Renderer {
       this.grainSprite.width = diameter;
       this.grainSprite.height = diameter;
       const sprite = this.grainSprite.getContext('2d');
-      sprite.fillStyle = '#eee1b5';
+      sprite.fillStyle = '#e6d09b';
       sprite.beginPath();
       sprite.arc(
         diameter / 2,
@@ -104,6 +174,8 @@ export class Renderer {
     }
     c.setTransform(1, 0, 0, 1, 0, 0);
     const offset = this.grainSprite.width / 2;
+    // Missed grains remain here too: their visible ground piles are made from
+    // the same particles and contacts as the deposits on the stone.
     for (const grain of sim.grains)
       c.drawImage(
         this.grainSprite,
@@ -111,51 +183,18 @@ export class Renderer {
         grain.y * this.scale - offset,
       );
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
-    c.fillStyle = '#cbb480';
-    c.fillRect(74, 11, 12, 1);
+    c.fillStyle = '#c8b385';
+    c.fillRect(
+      sim.config.sourceX - sim.config.sourceWidth / 2,
+      11,
+      sim.config.sourceWidth,
+      0.8,
+    );
     for (const [x, count, target] of [
       [42.5, sim.left, challenge.leftTarget],
       [117.5, sim.right, challenge.rightTarget],
     ]) {
-      c.save();
-      c.beginPath();
-      c.moveTo(x - 24.5, 181);
-      c.quadraticCurveTo(x - 20, 194, x, 194);
-      c.quadraticCurveTo(x + 20, 194, x + 24.5, 181);
-      c.closePath();
-      c.fillStyle = '#28291e';
-      c.fill();
-      c.clip();
-      const fill =
-        mode === 'challenge'
-          ? Math.min(count / target, 1)
-          : Math.min(count / 1600, 1);
-      const y = 193 - fill * 12;
-      c.fillStyle = '#a28d50';
-      c.beginPath();
-      c.moveTo(x - 25, y + 2);
-      c.quadraticCurveTo(x, y - 3, x + 25, y + 2);
-      c.lineTo(x + 25, 195);
-      c.lineTo(x - 25, 195);
-      c.closePath();
-      if (count) c.fill();
-      c.restore();
-      c.strokeStyle = '#9c956d';
-      c.lineWidth = 0.7;
-      c.beginPath();
-      c.ellipse(x, 181, 24.5, 3, 0, 0, Math.PI * 2);
-      c.stroke();
-      if (mode === 'challenge') {
-        c.strokeStyle = '#e4c578';
-        c.lineWidth = 1;
-        c.beginPath();
-        c.moveTo(x - 27, 180);
-        c.lineTo(x - 22, 180);
-        c.moveTo(x + 22, 180);
-        c.lineTo(x + 27, 180);
-        c.stroke();
-      }
-      c.fillStyle = '#e5d6af';
+      c.fillStyle = '#ded3b3';
       c.font = `${Math.max(6, 12 / (this.canvas.clientWidth / 160))}px system-ui`;
       c.textAlign = 'center';
       c.fillText(
@@ -167,25 +206,31 @@ export class Renderer {
       );
     }
     if (this.brush) {
-      c.strokeStyle = this.tool === 'rub' ? '#f2e6c5' : '#c5bd9b';
-      c.lineWidth = 0.4;
+      c.fillStyle = '#e8d5a414';
+      c.strokeStyle = '#e1d2ad';
+      c.lineWidth = 0.35;
       c.beginPath();
       c.arc(
         this.brush.x,
         this.brush.y,
-        this.tool === 'rub'
-          ? sim.config.rubWidth / 2
-          : sim.config.ridgeThickness / 2,
+        sim.config.brushWidth / 2,
         0,
         Math.PI * 2,
       );
+      c.fill();
       c.stroke();
     }
     if (sim.blocked) {
-      c.fillStyle = '#f4dfb0';
-      c.font = '4px system-ui';
+      c.fillStyle = '#dfd1ae';
+      c.font = '4.3px system-ui';
       c.textAlign = 'center';
-      c.fillText('Clear the dust below the source', 80, 23);
+      c.fillText(
+        sim.blockReason === 'full'
+          ? 'A full tray. Reset for a fresh pour.'
+          : 'Brush the sand below the source',
+        80,
+        23,
+      );
     }
   }
 }

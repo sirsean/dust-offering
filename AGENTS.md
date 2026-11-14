@@ -1,46 +1,38 @@
 # Working on Dust Offering
 
-## Scope and source
+## Current direction
 
-Build a standalone, portrait-first browser game at the Black Pyramid: draw ridges, rub gaps, and guide falling dust into two offering bowls. The key experience is widening a gap while the stream runs and seeing the split change gradually.
+The owner's latest gameplay feedback supersedes the original ridge prototype. Read `docs/stone-sand-plan.md`, `docs/status.md`, and `docs/architecture.md` before substantive work. The intended experience is quiet, slow sand accumulating on a stone triangle. There is **one finger action**: brush through that sand, dislodge it, and shape the deposits that later sand runs over. Do not reintroduce Draw/Rub modes or invisible player-drawn barriers.
 
-Read `docs/status.md`, `docs/architecture.md`, and `docs/prototype-plan.md` before substantive work. The prototype is now playable; `docs/physics-results.md` and `docs/playtest.md` preserve its acceptance evidence and current limits. The plan is a snapshot of the user's Fringe Page; its source URL is in the file. Keep status, decisions, commands, and measured results current as the project changes. Do not silently change the core mechanic or expand into accounts, hosted leaderboards, or other backend services.
+Sand adheres weakly to rough stone and more strongly to other attached sand. Some stays on the stone; missed sand remains physically present in piles at the bottom. Relaxed Free Pour is the default. Challenge is optional and must be versioned when its physics, supply, targets, or scoring conditions change. Historical v2 measurements and the superseded plan are retained for provenance, not as acceptance gates for the new mechanic.
 
-## Implementation conventions
+## Code and simulation
 
-- Use Vite, vanilla JavaScript ES modules, semantic HTML, CSS, and Canvas 2D. Avoid frameworks, a physics engine, and unnecessary dependencies.
-- Keep simulation, geometry, deterministic randomness, accounting, and scoring independent of the DOM. Rendering and input consume that state; they do not own physics rules.
-- Keep tunable defaults in `src/config/`, with units and reasons for changes. Use the fixed 160 × 200 logical playfield and fixed 60 Hz stepping regardless of screen size or display refresh rate.
-- Start with circles, rounded short ridge segments, a spatial hash, continuous velocities, and two collision substeps. Preserve the maximum travel bound of one grain radius per substep. Use stable contact ordering and seeded randomness.
-- Rub clips ridge geometry; it never deletes dust. Draw must preserve grain counts. Wake grains when their support changes. Collection counts a crossing exactly once, including spill. Never discard grains to conceal a performance problem.
-- Keep modules small and named for their responsibility. Prefer clear data and functions over generic abstractions. Document nonobvious numerical choices and invariants near the code.
+- Use Vite, vanilla JavaScript ES modules, semantic HTML, CSS, Canvas 2D, and optional Web Audio. No framework or full physics engine.
+- Keep simulation, seeded randomness, accounting, challenge/scoring, and sharing independent of the DOM. Rendering reads state; pointer input produces brush strokes.
+- Use the fixed 160 × 200 logical field, fixed 60 Hz steps, two collision substeps, stable spatial-hash ordering, and seeded randomness. Screen size/DPR must never change physics.
+- Keep all tuning defaults in `src/config/`, with logical units. Default motion and emission must remain substantially slower than the original 78-unit/s, 120-grain/s prototype.
+- The physical supports are sand grains. Represent adhesion explicitly and release dependent attachments when a supporting bond is brushed away. A stroke moves/releases existing material; it never creates rail geometry or deletes grains.
+- Keep missed grains in the simulation and render their resting piles. Count bowl collection once. Preserve `emitted = left + right + all retained grains`; retained grains include those on the stone and those on the ground. `spill` counts retained grains marked as missed, so `emitted = left + right + spill + faceCount` also holds.
+- A grain may sleep when resting. Brush edits and moving contacts must wake affected material. Removing adhesion must not leave frozen unsupported descendants. Never discard grains for performance.
+- Prefer plain named functions/data over generic abstractions. Document nonobvious numerical behavior near the solver. Keep status, commands, tuning reports and constraints current.
 
-## Build order and gates
+## Interaction and feel
 
-1. Scene: portrait playfield, source, two bowls, center spill, Reset. Untouched dust falls into the gap.
-2. Free Pour: Draw, Rub, Stop/Resume, visible piles, proper pointer capture/cancellation and continuous strokes. Pass the physics gate below before scoring, glow, texture, or sound.
-3. Challenge: versioned `first-offering-v2`, 40 active pouring seconds, 4,800 grains, targets 1,800 / 3,000, Begin/Finish, local best, share URL.
-4. Tune: legibility, performance, accessibility, real-phone playtesting where available. Report tested hardware and limits honestly.
+Use Pointer Events for touch, pen, and mouse, capture one active pointer, interpolate fast strokes, and end on up/cancel/lost capture. Brush only the stone, protecting the source and bowl mouths. Show a contact footprint, keep controls at least 44 CSS pixels tall, and apply `touch-action: none` only to the canvas.
 
-The physics gate requires 20°/35° ramps in both directions, support removal draining within 0.2 seconds, and reproducible three-width split measurements (initial widths 3/6/9, five-second warm-up, ten-second sample, three fixed seeds). At least two widths must carry >=10% down each path, and every widening must raise the gap fraction by >=10 percentage points. Measure locally at the cut and ramp end. Save scene coordinates, seeds, parameters, and measured fractions in the repo. Do not fake the split with random routing, quotas, or invisible barriers.
+Preserve all grains, bonds, piles, counts and supply through resize/rotation; suspend stepping while hidden and reset the frame clock on return. Stopping the pour only stops new emission. No countdown, rushing cues, or catch-up bursts. Sound starts muted. Reduced motion removes decorative trails while retaining necessary sand movement.
 
-## Input and presentation
+## Verification
 
-- Use Pointer Events for mouse, pen, and touch. Interpolate strokes, capture one active pointer, and finish cleanly on up/cancel/lost capture.
-- Apply `touch-action: none` only to the playfield. Protect source and bowl mouths from edits. Keep controls >=44 CSS pixels tall with selected state exposed.
-- Preserve game state during resize/rotation; suspend stepping when hidden and reset the clock on return. Avoid emission backlogs and catch-up bursts.
-- Recreate art procedurally using the Mesmegraph references linked in the plan. Keep dust, ridges, cuts, and counts legible on phones. Support reduced decorative motion. Sound is optional and comes last.
+Use Node 24 and the npm lockfile. Run `npm ci` on clean checkouts and `npm run check` before committing. For gameplay changes run `npm run test:browser`; install Chromium using Playwright or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a system browser. `npm run playtest` runs the real-time scripted player with Vite running.
 
-## Validation
-
-Use Node 24 and npm with the committed lockfile. Run `npm ci` on a clean checkout and `npm run check` before committing. This runs ESLint, Prettier, Node's test runner, and the production build. For gameplay changes, also run `npm run test:browser`; install Chromium with Playwright or set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` to a system browser. `npm run playtest` (with Vite running) records a real-time gameplay run. Add focused behavioral tests as each mechanic is implemented; do not substitute tests of constants for physics evidence.
-
-Test contact/collection accounting, ramp transport, waking, gap splits, fixed-step emission, deterministic replay, and scoring. Preserve `initial supply = remaining + left + right + spill + on-face grains`, including sleepers. Check 4,800 successful spawns over 2,400 unobstructed steps; stop/block spends no supply and accrues no backlog. Test exact score, one-grain error, partial fill, overfill, total spill, and sharing failures. Manually cover fast strokes, reset, mode switches, resize, hidden tabs, and dust in flight after Stop.
+Test the slow speed bound, full unobstructed supply, weak stone adhesion versus stronger sand adhesion, contact deflection by real deposits, mass-preserving brushing, bond-release cascades, continuous strokes, persistent missed-sand piles, sleeping/waking, deterministic replay, collection, score/storage/sharing, and reset/mode/resize/hidden recovery. Keep numerical evidence and browser screenshots for the current design. Report emulated touch and real hardware separately; automated play cannot prove human enjoyment.
 
 ## Repository and deployment
 
-The repository is `sirsean/dust-offering`; `main` is production. Use focused branches for implementation and push reviewable commits. Never commit tokens, `.env` files, generated deployment configs, build outputs, or dependency directories. Do not introduce a license without the owner's choice.
+Public repository: `sirsean/dust-offering`. `main` is production. Work on focused branches and push reviewable commits. Do not add a license without the owner's choice. Never commit credentials, `.env` files, generated deployment config, `dist/`, dependency directories or transient browser reports.
 
-Cloudflare Workers serves static `dist/` assets using `wrangler.json`. Production is `https://dust-offering.sirsean.me`. **Use direct Wrangler deployments from the working environment; the owner has deferred automated GitHub deployments.** Do not configure an Actions deployment secret or enable automated deployment until requested. GitHub Actions runs code checks; prepared deployment/cleanup steps show a notice and skip when the `CLOUDFLARE_API_TOKEN` repository secret is absent. PR checks do not receive deployment credentials. Branches use isolated Workers and exact custom domains, e.g. `branch-1.dust-offering.sirsean.me`; see `docs/deployment.md` for naming and cleanup.
+Use direct Wrangler deployment from this environment. The owner has deferred automated GitHub deployments; do not configure an Actions deployment secret until requested. CI runs code/browser checks, with deployment/cleanup steps skipped while the secret is absent.
 
-Use `npm run deploy` for production and `npm run deploy:branch -- branch-name` for a preview. These require authorized Cloudflare credentials. Routine local development needs none. Preserve the shared Cloudflare account and other sites; deployment scripts must target only Dust Offering resources. Keep deploy documentation synchronized with configuration and workflows.
+Production: `https://dust-offering.sirsean.me`, served by Workers static assets from `dist/`. Use `npm run deploy` for production, `npm run deploy:branch -- branch-name` for an isolated preview, and `npm run deploy:branch:delete -- branch-name` for cleanup. Branch previews have exact custom domains such as `stone-sand.dust-offering.sirsean.me`. Protect the other Workers and DNS records in the shared account. See `docs/deployment.md` for the environment-specific writable cache/config paths.

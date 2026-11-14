@@ -14,7 +14,7 @@ Workers static assets serve `dist/` directly; there is no server handler or data
 
 ## Automatic deployments
 
-`.github/workflows/ci.yml` runs `npm ci` and `npm run check` on every push and pull request. Once the `CLOUDFLARE_API_TOKEN` repository secret is configured, successful pushes in this repository deploy:
+`.github/workflows/ci.yml` runs `npm ci`, `npm run check`, and `npm run test:browser` on every push and pull request. Once the `CLOUDFLARE_API_TOKEN` repository secret is configured, successful pushes in this repository deploy:
 
 | Ref          | Destination                              |
 | ------------ | ---------------------------------------- |

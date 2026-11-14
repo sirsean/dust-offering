@@ -1,52 +1,55 @@
-# Gameplay test and handoff
+# Slow sand-on-stone playtest
 
-Play at <https://dust-offering.sirsean.me>. Free Pour opens with a live stream. The initial playtest prompt is: **“Get some dust into both bowls while the stream is running.”**
+The original prototype was too fast and stressful. This revision replaces its drawn barriers with slow, adhesive sand on a textured stone triangle. There is one action: brush existing material with a finger, pen or mouse. The source and bowl mouths are protected, while missed sand remains visible on the ground. Free Pour is the default; Pause pour only stops new emission, and Reset clears all material.
 
-Draw a ridge with a finger, pen, or mouse. Select Rub and drag along a ridge to widen a cut. Stop pour only pauses new emission; existing dust keeps moving. Reset clears the current mode. Challenge allows drawing before Begin, then supplies exactly 4,800 grains for the 1,800 / 3,000 targets. There is no countdown or time penalty. When the source empties, keep editing to rescue dust, then Finish. Sound is optional and starts muted. Desktop shortcuts: D, R, and Space.
+## Pace and shaping
 
-## What was exercised
+Maximum grain speed is 16 units/s instead of 78; the source emits 24 grains/s instead of 120. Gravity is reduced from 160 to 12 units/s², launch speed from 22 to 3, and sideways launch from ±4 to ±0.65. The 8-unit finger footprint is larger than the old eraser and has no tool toggle. Brush release is immediate, but gravity, settling, and reattachment are deliberately slow.
 
-Linux headless Chromium 156, Node 24.22.1, a 390 × 844 touch-enabled viewport and a 1280 × 800 desktop viewport. Additional layout checks cover 320 × 568, 360 × 640, 768 × 1024, and 844 × 390. Pointer tests use actual browser mouse events and emulated touch events, including fast strokes and touch cancellation. **No physical phone, pen, speaker, or human participant was available.**
+Some sand stays lightly attached to bare stone. Grains in sustained contact with existing deposits bond much more readily. Those same physical circles deflect later arrivals. Brushing pushes sand aside, breaks attachments and releases dependent material outside the immediate finger footprint. Released material has a 2.5-second reattachment cooldown, giving a cleared path time to flow. Unrelated bottom piles stay asleep until actual falling grains disturb them.
 
-The browser suite covers a blank face, live drawing/rubbing, widening while pouring, Stop/Resume with dust in flight, full challenge exhaustion, Finish, saved best and reload, failed clipboard/manual sharing, storage denial, sound opt-in/mute, repeated mode switches, resize/rotation, source/bowl edit protection, hidden-tab recovery, and reduced decorative motion. Pure tests also cover native-share success/cancellation, clipboard success/failure, all specified scoring cases, deterministic replay, the physics gate, and grain accounting.
+## Real-time simulated play
 
-## Real-time simulated gameplay
+Current evidence: [stone-playtest-report.json](../artifacts/stone-playtest-report.json). The player waits 25 real seconds for material to gather, pauses the pour, makes one slow stroke from (78,28) to (90,115), and then watches it settle for 16 seconds. This uses actual elapsed browser time, not an accelerated frame clock.
 
-The reproducible browser player is `scripts/playtest.js`. It uses real elapsed time rather than accelerating the simulation. Its report is [playtest-report.json](../artifacts/playtest-report.json).
+| Observation                                           | Result                                                                   |
+| ----------------------------------------------------- | ------------------------------------------------------------------------ |
+| Before brushing                                       | 204 attached grains: 42 on stone, 162 attached to sand                   |
+| After the slow stroke                                 | 153 attached grains; material released and redistributed                 |
+| Already-resting ground grains before / after brushing | 62 / 62, undisturbed by the stroke above                                 |
+| After settling                                        | 260 attached grains; 166 missed grains resting on the ground             |
+| Paused supply                                         | 605 emitted before/after the paused sequence, with no new grain emission |
+| Retained accounting after settling                    | 82 left + 89 right + 434 retained = 605                                  |
+| Browser JavaScript errors                             | None                                                                     |
 
-It draws a main ridge from (50,70) to (110,155) and a corrective ridge from (96,140) to (38,168). With the main ridge intact, all measured collected grains went right. A short rub from (78,109.667) to (80.884,113.752) opened a live split. Extending it to (82.038,115.386) visibly widened that split.
+![Sand gathered on the stone](../artifacts/stone-before.png)
 
-| Real-time observation                | Result                                       |
-| ------------------------------------ | -------------------------------------------- |
-| Intact ridge sample                  | 0 left / 242 right, no spill                 |
-| Small-cut sample                     | 212 left / 264 right, 44.54% left, no spill  |
-| Wider-cut sample                     | 292 left / 185 right, 61.22% left, 2 spilled |
-| Full active challenge pour           | 4,800 emitted in 40.05 wall-clock seconds    |
-| Challenge result using the small cut | 2,204 left / 2,596 right, 831/1000           |
-| Challenge uncollected                | 0 spilled, 0 on the face                     |
-| Browser JavaScript errors            | None                                         |
+![After brushing and slow settling; bottom piles remain](../artifacts/stone-after.png)
 
-![Live split after widening](../artifacts/playtest-free.png)
+The slow source leaves time to watch a deposit form. A stroke changes actual material without leaving a solid drawn line, and the released grains remain visible as they move or settle. The absence of tool switching and the stable ground piles support the intended quieter interaction. Automated play can verify these responses; whether the pace feels relaxing under a real thumb still needs the owner's evaluation.
 
-The result is mechanically promising: the first edit has an immediate visible effect, a larger cut causes a measurable further change, and the finite challenge rewards a correction to the same geometry. The stream keeps moving through edits and the controls do not require a hold gesture at the source. That supports the intended tactile loop. Whether people want another pour still needs a human test; automated play cannot establish that response.
+## Optional challenge and limits
 
-## Retained-pile limit
+Challenge remains optional with no countdown or time penalty. It uses a new identifier, `stone-offering-v1`, so previous bests stay separate. The lower source rate produces a 960-grain supply with targets 360 / 600. Settling and rescue time is additional, and Finish has an 18-second fallback after exhaustion or the latest stroke.
 
-The stress fixture holds 6,000 grains inside a container, with no spill or performance deletion. On this cloud CPU, rendering is roughly 25 FPS near that cap, with occasional 50 ms frames. Direct pointer dispatches selecting Rub completed in 29–46 ms in the retained measurement (33–49 ms in a separate run). Locator-based automation takes longer because it also waits for layout stability; the retained report records direct pointer round trips. A strict 60 FPS guarantee on phone hardware is not established.
+The real-time player emitted all 960 grains in 40.01 seconds while making three short source-clearing strokes. That run finished with 109 left, 134 right, 258 on the ground and 459 still above the bowls, scoring 253. This was an interaction/conservation check rather than an optimized score attempt. Persistent attachments are part of the new material model, so old v2 score expectations no longer apply.
 
-Resting particles may sleep, but the deliberately extreme fixture remained active. An edit wakes all grains, so a rubbed support cannot leave frozen dust suspended. The fixed-step work budget preserves input at the cap by allowing simulation time to slow under load. Normal challenge play uses far fewer retained particles and the measured active pour stayed within 0.05 seconds of the planned 40 seconds.
+The full-face stress fixture retains 6,000 grains. On this cloud machine, its mean frame was 18.76 ms (about 53 FPS), with 33.4 ms at the 95th percentile. A direct brush pointer sequence took 64.5 ms and released 46 of those grains without losing mass. The cap includes material on the stone and on the ground. A full tray pauses the source; Reset starts a fresh pour. No retained grain is discarded for performance.
 
-## Reproduce locally
+## Verification and reproduction
+
+Testing used Node 24.22.1 and Linux headless Chromium 156, with a 390 × 844 emulated-touch viewport and a 1280 × 800 desktop viewport. Layouts also cover 320 × 568, 360 × 640, 768 × 1024 and 844 × 390. No physical phone, stylus, speaker or human participant was available.
+
+The numerical suite covers slow speed, weak/strong adhesion, dependent release, displacement without creation/deletion, blank-stone strokes leaving future flow unchanged, contact deflection, persistent ground piles, sleeping/waking, blocked/paused/capped emission, collection, seeded replay, new scoring and isolated best/share data. Browser checks cover single-action mouse/touch strokes, capture cancellation, gradual accumulation, the optional full challenge, failed sharing/storage, sound opt-in/mute, reset/mode changes, resize/rotation, hidden recovery and protected source/bowls.
 
 ```sh
 npm ci
-npx playwright install chromium
 npm run check
+npm run test:physics
+npx playwright install chromium
 npm run test:browser
 ```
 
-The browser test command starts Vite if necessary. For the real-time simulated player, first start `npm run dev`, then run `npm run playtest`. To remeasure only the stress scene while preserving the existing full-run report, use `npm run playtest -- --stress-only`. On a machine with a system Chromium, set `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium` instead of downloading a browser. Physics measurements are `npm run test:physics`.
+For real-time simulated play, run `npm run dev`, then `npm run playtest` in another terminal. It takes roughly two minutes. `npm run playtest -- --stress-only` remeasures the retained face while preserving the full-run report. A system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
 
-## Human evaluation next
-
-Give the free-play prompt without showing the coordinates above. Watch whether the player discovers a split, corrects it without coaching, and keeps experimenting after succeeding. Then try Challenge. Priorities for tuning are Rub sensitivity under a thumb, the width range that feels controllable, whether a 3:5 target is motivating, sound level on real speakers, and frame rate with a large catch on actual phones. Change the challenge identifier if published physics or scoring conditions change.
+Next human prompt: **“Let some sand gather, then brush it and watch where it goes.”** Check whether the pace is now calm enough, whether the material feels like sand on stone, and whether brushing feels predictable. The remaining tuning priorities are adhesion strength, brush width/push, reattachment delay, and large-pile response on actual phones.

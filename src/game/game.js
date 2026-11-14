@@ -21,8 +21,6 @@ export class Game {
     this.mode = mode;
     this.phase = mode === 'challenge' ? 'ready' : 'running';
     this.sim = new Simulation(mode === 'challenge' ? challenge : {});
-    for (const ridge of mode === 'challenge' ? challenge.startingRidges : [])
-      this.sim.ridges.add(ridge.a, ridge.b);
     this.sim.pouring = mode === 'free';
     this.quietSteps = 0;
     this.exhaustedSteps = 0;
@@ -41,9 +39,9 @@ export class Game {
       this.sim.pouring = !this.sim.pouring;
   }
 
-  edit(a, b, tool) {
+  edit(a, b) {
     if (this.phase === 'finished') return;
-    this.sim.edit(a, b, tool);
+    this.sim.brush(a, b);
     this.quietSteps = 0;
     this.exhaustedSteps = 0;
     this.canFinish = false;
@@ -58,9 +56,14 @@ export class Game {
       this.sim.remaining === 0
     ) {
       this.exhaustedSteps++;
-      const moving = this.sim.grains.some((g) => Math.hypot(g.vx, g.vy) > 1.5);
+      const moving = this.sim.grains.some(
+        (g) => !g.bond && Math.hypot(g.vx, g.vy) > 0.45,
+      );
       this.quietSteps = moving ? 0 : this.quietSteps + 1;
-      this.canFinish = this.quietSteps >= 60 || this.exhaustedSteps >= 300;
+      this.canFinish =
+        this.quietSteps >= 60 ||
+        this.exhaustedSteps >=
+          challenge.finishDelaySeconds * challenge.stepsPerSecond;
     }
   }
 
@@ -76,7 +79,7 @@ export class Game {
       left: this.sim.left,
       right: this.sim.right,
       spill: this.sim.spill,
-      onFace: this.sim.grains.length,
+      onFace: this.sim.faceCount,
     };
     this.phase = 'finished';
     this.sim.pouring = false;

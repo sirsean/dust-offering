@@ -1,51 +1,42 @@
-# Physics verification — first-offering-v2
+# Sand-on-stone physics checks
 
-The numerical gate passed before challenge scoring and visual polish were added. Subsequent support and velocity fixes were followed by the same gate again. Final counts are retained in [physics-splits.jsonl](../artifacts/physics-splits.jsonl); rerun with `npm run test:physics`.
+This is the current `stone-offering-v1` model. The old drawn-ridge experiment is archived separately. Full parameters are in `src/config/prototype.js`; the current direction is documented in `stone-sand-plan.md`.
 
-## Final parameters
+## Pace and material
 
-The complete configuration is in `src/config/prototype.js`, with the versioned challenge in `src/config/challenge.js`.
+| Parameter                    | Current                                        | Original prototype              |
+| ---------------------------- | ---------------------------------------------- | ------------------------------- |
+| Maximum speed                | 16 units/s                                     | 78                              |
+| Gravity                      | 12 units/s²                                    | 160                             |
+| Downward launch speed        | 3 units/s                                      | 22                              |
+| Sideways launch              | ±0.65 units/s                                  | ±4                              |
+| Emission                     | 24 grains/s                                    | 120                             |
+| Finger diameter              | 8 units                                        | separate Draw/Rub tools         |
+| Field / stepping             | 160 × 200, 60 Hz, 2 substeps, 3 contact passes | same logical field              |
+| Grain radius                 | 0.65 units                                     | 0.65                            |
+| Stone / sand attachment rate | 0.025 / 1.6 per second of eligible exposure    | no adhesion                     |
+| Low-speed sand attachment    | below 7 units/s, sustained contact             | —                               |
+| Brush release cooldown       | 2.5 seconds                                    | —                               |
+| Retained cap                 | 6,000, including missed sand on the ground     | ground misses used to disappear |
 
-| Parameter                                     | Value                                                                 |
-| --------------------------------------------- | --------------------------------------------------------------------- |
-| World                                         | 160 × 200 logical units                                               |
-| Fixed stepping                                | 60 Hz, 2 collision substeps, 3 contact passes per substep             |
-| Gravity / maximum speed                       | 160 units/s² / 78 units/s                                             |
-| Grain radius / ridge thickness / Rub diameter | 0.65 / 2 / 3 units                                                    |
-| Source                                        | 120 grains/s, 12 units wide, seeded sideways speed −4 to +4 units/s   |
-| Initial downward source speed                 | 22 units/s                                                            |
-| Spawn distribution                            | 8 stratified source lanes, seeded ±0.09-unit jitter, stride 3         |
-| Ridge / grain Coulomb friction                | 0.025 / 0.22                                                          |
-| Position impulse feedback into velocity       | 0.5 blend per substep                                                 |
-| Sleep thresholds                              | speed <1.5 units/s and displacement <0.06 units per step for 30 steps |
-| Free Pour cap                                 | 6,000 retained grains, including sleepers                             |
-| Challenge                                     | 4,800 grains, targets 1,800 / 3,000, seed 48                          |
+The maximum integration travel is 0.1333 units per substep, below one grain radius. Speed is capped after contact feedback as well as before integration. The source uses eight seeded lanes to avoid obstructing itself at the lower launch speed. An unobstructed 24-grain/s source emits exactly 960 grains in 2,400 steps; natural deposits can obstruct it without building a catch-up burst.
 
-The source's downward launch and stratification prevent the source from obstructing itself while producing the full planned rate. It still uses seeded positions and velocities. A blocked source spends no supply and accrues no backlog. Contact projection feeds back into velocity so a deep pile does not accumulate hidden downward speed. Ridge projection preserves the particle's previous side when other grain contacts push it across a ridge centreline. These are physical contact corrections, not path routing rules.
+## Reproducible adhesion and brush experiment
 
-## Three-width experiment
+`src/config/adhesion-scene.js` specifies seeds 48, 2026 and 914. Let material accumulate for 25 seconds, brush from (78,28) to (90,115), pour another ten seconds and settle for twenty. Run a matching unbrushed control for each seed. Raw evidence is [stone-physics.jsonl](../artifacts/stone-physics.jsonl), reproduced by `npm run test:physics`.
 
-Configuration: `src/config/physics-scene.js`. Source centre (43,42), 12 units wide. Ramp from (30,70) to (135,108.2169), 20° below horizontal. Cut centre (85,90.0184). All runs use the same scene; only cut width and seed change. Warm up for 300 steps (5 seconds), sample for 600 steps (10 seconds). The same configuration file preserves the optional horizontal catch from (50,80) to (110,80), its cut at (80,80), and its pour/settle timings for the pile-drain test.
+| Seed | Stone bonds before brush | Sand bonds before brush | Bonds released | Retained grains before / immediately after | Ground grains below y=190 after settling |
+| ---- | ------------------------ | ----------------------- | -------------- | ------------------------------------------ | ---------------------------------------- |
+| 48   | 42                       | 161                     | 62             | 541 / 541                                  | 131                                      |
+| 2026 | 41                       | 137                     | 61             | 503 / 503                                  | 119                                      |
+| 914  | 42                       | 130                     | 63             | 489 / 489                                  | 105                                      |
 
-The gap detector is a plane four units below the ramp, bounded locally after the cut; the other detector is two units past the ramp end. A grain is classified once. These measurements do not use bowl counts. Rounded ridge ends and the grain radius remain part of the collision geometry.
+All three runs form substantially more sand bonds than bare-stone bonds. The brush changes existing material without adding/deleting grains. Subsequent flow differs from the unbrushed controls; there is no artificial path selection. Treatment runs each emit and account for 840 grains. The control can emit slightly fewer when its unbrushed source becomes obstructed.
 
-| Seed | 3-unit cut: gap / end | Gap fraction | 6-unit cut: gap / end | Gap fraction | 9-unit cut: gap / end | Gap fraction |
-| ---- | --------------------- | ------------ | --------------------- | ------------ | --------------------- | ------------ |
-| 48   | 24 / 1,151            | 2.04%        | 231 / 942             | 19.69%       | 437 / 739             | 37.16%       |
-| 2026 | 28 / 1,143            | 2.39%        | 225 / 950             | 19.15%       | 436 / 739             | 37.11%       |
-| 914  | 21 / 1,149            | 1.79%        | 227 / 952             | 19.25%       | 434 / 734             | 37.16%       |
+## Behavioral coverage
 
-For every seed, both the 6- and 9-unit cuts sustain more than 10% on each path. Both widenings increase the gap fraction by more than 10 percentage points. The smallest cut mostly bridges; wider cuts progressively capture more flow. There are no random bowl choices, quotas, invisible barriers, or discarded grains.
+Tests show weak capture on bare stone, faster capture against bound sand, fixed positions after attachment, and physical deflection by a bank made of grains. Releasing a root removes bonds from a full dependent chain outside the immediate brush footprint. A continuous fast stroke cannot leave gaps in its physical action. Brush impulses and subsequent motion obey the slow velocity cap.
 
-## Other gates
+Misses persist in all three ground pockets. Resting grains remain present across further simulation steps. Bowl crossings are interpolated and counted once; a grain later entering a bowl transfers from the missed count rather than being counted twice. Source pause/block/full-cap behavior and deterministic replay preserve mass. The 6,000-grain fixture remains accounted for when brushed.
 
-- Independent grains traverse 20° and 35° ramps in both directions without stair-step jams.
-- A horizontal catch holds a visible pile. After a 12-unit opening is rubbed, draining begins within the required 0.2 seconds. Geometry changes wake all retained grains immediately; moving contacts wake sleeping neighbors through the spatial hash.
-- An unobstructed source emits exactly 4,800 grains over 2,400 simulation steps. The initial blank face spills all 4,800 grains after settling.
-- Accounting is checked throughout deterministic replay and the challenge: supply remaining + left + right + spill + on-face grains = 4,800.
-- The 6,000-grain stress container retains all grains. No grain is removed for performance. Collection interpolates the line crossing and removes each collected grain once.
-- Replaying a seed and identical edits at identical steps gives an identical state in the same Node runtime.
-
-## Performance bounds
-
-Normal play retains a few hundred active grains. The extreme retained-pile fixture intentionally keeps all 6,000 grains on the face and is slower. The browser loop uses an 8 ms work budget between physics steps to avoid a catch-up spiral; each physics step remains 1/60 second. Under extreme load, simulation time can slow while input and rendering continue. No supply, grain, or collision step is silently dropped. See the measured browser limits in [playtest.md](playtest.md).
+Both mass equations are checked: `emitted = left + right + retained`, and `emitted = left + right + spill + faceCount`. For Challenge, `remaining + emitted = 960`. The new targets 360 / 600 preserve the 3:5 ratio, with a new identifier and extra settling time. The old ramp/split gate is not applicable to this user-directed change in mechanic.

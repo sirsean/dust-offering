@@ -1,5 +1,7 @@
 # Dust Offering — prototype plan
 
+**Historical original plan.** The owner's gameplay feedback superseded the drawn-ridge mechanic and its speed/flow gates. Use [stone-sand-plan.md](stone-sand-plan.md) for the current design. This source snapshot is retained for provenance.
+
 Source: https://chatgpt.com/space/page_ad5cbe9d6d2881919e3df3cfb9f08feb
 
 Snapshot read on 2026-11-14, source sequence 1. This is the implementation reference; consult the source for later revisions. Repository decisions and current progress live in `architecture.md` and `status.md`.
