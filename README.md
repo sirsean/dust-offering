@@ -28,7 +28,15 @@ The current page is a small holding screen used to verify the build and hosting.
 
 ## Deploy
 
-With the `CLOUDFLARE_API_TOKEN` GitHub Actions secret configured, pushing `main` publishes production after checks pass, pushing another branch publishes a preview under `dust-offering.sirsean.me`, and deleting the branch removes its preview. Without the secret, CI checks still run and deployment steps show a notice. Manual Wrangler deployment is available. See [deployment instructions](docs/deployment.md) for credentials, commands, and hostname mapping.
+Deploy directly from the working environment with the configured Cloudflare token:
+
+```sh
+npm run deploy                           # production
+npm run deploy:branch -- branch-1         # branch-1.dust-offering.sirsean.me
+npm run deploy:branch:delete -- branch-1  # remove the preview
+```
+
+GitHub Actions runs code checks. Automated deployments are prepared but deferred by the owner; deployment steps skip with a notice while the Actions secret is absent. Branch deletion does not remove a manually deployed preview until the cleanup command is run. See [deployment instructions](docs/deployment.md) for credentials, commands, and hostname mapping.
 
 ## Build next
 

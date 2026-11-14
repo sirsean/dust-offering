@@ -10,6 +10,8 @@
 
 Workers static assets serve `dist/` directly; there is no server handler or database. `wrangler.json` is the production configuration. Asset paths use Vite content hashes; only `/assets/*` gets long immutable caching. Unknown paths return 404, so future challenge URLs should use query parameters unless routing is explicitly changed.
 
+**Current workflow:** deploy directly from this working environment with Wrangler. The owner has deferred automated GitHub deployments. Leave the Actions deployment secret unconfigured until requested. Use the local commands below for production, branch previews, and preview cleanup; code checks still run in GitHub Actions.
+
 ## Automatic deployments
 
 `.github/workflows/ci.yml` runs `npm ci` and `npm run check` on every push and pull request. Once the `CLOUDFLARE_API_TOKEN` repository secret is configured, successful pushes in this repository deploy:
@@ -22,7 +24,7 @@ Workers static assets serve `dist/` directly; there is no server handler or data
 
 Pull requests run checks only. Public fork pull requests do not receive Cloudflare credentials. Automatic deployment requires the repository's GitHub Actions secret `CLOUDFLARE_API_TOKEN`; no secret goes into the browser build. If that secret is missing, deployment and cleanup steps are skipped with an explicit notice and workflow summary; code checks still run. Account and zone IDs are identifiers, not credentials. Keep write access to branches limited to trusted collaborators, since branch pushes execute workflows with the deployment secret. See `status.md` for provisioning progress.
 
-To enable automatic deployment, an owner can add the tested Cloudflare token as a repository Actions secret at <https://github.com/sirsean/dust-offering/settings/secrets/actions/new>, then rerun the workflow or push a commit. Enter the token in GitHub's secret field, never in chat or source. This setup's GitHub integration currently cannot manage Actions secrets. Manual Wrangler deployments use the environment's existing token and need no GitHub secret.
+If the owner later requests automatic deployment, add a suitable Cloudflare token as a repository Actions secret at <https://github.com/sirsean/dust-offering/settings/secrets/actions/new>, then rerun the workflow or push a commit. Enter the token in GitHub's secret field, never in chat or source. Direct Wrangler deployments use the environment's existing token and need no GitHub secret.
 
 Each preview has a separate Worker named `dust-offering-<branch-slug>` and an exact Workers Custom Domain. Cloudflare manages its DNS and TLS certificate, including the deeper branch hostname. There is no wildcard Worker, shared preview bundle, or dependency on a wildcard certificate. First visits can wait for DNS/certificate provisioning.
 
@@ -32,7 +34,7 @@ Simple lowercase DNS-safe branch names up to 48 characters are preserved. Names 
 node --input-type=module -e "import { targetForBranch } from './scripts/deployment-target.js'; console.log(targetForBranch('feature/ramp'));"
 ```
 
-`.github/workflows/preview-cleanup.yml` deletes the preview Worker and associated custom domain when its branch is deleted. Deleting `main` is excluded, and deployment targeting rejects `main` or detached `HEAD` as preview targets. Keep previews within Cloudflare account resource limits and delete stale branches. Preview URLs are public and must not contain secrets.
+Once automation is enabled, `.github/workflows/preview-cleanup.yml` deletes the preview Worker and associated custom domain when its branch is deleted. For the current direct-deployment workflow, run `npm run deploy:branch:delete -- branch-name` when removing a preview. Deleting `main` is excluded from automated cleanup, and deployment targeting rejects `main` or detached `HEAD` as preview targets. Keep previews within Cloudflare account resource limits and remove stale previews. Preview URLs are public and must not contain secrets.
 
 ## Local deployment and cleanup
 
@@ -52,6 +54,6 @@ Omit the branch argument to use the current Git branch. The deploy commands rebu
 
 ## Verify and recover
 
-Inspect the GitHub Actions run for checks, uploaded asset version, and the domain binding. Request the destination over HTTPS with certificate verification enabled and confirm that it serves the intended revision. A missing hostname immediately after creation can mean provisioning is still pending; inspect Cloudflare Workers Custom Domains before changing DNS manually.
+Run `npm run check`, then inspect Wrangler's deployment output for the uploaded asset version and domain binding. Request the destination over HTTPS with certificate verification enabled and confirm that it serves the intended revision. A missing hostname immediately after creation can mean provisioning is still pending; inspect Cloudflare Workers Custom Domains before changing DNS manually.
 
-If a deploy fails, the prior deployment remains the version to inspect. Fix the build or deploy configuration and rerun the workflow. To roll back application code, revert the offending commit and push to `main`; the same checked deployment path republishes it. Never delete or overwrite another project's DNS records or Worker to fix this project.
+If a deploy fails, inspect the actual active deployment before assuming which version is live. Fix the build or deploy configuration and rerun the direct deployment command. To roll back application code, revert the offending commit, run checks, push to `main`, and run `npm run deploy` to republish it. A Git push alone does not deploy in the current workflow. Never delete or overwrite another project's DNS records or Worker to fix this project.

@@ -4,22 +4,23 @@
 
 Repository and deployment scaffold prepared. The source prototype plan has been read and preserved in `prototype-plan.md`. Gameplay implementation has not begun.
 
-Included: Vite/vanilla JavaScript entry, holding screen, starting configuration, lint/format/build commands, Node tests for deployment targeting and starting invariants, Wrangler static assets, automated production/branch deployments, preview cleanup, and repository instructions.
+Included: Vite/vanilla JavaScript entry, holding screen, starting configuration, lint/format/build commands, Node tests for deployment targeting and starting invariants, Wrangler static assets, direct production/branch deployment and preview cleanup commands, prepared automation workflows, and repository instructions.
 
 Verified:
 
 - `npm run check`: ESLint, formatting, five Node tests, and production build pass.
+- [Initial GitHub CI run](https://github.com/sirsean/dust-offering/actions/runs/43635999438) passed on the pushed scaffold. Both deployment steps skipped as intended while automation is deferred.
 - Production deployed with Wrangler to `https://dust-offering.sirsean.me` (Worker version `01d32658-4bf1-4fd2-a256-b1bf24054608`). HTTPS returns 200 and the HTML, JavaScript, CSS, and favicon exactly match the local build. Unknown paths return 404.
 - A separate `dust-offering-setup-check` Worker served `https://setup-check.dust-offering.sirsean.me` over HTTPS with the same build. Cloudflare provisioned its exact nested hostname and certificate. The temporary Worker was deleted after verification.
 - Headless Chromium checked the holding screen at 360 × 640 and 1440 × 900, with no JavaScript errors or page overflow. This was a desktop browser viewport check, not a touch-hardware test.
 
 ## GitHub repository access
 
-The owner created the empty public `sirsean/dust-offering` repository. The scaffold is in `/workspace/dust-offering`, on `main`, with its HTTPS origin set to that repository.
+The owner created the public [sirsean/dust-offering](https://github.com/sirsean/dust-offering) repository and granted the ChatGPT GitHub app access. The scaffold was successfully pushed to `main`; the local checkout at `/workspace/dust-offering` tracks `origin/main`. The repository access blocker is resolved.
 
-Publishing is still blocked by GitHub app access: `git push` and the GitHub plugin's file-write endpoint both return HTTP 403. The connected GitHub app reports no installation for the `sirsean` account. The owner has been asked to grant the ChatGPT GitHub app access to this repository. Once accessible, push the local commits and verify CI.
+GitHub Actions runs lint, formatting, tests, and the production build. The owner has explicitly deferred automated GitHub deployments in favor of direct Wrangler deployment from this environment. Leave the Actions deployment secret unconfigured until requested. Prepared deployment and cleanup steps skip with a notice when that secret is absent.
 
-The connection also cannot manage Actions secrets (the repository public-key endpoint returns HTTP 403). CI is configured to run checks and show an explicit notice if the `CLOUDFLARE_API_TOKEN` secret is absent. Automatic production/preview deployment and cleanup become active when an owner adds that secret. Manual production and branch deployments through Wrangler are already verified and are sufficient to begin implementation. GitHub workflows have not yet run.
+Production and branch deployments through Wrangler are verified. Run `npm run deploy` for production, `npm run deploy:branch -- branch-name` for a preview, and `npm run deploy:branch:delete -- branch-name` to clean it up. Deleting a Git branch alone does not clean up its preview while automation is deferred. The foundation is ready for prototype implementation.
 
 ## Next implementation pass
 
