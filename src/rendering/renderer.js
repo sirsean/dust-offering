@@ -113,7 +113,7 @@ export class Renderer {
     c.lineTo(4, 174);
     c.closePath();
     c.fill();
-    const random = seededRandom(480);
+    const random = seededRandom(480 ^ (this.visualSeed ?? 0));
     for (let i = 0; i < 5000; i++) {
       const x = random() * 160;
       const y = random() * 174;
@@ -236,9 +236,19 @@ export class Renderer {
   drawBowls(sim, mode) {
     const c = this.ctx;
     const p = this.palette;
-    for (const [mouth, count, target] of [
-      [sim.config.leftMouth, sim.left, challenge.leftTarget],
-      [sim.config.rightMouth, sim.right, challenge.rightTarget],
+    for (const [mouth, count, target, arrival] of [
+      [
+        sim.config.leftMouth,
+        sim.left,
+        challenge.leftTarget,
+        sim.lastCollections[0],
+      ],
+      [
+        sim.config.rightMouth,
+        sim.right,
+        challenge.rightTarget,
+        sim.lastCollections[1],
+      ],
     ]) {
       const x = (mouth[0] + mouth[1]) / 2;
       const half = (mouth[1] - mouth[0]) / 2;
@@ -266,12 +276,41 @@ export class Renderer {
       c.lineTo(x - half - 1, 195);
       c.closePath();
       if (count) c.fill();
+      const age = arrival ? sim.time - arrival.time : Infinity;
+      if (!this.reducedMotion.matches && age >= 0 && age < 0.65) {
+        // A small wave on the actual bowl surface makes arrivals readable.
+        // It uses real collection state, never extra sand or score particles.
+        c.strokeStyle = p.sandLight;
+        c.globalAlpha = 0.35 * (1 - age / 0.65);
+        c.lineWidth = 0.4;
+        c.beginPath();
+        c.ellipse(
+          Math.max(x - half + 5, Math.min(x + half - 5, arrival.x)),
+          y + 1,
+          1 + age * 8,
+          0.3 + age * 1.5,
+          0,
+          0,
+          Math.PI * 2,
+        );
+        c.stroke();
+      }
       c.restore();
       c.strokeStyle = p.bowlRim;
       c.lineWidth = 0.7;
       c.beginPath();
       c.ellipse(x, 181, half, 3, 0, 0, Math.PI * 2);
       c.stroke();
+      if (!this.reducedMotion.matches && age >= 0 && age < 0.5) {
+        c.save();
+        c.strokeStyle = p.mark;
+        c.globalAlpha = 0.45 * (1 - age / 0.5);
+        c.lineWidth = 1;
+        c.beginPath();
+        c.ellipse(x, 181, half, 3, 0, 0, Math.PI * 2);
+        c.stroke();
+        c.restore();
+      }
       if (mode === 'challenge') {
         c.strokeStyle = p.mark;
         c.lineWidth = 0.8;
@@ -333,6 +372,10 @@ export class Renderer {
   }
 
   draw(sim, mode = 'free') {
+    if (this.visualSeed !== sim.config.seed) {
+      this.visualSeed = sim.config.seed;
+      this.resize();
+    }
     const c = this.ctx;
     // Cached artwork already matches the backing store. A second resize can
     // resample colors when CSS sizing rounds its height to a fractional pixel.
@@ -352,6 +395,15 @@ export class Renderer {
           Math.hypot(grain.vx, grain.vy) > 6
         ) {
           c.moveTo(grain.x - grain.vx * 0.045, grain.y - grain.vy * 0.045);
+          c.lineTo(grain.x, grain.y);
+        }
+      c.stroke();
+      c.strokeStyle = this.palette.mark + '65';
+      c.lineWidth = 0.5;
+      c.beginPath();
+      for (const grain of sim.grains)
+        if (!grain.bond && sim.time - grain.brushedAt < 0.65) {
+          c.moveTo(grain.x - grain.vx * 0.09, grain.y - grain.vy * 0.09);
           c.lineTo(grain.x, grain.y);
         }
       c.stroke();

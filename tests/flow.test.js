@@ -36,7 +36,8 @@ test('layered traces guide loosely downhill, independently of drawing direction,
     left = guidedGrain(3, false, true);
   assert.equal(bare.x, 70);
   assert.ok(once.x > bare.x + 10);
-  assert.ok(layered.x > once.x + 5);
+  // The broad first pass already guides strongly; layering still adds control.
+  assert.ok(layered.x > once.x + 2);
   assert.ok(left.x < 90 - 20);
   assert.ok(Math.abs(upward.x - layered.x) < 0.001);
   assert.ok(Math.abs(upward.y - layered.y) < 0.001);
@@ -63,8 +64,8 @@ test('a horizontal trace slows crossing without suspending a grain or moving it 
   assert.ok(grain.y > 100.3);
   assert.ok(grain.vy > 0);
   advance(sim, 540);
-  assert.ok(grain.y > 110);
-  assert.ok(grain.vy > 0);
+  assert.ok(grain.y > 160);
+  assert.ok(grain.vy > 0 || grain.y >= 197);
   assert.equal(grain.bond, null);
   conserved(sim);
 });

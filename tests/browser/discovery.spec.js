@@ -21,7 +21,7 @@ async function pixels(page, x, y) {
 test('the entire stone starts invisible, local brushing deepens its reveal, and discovery survives fading and resize until Reset', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await page.clock.runFor(100);
   for (const [x, y] of [
     [80, 7],
@@ -40,8 +40,8 @@ test('the entire stone starts invisible, local brushing deepens its reveal, and 
   const once = await page.evaluate(() =>
     dust.sim.discovery.levelAt(80.5, 100.5),
   );
-  expect(once).toBeGreaterThan(0.6);
-  expect(once).toBeLessThan(0.8);
+  expect(once).toBeGreaterThan(0.75);
+  expect(once).toBeLessThan(0.9);
   const p = await pixels(page, 84, 100);
   expect(p.actual).not.toEqual(p.landscape);
   for (let i = 0; i < 2; i++) await stroke(page, [80.5, 65.5], [80.5, 145.5]);
@@ -84,7 +84,7 @@ test('the entire stone starts invisible, local brushing deepens its reveal, and 
 test('sand alone gradually reveals its contact patch, while untouched parts of the triangle remain invisible', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await page.clock.runFor(100);
   await page.evaluate(() => {
     const grain = dust.sim.addGrain(90.5, 110.5);
@@ -98,7 +98,7 @@ test('sand alone gradually reveals its contact patch, while untouched parts of t
   );
   expect(early).toBeGreaterThan(0);
   expect(early).toBeLessThan(0.1);
-  await page.clock.runFor(4500);
+  await page.clock.runFor(14000);
   expect(
     await page.evaluate(() => dust.sim.discovery.levelAt(90.5, 110.5)),
   ).toBe(1);

@@ -33,7 +33,15 @@
         <button id="free" aria-pressed="true">Free Pour</button
         ><button id="challenge" aria-pressed="false">Challenge</button>
       </nav>
-      <div id="hud" class="hud" hidden>
+      <div id="hud" class="hud">
+        <span id="discovery-status">Uncovered 0%</span>
+        <meter
+          id="discovery-progress"
+          min="0"
+          max="0.82"
+          value="0"
+          aria-label="Stone discovery"
+        ></meter>
         <span id="supply"></span><span id="best"></span>
       </div>
       <div class="stage">

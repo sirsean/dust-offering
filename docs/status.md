@@ -1,30 +1,28 @@
-# Project status — Fringe lettering and mechanical controls
+# Project status — tactile play and a quiet discovery loop
 
-Revision 0.9.0 applies the owner's FringeV2 font throughout the interface and Canvas text. Worn, sand-blasted mechanical controls use recessed housings, beveled key faces and amber selection indicators. The opening explanation box and its dismissal logic are removed, so Free Pour starts directly. Persistent discovery, the wide uneven pour, desert palette, multi-touch, fading grease and ground piles retain their 0.8.0 tuning and `stone-offering-v6` challenge.
+Revision 0.10.0 follows an extensive gameplay review of 0.9.0. Free Pour now starts with real dust already in flight, uses a broader sweep with moderate carry, and gives clearer physical and optional audio feedback. Brushing has more authorship over discovery. A small uncovering meter leads to “Stone found” and an optional “New stone,” without interrupting play. Normal free runs vary their shower and weathering; Challenge remains fixed and uses `stone-offering-v7`.
 
-Current design: [stone-sand-plan.md](stone-sand-plan.md). Current visual evidence: [visual-style.md](visual-style.md) and `artifacts/fringe-controls/`. The unchanged 0.8.0 physical and real-time baseline remains in [playtest.md](playtest.md), [physics-results.md](physics-results.md) and `artifacts/stone-*`.
+Current design: [stone-sand-plan.md](stone-sand-plan.md). Trial history, rejected ideas and before/after evidence: [gameplay-review.md](gameplay-review.md). Current architecture: [architecture.md](architecture.md). Numerical and real-time evidence: [physics-results.md](physics-results.md), [playtest.md](playtest.md) and `artifacts/gameplay-review/`.
 
-## Behavior and checks
+## Selected behavior
 
-- The supplied font is hosted locally and preloaded. It covers headings, controls, results, copy fields, notices and bowl counts. Canvas reads the inherited CSS font family. No initial help box, saved hint state or dismissal callback remains.
-- Controls have static grit and wear, physical bevels, clear active/pressed/disabled states and a visible keyboard outline. Touch targets remain at least 44 pixels high. Phone, 320-pixel narrow, landscape and desktop captures verify that the font fits without page overflow; the result and manual-copy flow are checked too.
-- Stone artwork, rim and grease share a persistent local visibility mask. Untouched areas have no silhouette, shadow or outline. Landscape, grains and bowls stay visible.
-- A finger pass reveals about 65% at its centre with soft edges; more passes deepen and widen it. Sand gradually reveals its swept paths and resting patches. Discovery follows distance/time rather than event frequency or frame rate, and never changes physics or seeded randomness.
-- Traces stack to six and halve in strength every six seconds. A decaying orientation field grips across a stroke while allowing downhill sliding along it. Uphill drawing on the same slope gives the same guide; crossings blend, and grains can drift away.
-- Brushing reaches the entire visible stone, including the tip, sides and bottom rim. Swept contacts may end beyond an edge while still coating it. Bowls and the surrounding space remain outside the mask.
-- The invisible opening is at y=-4 and spans 34 units with 24 lanes. Its centre sweeps through x=80,124,80,36,80 over 60 seconds. It starts with the first pour, evolves while emission pauses, and freezes while hidden or finished. Reset restarts its phase. Offscreen grains remain accounted for.
-- Nominal flow is 24 grains/s, with gradual swells and ripples bounded below 44 grains/s. Irregularly placed 1.4-second sputter clusters produce real brief gaps. Flow samples seed and source time without consuming particle randomness. It does not repeat with the one-minute sway, and paused/blocked emission never builds a backlog.
-- Weaker attachment below the inlet and 2.5-second upper bonds let the tip drain. Natural bond release wakes unsupported loose sand without waking bottom piles.
-- Touch, pen and mouse share one action. Each finger has its own captured path and footprint. A partial lift/cancel affects only that finger, with no connecting line between contacts.
-- Reset and mode changes clear discovery, traces and contacts. Begin preserves preparation brushing. Resize preserves the logical fields. Source pause still allows discovery, fading and settling; hidden pages and finished challenges freeze simulation time. Grease fading leaves discovered stone visible.
-- The optional `stone-offering-v6` challenge retains 960 grains and targets 360 / 600, with variable pour duration, no countdown and no time penalty. Earlier bests remain isolated under their previous identifiers.
-- Verification covers 52 numerical/unit tests and 27 browser scenarios across emulated phone and desktop. Three desktop duplicates of touch-only cases are intentionally skipped. New checks cover rate bounds, slow swells, genuine sputter gaps, widened births, seed/order independence, no catch-up bursts, full supply and conservation. Discovery, grease, multi-touch, material and challenge checks remain. Lint, formatting and production build are required before release.
-- Real hardware feel still needs the owner's evaluation. The real-time player verifies progressive sand discovery, two-finger discovery and grease, material release, conservation, challenge completion and retained-material performance.
+- Free Pour prepares nine seconds of its actual offscreen emitter. Every grain, count and timestamp is retained; only discovery is cleared before entry. There is material to touch immediately. Fresh seeds vary normal runs; `?debug&seed=48` repeats a prepared scene. Challenge still begins empty at source time zero with seed 48 and all 960 grains.
+- A 14-unit finger moves actual sand into banks and carries some along its path (carry 0.6, brush speed 9). Independent residual spacing makes sparse/dense events agree. Holding still cannot pump sand. Lifts/cancels flush only that contact; late residual edits clear Finish eligibility.
+- Stone and sand adhesion, the 2.5-second release cooldown, 16-unit/s fall bound, 34-unit aperture and variable nominal 24-grain/s shower remain. Near-horizontal grease loses effective grip so broad marks do not become dams.
+- Finger reveal uses radius 10 and gain 0.8/pass; passive contact reveal is slower at 0.08/s. Discovery persists after grease fades. At 82% opacity-weighted face coverage, Free Pour acknowledges the stone and offers a fresh one. The creation remains playable, with no modal, countdown, streak or automatic reset.
+- Wakes on recently brushed real grains and brief bowl responses make effects visible. Optional filtered brushing texture and bowl tones respond to actual contacts/arrivals. Sound starts muted; hiding and muting silence it. Reduced motion omits the decorative wakes/waves.
+- The warm desert palette, Fringe font, mechanical controls, initially hidden face, independently tracked fingers, permanent ground piles, bests/sharing and direct entry remain.
+
+## Verification and interpretation
+
+All 63 numerical/unit tests and 33 browser scenarios pass; three desktop duplicates of touch-only cases are skipped. The review also includes controlled deposits, three matched active/idle policies, preparation and discovery trials, rejected tuning variants, several real-time native emulated-touch sessions, an actual audio-signal check, layout captures and the isolated 6,000-grain load scene.
+
+The selected sweep moves about twice as much material in the controlled deposit. A scripted player's additional collection over idle rises from about 159 to 240 grains per minute across three seeds. These are improvements in control and pacing, not measurements of human enjoyment, addictiveness or retention. The next evaluation is whether the new response and gentle completion make a human want another swipe.
 
 ## Repository and deployment
 
-Public repo: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `fringe-controls`, then integrated into `main`. Preview: <https://fringe-controls.dust-offering.sirsean.me>.
+Repository: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `gameplay-feel` and integrated into `main`. Preview: <https://gameplay-feel.dust-offering.sirsean.me>. The earlier interface build remains at <https://fringe-controls.dust-offering.sirsean.me> for human comparison.
 
-Revision 0.8.0 source is commit `1527287`; its material and flow evidence remains the current physical baseline. Revision 0.7.0 (`421043a`) evidence is archived under `docs/archive/stone-v5/` and `artifacts/archive/stone-v5/`. The 0.5.0 palette baseline remains in `artifacts/desert-dusk/`. Earlier revisions remain under the other archive directories.
+Revision 0.9.0 is `1f3ed66`; its material baseline is archived under `docs/archive/stone-v6/` and `artifacts/archive/stone-v6/`. The 0.9.0 interface captures remain in `artifacts/fringe-controls/`, and older evidence stays in its existing archives.
 
-Use direct Wrangler deployment. Automated GitHub deployments remain deferred; no deployment secret should be configured until requested. CI runs code/browser checks. `npm run deploy` publishes production, and `npm run deploy:branch -- fringe-controls` publishes the isolated preview. See [deployment.md](deployment.md) for environment-specific writable paths.
+Use direct Wrangler deployment; automated GitHub deployment remains deferred. Run `npm run deploy` for production or `npm run deploy:branch -- gameplay-feel` for the preview. No deployment secret should be configured until requested. See [deployment.md](deployment.md).

@@ -1,0 +1,487 @@
+{
+  "root": ".",
+  "options": {
+    "stoneAdhesionRate": 0.045
+  },
+  "configuration": {
+    "width": 160,
+    "height": 200,
+    "seed": 48,
+    "sourceX": 80,
+    "sourceY": -4,
+    "sourceSwayAmplitude": 44,
+    "sourceSwaySeconds": 60,
+    "collectionY": 181,
+    "leftMouth": [18, 67],
+    "rightMouth": [93, 142],
+    "grainRadius": 0.65,
+    "brushWidth": 14,
+    "stepsPerSecond": 60,
+    "collisionSubsteps": 2,
+    "contactPasses": 3,
+    "gravity": 12,
+    "maxSpeed": 16,
+    "sourceRate": 24,
+    "sourceWidth": 34,
+    "sourceFlowVariation": 0.6,
+    "sourceFlowSeconds": 4.5,
+    "sourceRippleSeconds": 0.75,
+    "sourceSputterInterval": 12,
+    "sourceSputterSeconds": 1.4,
+    "launchSpeed": 0.65,
+    "sourceSpeed": 3,
+    "sourceLanes": 24,
+    "grainFriction": 0.3,
+    "contactVelocityBlend": 0.35,
+    "stoneAdhesionRate": 0.045,
+    "sandAdhesionRate": 1.6,
+    "adhesionSpeed": 7,
+    "inletClearY": 45,
+    "inletBlendY": 72,
+    "inletBondSeconds": 2.5,
+    "brushReleaseSeconds": 2.5,
+    "brushSpeed": 9,
+    "brushCarry": 0.6,
+    "traceCellSize": 1,
+    "tracePassGain": 1,
+    "traceMaxStrength": 6,
+    "traceHalfLife": 6,
+    "traceMinStrength": 0.002,
+    "traceAdhesionGain": 8,
+    "traceSlideCaptureReduction": 0.9,
+    "traceGuideGain": 0.85,
+    "traceCrossDrag": 9,
+    "traceFlatGrip": 0.35,
+    "traceGuideMinSlope": 0.35,
+    "traceAlongDrag": 0.35,
+    "revealCellSize": 1,
+    "revealBrushRadius": 10,
+    "revealBrushGain": 0.8,
+    "revealGrainRadius": 2,
+    "revealGrainRate": 0.08,
+    "revealIntervalSteps": 6,
+    "sleepSpeed": 0.45,
+    "sleepMovement": 0.02,
+    "sleepSteps": 30,
+    "freePourCap": 6000,
+    "challengeId": "stone-offering-v7",
+    "startingSupply": 960,
+    "leftTarget": 360,
+    "rightTarget": 600,
+    "finishDelaySeconds": 18
+  },
+  "note": "A material-seeking scripted policy; not a human skill, fun or retention study.",
+  "results": [
+    {
+      "idle": {
+        "seed": 48,
+        "active": false,
+        "gestures": [],
+        "emitted": 1270,
+        "left": 120,
+        "right": 172,
+        "collected": 292,
+        "attached": 608,
+        "retained": 978,
+        "accounted": 1270
+      },
+      "active": {
+        "seed": 48,
+        "active": true,
+        "gestures": [
+          {
+            "time": 10,
+            "from": {
+              "x": 105.99065980326934,
+              "y": 104.83842718689118,
+              "count": 1
+            },
+            "target": 117.5,
+            "released": 1,
+            "moved": 13
+          },
+          {
+            "time": 14.8,
+            "from": {
+              "x": 77.45814710678955,
+              "y": 134.54778467490834,
+              "count": 3
+            },
+            "target": 42.5,
+            "released": 5,
+            "moved": 5
+          },
+          {
+            "time": 19.6,
+            "from": {
+              "x": 85.69121711533914,
+              "y": 153.5770960214474,
+              "count": 4
+            },
+            "target": 42.5,
+            "released": 9,
+            "moved": 9
+          },
+          {
+            "time": 24.4,
+            "from": {
+              "x": 115.59419297810012,
+              "y": 93.77111021670135,
+              "count": 15
+            },
+            "target": 42.5,
+            "released": 48,
+            "moved": 53
+          },
+          {
+            "time": 29.2,
+            "from": {
+              "x": 125.17573176083351,
+              "y": 124.15262204777778,
+              "count": 16
+            },
+            "target": 42.5,
+            "released": 46,
+            "moved": 67
+          },
+          {
+            "time": 34,
+            "from": {
+              "x": 122.95446743854063,
+              "y": 105.25238817060239,
+              "count": 26
+            },
+            "target": 42.5,
+            "released": 50,
+            "moved": 59
+          },
+          {
+            "time": 38.8,
+            "from": {
+              "x": 96.03520318232893,
+              "y": 114.95680574650623,
+              "count": 16
+            },
+            "target": 42.5,
+            "released": 22,
+            "moved": 64
+          },
+          {
+            "time": 43.6,
+            "from": {
+              "x": 75.26117696608101,
+              "y": 87.38916683424566,
+              "count": 19
+            },
+            "target": 117.5,
+            "released": 49,
+            "moved": 46
+          },
+          {
+            "time": 48.4,
+            "from": {
+              "x": 67.45906785113694,
+              "y": 144.32620927699512,
+              "count": 23
+            },
+            "target": 117.5,
+            "released": 45,
+            "moved": 72
+          },
+          {
+            "time": 53.2,
+            "from": {
+              "x": 116.01408917940068,
+              "y": 87.56527244400492,
+              "count": 12
+            },
+            "target": 117.5,
+            "released": 44,
+            "moved": 46
+          }
+        ],
+        "emitted": 1270,
+        "left": 280,
+        "right": 276,
+        "collected": 556,
+        "attached": 330,
+        "retained": 714,
+        "accounted": 1270
+      }
+    },
+    {
+      "idle": {
+        "seed": 2026,
+        "active": false,
+        "gestures": [],
+        "emitted": 1257,
+        "left": 142,
+        "right": 178,
+        "collected": 320,
+        "attached": 570,
+        "retained": 937,
+        "accounted": 1257
+      },
+      "active": {
+        "seed": 2026,
+        "active": true,
+        "gestures": [
+          {
+            "time": 10,
+            "from": {
+              "x": 92.03289443268848,
+              "y": 128.5187342619104,
+              "count": 3
+            },
+            "target": 117.5,
+            "released": 3,
+            "moved": 11
+          },
+          {
+            "time": 14.8,
+            "from": {
+              "x": 92.72725839913794,
+              "y": 114.00174071074657,
+              "count": 5
+            },
+            "target": 42.5,
+            "released": 11,
+            "moved": 19
+          },
+          {
+            "time": 19.6,
+            "from": {
+              "x": 111.76586992446664,
+              "y": 135.98766662059887,
+              "count": 7
+            },
+            "target": 42.5,
+            "released": 22,
+            "moved": 27
+          },
+          {
+            "time": 24.4,
+            "from": {
+              "x": 116.5846341708576,
+              "y": 105.8069706461248,
+              "count": 7
+            },
+            "target": 42.5,
+            "released": 17,
+            "moved": 27
+          },
+          {
+            "time": 29.2,
+            "from": {
+              "x": 124.582105346789,
+              "y": 107.22735778150127,
+              "count": 13
+            },
+            "target": 42.5,
+            "released": 27,
+            "moved": 57
+          },
+          {
+            "time": 34,
+            "from": {
+              "x": 134.18268301715668,
+              "y": 132.43110367469208,
+              "count": 10
+            },
+            "target": 42.5,
+            "released": 22,
+            "moved": 37
+          },
+          {
+            "time": 38.8,
+            "from": {
+              "x": 82.20570118425324,
+              "y": 137.77507893761774,
+              "count": 7
+            },
+            "target": 42.5,
+            "released": 19,
+            "moved": 36
+          },
+          {
+            "time": 43.6,
+            "from": {
+              "x": 66.56295603837326,
+              "y": 147.73045014576118,
+              "count": 8
+            },
+            "target": 42.5,
+            "released": 19,
+            "moved": 34
+          },
+          {
+            "time": 48.4,
+            "from": {
+              "x": 54.05880829013899,
+              "y": 105.82586789567794,
+              "count": 14
+            },
+            "target": 117.5,
+            "released": 33,
+            "moved": 38
+          },
+          {
+            "time": 53.2,
+            "from": {
+              "x": 95.5355278164813,
+              "y": 123.87859874155664,
+              "count": 9
+            },
+            "target": 117.5,
+            "released": 16,
+            "moved": 20
+          }
+        ],
+        "emitted": 1257,
+        "left": 280,
+        "right": 238,
+        "collected": 518,
+        "attached": 380,
+        "retained": 739,
+        "accounted": 1257
+      }
+    },
+    {
+      "idle": {
+        "seed": 914,
+        "active": false,
+        "gestures": [],
+        "emitted": 1209,
+        "left": 134,
+        "right": 181,
+        "collected": 315,
+        "attached": 520,
+        "retained": 894,
+        "accounted": 1209
+      },
+      "active": {
+        "seed": 914,
+        "active": true,
+        "gestures": [
+          {
+            "time": 10,
+            "from": {
+              "x": 101.8182836179859,
+              "y": 117.47878779937007,
+              "count": 2
+            },
+            "target": 117.5,
+            "released": 2,
+            "moved": 7
+          },
+          {
+            "time": 14.8,
+            "from": {
+              "x": 66.25029841905022,
+              "y": 146.1393858894011,
+              "count": 4
+            },
+            "target": 42.5,
+            "released": 4,
+            "moved": 4
+          },
+          {
+            "time": 19.6,
+            "from": {
+              "x": 104.01255816604962,
+              "y": 94.3307110248298,
+              "count": 10
+            },
+            "target": 42.5,
+            "released": 18,
+            "moved": 21
+          },
+          {
+            "time": 24.4,
+            "from": {
+              "x": 117.57638224943416,
+              "y": 156.73961028984013,
+              "count": 11
+            },
+            "target": 42.5,
+            "released": 23,
+            "moved": 28
+          },
+          {
+            "time": 29.2,
+            "from": {
+              "x": 117.49374030057437,
+              "y": 95.239831503629,
+              "count": 16
+            },
+            "target": 42.5,
+            "released": 53,
+            "moved": 69
+          },
+          {
+            "time": 34,
+            "from": {
+              "x": 112.11216868816845,
+              "y": 145.3723932353792,
+              "count": 16
+            },
+            "target": 42.5,
+            "released": 20,
+            "moved": 37
+          },
+          {
+            "time": 38.8,
+            "from": {
+              "x": 105.0320294328723,
+              "y": 124.32111758411186,
+              "count": 12
+            },
+            "target": 42.5,
+            "released": 16,
+            "moved": 32
+          },
+          {
+            "time": 43.6,
+            "from": {
+              "x": 125.35820744328649,
+              "y": 116.40597833805258,
+              "count": 13
+            },
+            "target": 42.5,
+            "released": 32,
+            "moved": 52
+          },
+          {
+            "time": 48.4,
+            "from": {
+              "x": 144.49759725397652,
+              "y": 155.09559264841266,
+              "count": 9
+            },
+            "target": 117.5,
+            "released": 18,
+            "moved": 18
+          },
+          {
+            "time": 53.2,
+            "from": {
+              "x": 93.40880161046064,
+              "y": 95.89397316745857,
+              "count": 10
+            },
+            "target": 117.5,
+            "released": 31,
+            "moved": 29
+          }
+        ],
+        "emitted": 1209,
+        "left": 259,
+        "right": 246,
+        "collected": 505,
+        "attached": 332,
+        "retained": 704,
+        "accounted": 1209
+      }
+    }
+  ]
+}

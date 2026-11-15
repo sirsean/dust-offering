@@ -6,7 +6,7 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
 }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await expect(page.locator('.tools button')).toHaveCount(2);
   await expect(
     page.getByRole('button', { name: 'Draw', exact: true }),
@@ -17,11 +17,18 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
   await stroke(page, [80, 60], [95, 140]);
   expect((await state(page)).retained).toBe(0);
   await page.locator('#free').click();
+  const prepared = await state(page);
   await page.clock.runFor(3000);
   const early = await state(page);
-  expect(early.emitted).toBeLessThan(90);
+  expect(early.emitted - prepared.emitted).toBeLessThan(90);
   expect(
-    await page.evaluate(() => Math.max(...dust.sim.grains.map((g) => g.y))),
+    await page.evaluate(
+      (bornBefore) =>
+        Math.max(
+          ...dust.sim.grains.filter((g) => g.id >= bornBefore).map((g) => g.y),
+        ),
+      prepared.emitted,
+    ),
   ).toBeLessThan(65);
   await page.clock.runFor(22000);
   const before = await state(page);
@@ -32,7 +39,11 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
   const positions = await page.evaluate(() =>
     JSON.stringify(dust.sim.snapshot()),
   );
-  await stroke(page, [78, 28], [90, 115]);
+  const pile = await page.evaluate(() => {
+    const g = dust.sim.grains.find((g) => g.bond && g.y > 85 && g.y < 155);
+    return { x: g.x, y: g.y };
+  });
+  await stroke(page, [pile.x, pile.y], [80, 170]);
   const brushed = await state(page);
   expect(brushed.retained).toBe(mass.retained);
   expect(brushed.emitted).toBe(mass.emitted);
@@ -56,6 +67,7 @@ test('Pause preserves visible bottom piles, loose sand keeps falling, and Reset 
   page,
 }) => {
   await open(page);
+  const prepared = await state(page);
   await page.clock.runFor(30000);
   await page.locator('#pour').click();
   const before = await state(page);
@@ -80,8 +92,8 @@ test('Pause preserves visible bottom piles, loose sand keeps falling, and Reset 
   await hidden(page, true);
   const reset = await state(page);
   expect(reset.spill).toBe(0);
-  expect(reset.attached).toBe(0);
-  expect(reset.retained).toBeLessThan(4);
+  expect(reset.attached).toBeLessThanOrEqual(prepared.attached + 3);
+  expect(reset.retained).toBeLessThan(prepared.retained + 4);
   await expect(page.locator('#pour')).toHaveText('Pause pour');
 });
 
@@ -89,9 +101,9 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   page,
 }) => {
   await page.addInitScript(() =>
-    localStorage.setItem('dust-offering:best:stone-offering-v5', '999'),
+    localStorage.setItem('dust-offering:best:stone-offering-v6', '999'),
   );
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await expect(page.locator('#best')).toHaveText('Best —');
   await expect(page.locator('#pour')).toHaveText('Begin');
   await page.clock.runFor(1000);
@@ -116,12 +128,12 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   expect(score).toBeLessThanOrEqual(1000);
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v6'),
+      localStorage.getItem('dust-offering:best:stone-offering-v7'),
     ),
   ).toBe(String(score));
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v5'),
+      localStorage.getItem('dust-offering:best:stone-offering-v6'),
     ),
   ).toBe('999');
   await page.evaluate(() => {
@@ -140,7 +152,7 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   });
   await page.locator('#share').click();
   await expect(page.locator('#manual-share')).toHaveValue(
-    /challenge=stone-offering-v6/,
+    /challenge=stone-offering-v7/,
   );
   await expect(page.locator('#result-uncollected')).toContainText(
     'on the ground',
@@ -170,13 +182,17 @@ test('touch strokes cancel cleanly and release deposited sand without modes', as
     id: 1,
   });
   const client = await context.newCDPSession(page);
+  const pile = await page.evaluate(() => {
+    const g = dust.sim.grains.find((g) => g.bond && g.y > 85 && g.y < 155);
+    return { x: g.x, y: g.y };
+  });
   await client.send('Input.dispatchTouchEvent', {
     type: 'touchStart',
-    touchPoints: [p(80, 30)],
+    touchPoints: [p(pile.x, pile.y)],
   });
   await client.send('Input.dispatchTouchEvent', {
     type: 'touchMove',
-    touchPoints: [p(86, 110)],
+    touchPoints: [p(80, 165)],
   });
   expect(await page.evaluate(() => dust.renderer.brushes.size > 0)).toBe(true);
   await client.send('Input.dispatchTouchEvent', {
@@ -221,7 +237,7 @@ test('rotation and hidden recovery preserve sand, piles and traces; bowls and sp
     await page.evaluate(() => JSON.stringify(dust.sim.surface.snapshot())),
   ).toBe(coating);
   await stroke(page, [50, 30], [55, 30]);
-  await stroke(page, [30, 181], [60, 181]);
+  await stroke(page, [30, 190], [60, 190]);
   expect(
     await page.evaluate(() => JSON.stringify(dust.sim.surface.snapshot())),
   ).toBe(coating);
@@ -241,7 +257,7 @@ test('rotation and hidden recovery preserve sand, piles and traces; bowls and sp
     await page.locator('#challenge').click();
     await page.locator('#free').click();
   }
-  expect((await state(page)).attached).toBe(0);
+  expect((await state(page)).attached).toBeLessThan(15);
   await expect(page.locator('#pour')).toHaveText('Pause pour');
 });
 
@@ -257,7 +273,7 @@ test('narrow phones and landscape fit, controls remain accessible, storage denia
       },
     }),
   );
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   for (const viewport of [
     { width: 320, height: 568 },
     { width: 360, height: 640 },

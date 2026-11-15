@@ -1,0 +1,255 @@
+{
+  "date": "2026-11-15T04:33:37.682Z",
+  "label": "moderate",
+  "base": "http://127.0.0.1:5173",
+  "options": {
+    "brushCarry": 0.6
+  },
+  "browser": "156.0.8078.79",
+  "input": "Native emulated touch, real browser time; not a human enjoyment study.",
+  "gestures": [
+    {
+      "name": "opening diagonal swipe",
+      "wallMilliseconds": 1431.4404809999996,
+      "movedGrains": 190,
+      "before": {
+        "time": 10.483333333333333,
+        "emitted": 197,
+        "left": 0,
+        "right": 0,
+        "retained": 197,
+        "attached": 13,
+        "missed": 0,
+        "revealEquivalent": 58.678530043810866,
+        "feedback": {
+          "serial": 0,
+          "moved": 0,
+          "released": 0,
+          "distance": 0,
+          "time": null
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 11.933333333333334,
+        "emitted": 227,
+        "left": 0,
+        "right": 0,
+        "retained": 227,
+        "attached": 10,
+        "missed": 0,
+        "revealEquivalent": 790.3491760305508,
+        "feedback": {
+          "serial": 26,
+          "moved": 3,
+          "released": 0,
+          "distance": 1.9970104033373395,
+          "time": 11.916666666666666
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "cross the incoming stream",
+      "wallMilliseconds": 1484.613832000001,
+      "movedGrains": 223,
+      "before": {
+        "time": 17.933333333333334,
+        "emitted": 375,
+        "left": 2,
+        "right": 60,
+        "retained": 313,
+        "attached": 31,
+        "missed": 50,
+        "revealEquivalent": 1031.4585235211134,
+        "feedback": {
+          "serial": 26,
+          "moved": 3,
+          "released": 0,
+          "distance": 1.9970104033373395,
+          "time": 11.916666666666666
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 19.45,
+        "emitted": 410,
+        "left": 2,
+        "right": 71,
+        "retained": 337,
+        "attached": 33,
+        "missed": 50,
+        "revealEquivalent": 1517.1153974444962,
+        "feedback": {
+          "serial": 40,
+          "moved": 3,
+          "released": 0,
+          "distance": 0.8681992112240171,
+          "time": 19.433333333333334
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "scoop down and left",
+      "wallMilliseconds": 1387.523790000003,
+      "movedGrains": 180,
+      "before": {
+        "time": 27.533333333333335,
+        "emitted": 542,
+        "left": 2,
+        "right": 165,
+        "retained": 375,
+        "attached": 123,
+        "missed": 51,
+        "revealEquivalent": 1936.4357383332976,
+        "feedback": {
+          "serial": 40,
+          "moved": 3,
+          "released": 0,
+          "distance": 0.8681992112240171,
+          "time": 19.433333333333334
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 28.95,
+        "emitted": 566,
+        "left": 2,
+        "right": 184,
+        "retained": 380,
+        "attached": 134,
+        "missed": 52,
+        "revealEquivalent": 2563.389584392138,
+        "feedback": {
+          "serial": 42,
+          "moved": 1,
+          "released": 0,
+          "distance": 2.8583508423015878,
+          "time": 27.616666666666667
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "slow curve",
+      "wallMilliseconds": 2191.899965999997,
+      "movedGrains": 264,
+      "before": {
+        "time": 35.45,
+        "emitted": 747,
+        "left": 3,
+        "right": 226,
+        "retained": 518,
+        "attached": 173,
+        "missed": 66,
+        "revealEquivalent": 3612.599371788591,
+        "feedback": {
+          "serial": 61,
+          "moved": 9,
+          "released": 0,
+          "distance": 0.780830966161532,
+          "time": 35.45
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 37.666666666666664,
+        "emitted": 802,
+        "left": 4,
+        "right": 249,
+        "retained": 549,
+        "attached": 188,
+        "missed": 74,
+        "revealEquivalent": 4515.0819426734,
+        "feedback": {
+          "serial": 85,
+          "moved": 9,
+          "released": 0,
+          "distance": 1.2039408948266614,
+          "time": 37.63333333333333
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "paused pour: reshape a deposit",
+      "wallMilliseconds": 1375.062199,
+      "movedGrains": 268,
+      "before": {
+        "time": 41.71666666666667,
+        "emitted": 885,
+        "left": 24,
+        "right": 263,
+        "retained": 598,
+        "attached": 238,
+        "missed": 79,
+        "revealEquivalent": 4761.5869910792735,
+        "feedback": {
+          "serial": 85,
+          "moved": 9,
+          "released": 0,
+          "distance": 1.2039408948266614,
+          "time": 37.63333333333333
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 43.11666666666667,
+        "emitted": 885,
+        "left": 27,
+        "right": 265,
+        "retained": 593,
+        "attached": 252,
+        "missed": 83,
+        "revealEquivalent": 5074.5088557771605,
+        "feedback": {
+          "serial": 106,
+          "moved": 1,
+          "released": 0,
+          "distance": 0.48852958806575386,
+          "time": 43.083333333333336
+        },
+        "progress": null
+      }
+    }
+  ],
+  "errors": [],
+  "initial": {
+    "time": 10.383333333333333,
+    "emitted": 195,
+    "left": 0,
+    "right": 0,
+    "retained": 195,
+    "attached": 13,
+    "missed": 0,
+    "revealEquivalent": 54.19432616287773,
+    "feedback": {
+      "serial": 0,
+      "moved": 0,
+      "released": 0,
+      "distance": 0,
+      "time": null
+    },
+    "progress": null
+  },
+  "final": {
+    "time": 47.11666666666667,
+    "emitted": 885,
+    "left": 59,
+    "right": 292,
+    "retained": 534,
+    "attached": 313,
+    "missed": 114,
+    "revealEquivalent": 5271.341492710457,
+    "feedback": {
+      "serial": 106,
+      "moved": 1,
+      "released": 0,
+      "distance": 0.48852958806575386,
+      "time": 43.083333333333336
+    },
+    "progress": null
+  },
+  "wallSeconds": 38.704788785000005
+}

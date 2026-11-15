@@ -1,0 +1,418 @@
+{
+  "root": "/workspace/dust-offering-baseline",
+  "options": {},
+  "note": "A material-seeking scripted policy; not a human skill, fun or retention study.",
+  "results": [
+    {
+      "idle": {
+        "seed": 48,
+        "active": false,
+        "gestures": [],
+        "emitted": 1270,
+        "left": 174,
+        "right": 244,
+        "collected": 418,
+        "attached": 457,
+        "retained": 852,
+        "accounted": 1270
+      },
+      "active": {
+        "seed": 48,
+        "active": true,
+        "gestures": [
+          {
+            "time": 10,
+            "from": {
+              "x": 98.74845563819568,
+              "y": 103.19469829753464,
+              "count": 2
+            },
+            "target": 117.5,
+            "released": 2,
+            "moved": 9
+          },
+          {
+            "time": 14.8,
+            "from": {
+              "x": 111.71285353159885,
+              "y": 143.71291296582677,
+              "count": 7
+            },
+            "target": 42.5,
+            "released": 7,
+            "moved": 17
+          },
+          {
+            "time": 19.6,
+            "from": {
+              "x": 114.50858461979742,
+              "y": 105.07497011178023,
+              "count": 7
+            },
+            "target": 42.5,
+            "released": 8,
+            "moved": 13
+          },
+          {
+            "time": 24.4,
+            "from": {
+              "x": 117.46164891709518,
+              "y": 96.67272120621897,
+              "count": 11
+            },
+            "target": 42.5,
+            "released": 20,
+            "moved": 18
+          },
+          {
+            "time": 29.2,
+            "from": {
+              "x": 125.33552245273292,
+              "y": 136.15326290904287,
+              "count": 12
+            },
+            "target": 42.5,
+            "released": 23,
+            "moved": 35
+          },
+          {
+            "time": 34,
+            "from": {
+              "x": 83.80596557335085,
+              "y": 134.86219443902377,
+              "count": 10
+            },
+            "target": 42.5,
+            "released": 12,
+            "moved": 13
+          },
+          {
+            "time": 38.8,
+            "from": {
+              "x": 92.16086937774824,
+              "y": 126.85426146524604,
+              "count": 8
+            },
+            "target": 42.5,
+            "released": 15,
+            "moved": 31
+          },
+          {
+            "time": 43.6,
+            "from": {
+              "x": 75.5431838855424,
+              "y": 104.49999424688956,
+              "count": 13
+            },
+            "target": 42.5,
+            "released": 30,
+            "moved": 60
+          },
+          {
+            "time": 48.4,
+            "from": {
+              "x": 63.47615214108834,
+              "y": 152.9452962116933,
+              "count": 16
+            },
+            "target": 117.5,
+            "released": 19,
+            "moved": 21
+          },
+          {
+            "time": 53.2,
+            "from": {
+              "x": 53.97757331029338,
+              "y": 157.29117211782378,
+              "count": 20
+            },
+            "target": 117.5,
+            "released": 32,
+            "moved": 28
+          }
+        ],
+        "emitted": 1270,
+        "left": 283,
+        "right": 230,
+        "collected": 513,
+        "attached": 363,
+        "retained": 757,
+        "accounted": 1270
+      }
+    },
+    {
+      "idle": {
+        "seed": 2026,
+        "active": false,
+        "gestures": [],
+        "emitted": 1257,
+        "left": 177,
+        "right": 246,
+        "collected": 423,
+        "attached": 436,
+        "retained": 834,
+        "accounted": 1257
+      },
+      "active": {
+        "seed": 2026,
+        "active": true,
+        "gestures": [
+          {
+            "time": 10,
+            "from": {
+              "x": 85.25285870307522,
+              "y": 91.61334596257284,
+              "count": 1
+            },
+            "target": 117.5,
+            "released": 1,
+            "moved": 15
+          },
+          {
+            "time": 14.8,
+            "from": {
+              "x": 91.71123605897549,
+              "y": 167.98306287626028,
+              "count": 2
+            },
+            "target": 42.5,
+            "released": 3,
+            "moved": 6
+          },
+          {
+            "time": 19.6,
+            "from": {
+              "x": 106.88246495191623,
+              "y": 145.01907933492257,
+              "count": 15
+            },
+            "target": 42.5,
+            "released": 22,
+            "moved": 20
+          },
+          {
+            "time": 24.4,
+            "from": {
+              "x": 113.35409745071408,
+              "y": 86.98053153617461,
+              "count": 9
+            },
+            "target": 42.5,
+            "released": 19,
+            "moved": 24
+          },
+          {
+            "time": 29.2,
+            "from": {
+              "x": 112.59094358750143,
+              "y": 144.3554628985544,
+              "count": 11
+            },
+            "target": 42.5,
+            "released": 15,
+            "moved": 21
+          },
+          {
+            "time": 34,
+            "from": {
+              "x": 123.066632582874,
+              "y": 107.17581698157416,
+              "count": 16
+            },
+            "target": 42.5,
+            "released": 37,
+            "moved": 36
+          },
+          {
+            "time": 38.8,
+            "from": {
+              "x": 97.94480813884987,
+              "y": 106.38764396584008,
+              "count": 17
+            },
+            "target": 42.5,
+            "released": 36,
+            "moved": 40
+          },
+          {
+            "time": 43.6,
+            "from": {
+              "x": 68.08511775839833,
+              "y": 154.35253541676664,
+              "count": 6
+            },
+            "target": 42.5,
+            "released": 13,
+            "moved": 31
+          },
+          {
+            "time": 48.4,
+            "from": {
+              "x": 116.31265557536726,
+              "y": 166.84378720534102,
+              "count": 7
+            },
+            "target": 117.5,
+            "released": 27,
+            "moved": 19
+          },
+          {
+            "time": 53.2,
+            "from": {
+              "x": 53.35949885914885,
+              "y": 147.03454457921927,
+              "count": 11
+            },
+            "target": 117.5,
+            "released": 16,
+            "moved": 17
+          }
+        ],
+        "emitted": 1257,
+        "left": 311,
+        "right": 302,
+        "collected": 613,
+        "attached": 258,
+        "retained": 644,
+        "accounted": 1257
+      }
+    },
+    {
+      "idle": {
+        "seed": 914,
+        "active": false,
+        "gestures": [],
+        "emitted": 1209,
+        "left": 168,
+        "right": 234,
+        "collected": 402,
+        "attached": 403,
+        "retained": 807,
+        "accounted": 1209
+      },
+      "active": {
+        "seed": 914,
+        "active": true,
+        "gestures": [
+          {
+            "time": 10,
+            "from": {
+              "x": 107.34511794198289,
+              "y": 96.47413102741592,
+              "count": 1
+            },
+            "target": 117.5,
+            "released": 1,
+            "moved": 6
+          },
+          {
+            "time": 14.8,
+            "from": {
+              "x": 101.53461971064526,
+              "y": 162.15676080451667,
+              "count": 4
+            },
+            "target": 42.5,
+            "released": 5,
+            "moved": 12
+          },
+          {
+            "time": 19.6,
+            "from": {
+              "x": 112.22709766524054,
+              "y": 93.71992512758146,
+              "count": 6
+            },
+            "target": 42.5,
+            "released": 14,
+            "moved": 15
+          },
+          {
+            "time": 24.4,
+            "from": {
+              "x": 124.03532196437683,
+              "y": 115.24970066474603,
+              "count": 8
+            },
+            "target": 42.5,
+            "released": 17,
+            "moved": 23
+          },
+          {
+            "time": 29.2,
+            "from": {
+              "x": 112.90185410586203,
+              "y": 112.35680437528396,
+              "count": 6
+            },
+            "target": 42.5,
+            "released": 9,
+            "moved": 12
+          },
+          {
+            "time": 34,
+            "from": {
+              "x": 125.7644056995395,
+              "y": 112.30889147661249,
+              "count": 9
+            },
+            "target": 42.5,
+            "released": 12,
+            "moved": 20
+          },
+          {
+            "time": 38.8,
+            "from": {
+              "x": 57.64331381086422,
+              "y": 161.95794402016733,
+              "count": 5
+            },
+            "target": 42.5,
+            "released": 5,
+            "moved": 10
+          },
+          {
+            "time": 43.6,
+            "from": {
+              "x": 58.033429614045986,
+              "y": 161.42403886372534,
+              "count": 5
+            },
+            "target": 42.5,
+            "released": 14,
+            "moved": 13
+          },
+          {
+            "time": 48.4,
+            "from": {
+              "x": 105.75855475953647,
+              "y": 106.98341636796867,
+              "count": 9
+            },
+            "target": 42.5,
+            "released": 19,
+            "moved": 27
+          },
+          {
+            "time": 53.2,
+            "from": {
+              "x": 113.35439571677273,
+              "y": 87.8477306349324,
+              "count": 8
+            },
+            "target": 117.5,
+            "released": 26,
+            "moved": 22
+          }
+        ],
+        "emitted": 1209,
+        "left": 285,
+        "right": 308,
+        "collected": 593,
+        "attached": 228,
+        "retained": 616,
+        "accounted": 1209
+      }
+    }
+  ]
+}

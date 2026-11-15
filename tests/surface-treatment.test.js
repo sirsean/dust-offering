@@ -62,7 +62,7 @@ test('a continuous pass coats its full path similarly with sparse or dense point
 test('treatment reaches all visible stone edges, without coating the surrounding space or bowls', () => {
   const field = new SurfaceTreatment(prototype);
   for (const p of [
-    { x: 40, y: 181 },
+    { x: 40, y: 190 },
     { x: 10, y: 60 },
   ])
     field.paint(p, p);

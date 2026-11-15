@@ -1,0 +1,345 @@
+{
+  "date": "2026-11-15T04:41:41.189Z",
+  "label": "selected",
+  "base": "http://127.0.0.1:5173",
+  "options": {
+    "brushCarry": 0.6
+  },
+  "browser": "156.0.8078.79",
+  "input": "Native emulated touch, real browser time; not a human enjoyment study.",
+  "gestures": [
+    {
+      "name": "opening diagonal swipe",
+      "wallMilliseconds": 1736.0428190000002,
+      "movedDuringGesture": 189,
+      "directEffect": {
+        "moved": 38,
+        "released": 10,
+        "firstHitMilliseconds": 31.799999997019768
+      },
+      "before": {
+        "time": 10.533333333333333,
+        "emitted": 198,
+        "left": 0,
+        "right": 0,
+        "retained": 198,
+        "attached": 13,
+        "missed": 0,
+        "revealEquivalent": 63.18635145465595,
+        "feedback": {
+          "serial": 0,
+          "moved": 0,
+          "released": 0,
+          "distance": 0,
+          "time": null
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 12.316666666666666,
+        "emitted": 235,
+        "left": 1,
+        "right": 1,
+        "retained": 233,
+        "attached": 13,
+        "missed": 5,
+        "revealEquivalent": 809.2374187528048,
+        "feedback": {
+          "serial": 26,
+          "moved": 3,
+          "released": 0,
+          "distance": 1.9970104033373395,
+          "time": 12.3
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "cross the incoming stream",
+      "wallMilliseconds": 1656.3135509999993,
+      "movedDuringGesture": 222,
+      "directEffect": {
+        "moved": 7,
+        "released": 1,
+        "firstHitMilliseconds": 458.80000000074506
+      },
+      "before": {
+        "time": 18.333333333333332,
+        "emitted": 384,
+        "left": 2,
+        "right": 68,
+        "retained": 314,
+        "attached": 32,
+        "missed": 52,
+        "revealEquivalent": 1042.3479262844758,
+        "feedback": {
+          "serial": 26,
+          "moved": 3,
+          "released": 0,
+          "distance": 1.9970104033373395,
+          "time": 12.3
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 20.016666666666666,
+        "emitted": 416,
+        "left": 2,
+        "right": 78,
+        "retained": 336,
+        "attached": 36,
+        "missed": 52,
+        "revealEquivalent": 1538.5651284663777,
+        "feedback": {
+          "serial": 36,
+          "moved": 4,
+          "released": 0,
+          "distance": 0.8681992112240171,
+          "time": 19.983333333333334
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "scoop down and left",
+      "wallMilliseconds": 1389.564774999999,
+      "movedDuringGesture": 186,
+      "directEffect": {
+        "moved": 4,
+        "released": 4,
+        "firstHitMilliseconds": 21
+      },
+      "before": {
+        "time": 28.133333333333333,
+        "emitted": 550,
+        "left": 2,
+        "right": 178,
+        "retained": 370,
+        "attached": 120,
+        "missed": 56,
+        "revealEquivalent": 1961.2294718065386,
+        "feedback": {
+          "serial": 36,
+          "moved": 4,
+          "released": 0,
+          "distance": 0.8681992112240171,
+          "time": 19.983333333333334
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 29.533333333333335,
+        "emitted": 579,
+        "left": 2,
+        "right": 190,
+        "retained": 387,
+        "attached": 129,
+        "missed": 58,
+        "revealEquivalent": 2586.9655738168017,
+        "feedback": {
+          "serial": 38,
+          "moved": 1,
+          "released": 0,
+          "distance": 2.8583508423015878,
+          "time": 28.2
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "slow curve",
+      "wallMilliseconds": 2302.0955319999994,
+      "movedDuringGesture": 271,
+      "directEffect": {
+        "moved": 54,
+        "released": 14,
+        "firstHitMilliseconds": 29.599999997764826
+      },
+      "before": {
+        "time": 36.05,
+        "emitted": 762,
+        "left": 2,
+        "right": 243,
+        "retained": 517,
+        "attached": 161,
+        "missed": 77,
+        "revealEquivalent": 3650.716951033846,
+        "feedback": {
+          "serial": 56,
+          "moved": 5,
+          "released": 1,
+          "distance": 0.780830966161532,
+          "time": 36.05
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 38.36666666666667,
+        "emitted": 822,
+        "left": 2,
+        "right": 267,
+        "retained": 553,
+        "attached": 167,
+        "missed": 85,
+        "revealEquivalent": 4545.731312343836,
+        "feedback": {
+          "serial": 81,
+          "moved": 6,
+          "released": 0,
+          "distance": 1.2039408948266614,
+          "time": 38.35
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "paused pour: reshape a deposit",
+      "wallMilliseconds": 1495.9272820000042,
+      "movedDuringGesture": 302,
+      "directEffect": {
+        "moved": 23,
+        "released": 11,
+        "firstHitMilliseconds": 26.299999997019768
+      },
+      "before": {
+        "time": 42.416666666666664,
+        "emitted": 900,
+        "left": 19,
+        "right": 274,
+        "retained": 607,
+        "attached": 205,
+        "missed": 89,
+        "revealEquivalent": 4794.000283168516,
+        "feedback": {
+          "serial": 81,
+          "moved": 6,
+          "released": 0,
+          "distance": 1.2039408948266614,
+          "time": 38.35
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 43.95,
+        "emitted": 900,
+        "left": 22,
+        "right": 278,
+        "retained": 600,
+        "attached": 224,
+        "missed": 105,
+        "revealEquivalent": 5121.958205853168,
+        "feedback": {
+          "serial": 102,
+          "moved": 5,
+          "released": 0,
+          "distance": 0.48852958806575386,
+          "time": 43.9
+        },
+        "progress": null
+      }
+    }
+  ],
+  "errors": [],
+  "configuration": {
+    "width": 160,
+    "height": 200,
+    "seed": 48,
+    "sourceX": 80,
+    "sourceY": -4,
+    "sourceSwayAmplitude": 44,
+    "sourceSwaySeconds": 60,
+    "collectionY": 181,
+    "leftMouth": [18, 67],
+    "rightMouth": [93, 142],
+    "grainRadius": 0.65,
+    "brushWidth": 14,
+    "stepsPerSecond": 60,
+    "collisionSubsteps": 2,
+    "contactPasses": 3,
+    "gravity": 12,
+    "maxSpeed": 16,
+    "sourceRate": 24,
+    "sourceWidth": 34,
+    "sourceFlowVariation": 0.6,
+    "sourceFlowSeconds": 4.5,
+    "sourceRippleSeconds": 0.75,
+    "sourceSputterInterval": 12,
+    "sourceSputterSeconds": 1.4,
+    "launchSpeed": 0.65,
+    "sourceSpeed": 3,
+    "sourceLanes": 24,
+    "grainFriction": 0.3,
+    "contactVelocityBlend": 0.35,
+    "stoneAdhesionRate": 0.025,
+    "sandAdhesionRate": 1.6,
+    "adhesionSpeed": 7,
+    "inletClearY": 45,
+    "inletBlendY": 72,
+    "inletBondSeconds": 2.5,
+    "brushReleaseSeconds": 2.5,
+    "brushSpeed": 9,
+    "brushCarry": 0.6,
+    "traceCellSize": 1,
+    "tracePassGain": 1,
+    "traceMaxStrength": 6,
+    "traceHalfLife": 6,
+    "traceMinStrength": 0.002,
+    "traceAdhesionGain": 8,
+    "traceSlideCaptureReduction": 0.9,
+    "traceGuideGain": 0.85,
+    "traceCrossDrag": 9,
+    "traceAlongDrag": 0.35,
+    "revealCellSize": 1,
+    "revealBrushRadius": 10,
+    "revealBrushGain": 0.8,
+    "revealGrainRadius": 2,
+    "revealGrainRate": 0.08,
+    "revealIntervalSteps": 6,
+    "sleepSpeed": 0.45,
+    "sleepMovement": 0.02,
+    "sleepSteps": 30,
+    "freePourCap": 6000,
+    "challengeId": "stone-offering-v7",
+    "startingSupply": 960,
+    "leftTarget": 360,
+    "rightTarget": 600,
+    "finishDelaySeconds": 18
+  },
+  "initial": {
+    "time": 10.433333333333334,
+    "emitted": 196,
+    "left": 0,
+    "right": 0,
+    "retained": 196,
+    "attached": 13,
+    "missed": 0,
+    "revealEquivalent": 58.678530043810866,
+    "feedback": {
+      "serial": 0,
+      "moved": 0,
+      "released": 0,
+      "distance": 0,
+      "time": null
+    },
+    "progress": null
+  },
+  "final": {
+    "time": 47.95,
+    "emitted": 900,
+    "left": 61,
+    "right": 306,
+    "retained": 533,
+    "attached": 279,
+    "missed": 136,
+    "revealEquivalent": 5325.328184316695,
+    "feedback": {
+      "serial": 102,
+      "moved": 5,
+      "released": 0,
+      "distance": 0.48852958806575386,
+      "time": 43.9
+    },
+    "progress": null
+  },
+  "wallSeconds": 39.630706989000004
+}

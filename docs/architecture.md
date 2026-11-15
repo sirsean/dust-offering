@@ -1,10 +1,11 @@
 # Architecture — sand on stone
 
-The active design is `stone-offering-v6`: a wide, variable offscreen pour with occasional sputters, an initially hidden stone discovered by fingers and sand, slow grains, fading downhill guides and full-triangle multi-touch. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
+The active design is revision 0.10.0 / `stone-offering-v7`: prepared and varied Free Pour, broad physical sweeps with moderate carry, quiet discovery completion and material feedback. It retains the wide variable offscreen pour, hidden stone, slow grains, fading downhill guides and independent multi-touch. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine. See [gameplay-review.md](gameplay-review.md) for trial choices and comparison evidence.
 
 | Location                           | Responsibility                                                                                                                         |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `src/config/prototype.js`          | Logical dimensions, slow motion/emission, adhesion, brush, limits and challenge defaults                                               |
+| `src/config/free-pour.js`          | Prepared-entry duration and the quiet discovery goal                                                                                   |
 | `src/config/challenge.js`          | Versioned supply/targets/seed, isolated from old scores                                                                                |
 | `src/config/adhesion-scene.js`     | Reproducible gathering, brush and control experiment                                                                                   |
 | `src/config/stress-scene.js`       | Retained 6,000-grain stone fixture                                                                                                     |
@@ -17,11 +18,19 @@ The active design is `stone-offering-v6`: a wide, variable offscreen pour with o
 
 Revision 0.5.0's desert appearance uses CSS custom properties in `src/styles.css` as the palette source for both DOM controls and Canvas artwork. `src/rendering/palette.js` reads those tokens during `Renderer.resize()`, when cached artwork is rebuilt. The stone, scenery and three sand-color sprites are cached; per-grain drawing only selects a sprite by grain ID. Visual randomness uses separate seeds and never consumes the simulation's random stream. See [visual-style.md](visual-style.md) for the Scablands references and visual review.
 
-Revision 0.9.0 uses the owner's unmodified `src/assets/fonts/FringeV2.otf` via a local CSS font face and HTML preload. Vite hashes the font asset; no external font host is involved. Headings, controls, results and copy fields use Fringe, and `readPalette()` also returns the canvas's inherited font family for counts and tray notices. Counts have a bounded drawing width, and the tray notice uses two lines to accommodate the broad glyphs. Continuous rendering picks up font availability without blocking simulation.
+The owner's unmodified `src/assets/fonts/FringeV2.otf` is a local CSS font face with an HTML preload. Vite hashes the font asset; no external font host is involved. Headings, controls, discovery status, results and copy fields use Fringe, and `readPalette()` returns the canvas's inherited font family for counts and tray notices. Counts have a bounded drawing width, and the tray notice uses two lines to accommodate broad glyphs. Continuous rendering picks up font availability without blocking simulation.
 
 Cached landscape and discovered-stone composites draw directly at backing-store resolution. Avoid rescaling them through the logical transform: fractional CSS heights can otherwise introduce a second interpolation and shift untouched landscape pixels. Browser capture helpers wait for local fonts before measuring layout or comparing pixels.
 
 Mechanical control faces use CSS bevels, recessed group housings and a small static procedural `src/assets/button-grit.svg` texture. Amber indicators and face color communicate selection; a pressed key lowers into its recess. Semantic buttons retain accessible names, pressed/disabled states and visible keyboard focus. The sound target is 44 pixels high; other keys are at least 48. Landscape reserves enough width for the supplied font instead of squeezing labels. There is no opening hint, saved hint state or pointer callback for dismissing one.
+
+## Prepared Free Pour and discovery completion
+
+`Game` accepts optional free-run configuration; Challenge always uses its fixed configuration. Normal Free Pour obtains a fresh 32-bit seed from `crypto.getRandomValues()`. Explicit `?debug&seed=48` supplies a stable seed for replay and fixtures. The seed also varies cached stone weathering, using a separate visual random stream; landscape and geometry remain consistent.
+
+Free Pour runs nine seconds of ordinary `Simulation.step()` before entry. Every retained or collected grain came through the actual offscreen emitter, and accounting, source phase and timestamps are preserved. Then it replaces only `SurfaceDiscovery` and invalidates stationary reveal-complete flags. The visible stone still begins undiscovered, while real sand is ready to brush. Source time is therefore about nine seconds on entry/reset, and continues normally from there. Challenge remains empty, prepared at source time zero, with all 960 grains.
+
+`Game.discovery` reads the persistent field's coverage and completion at 0.82. A small Free Pour meter/status lives in the existing HUD row; Challenge shows its supply/best there instead. Completion changes the status to “Stone found” and Reset to “New stone.” It never finishes Free Pour, shows a modal, resets the creation or modifies particles. Reset prepares a fresh seeded scene. The threshold leaves room around the soft rim rather than requiring pixel hunting.
 
 ## Sand and stone
 
@@ -35,7 +44,7 @@ The source spans 34 units with 24 distributed lanes. New adhesion is suppressed 
 
 ## Moving opening
 
-The opening is invisible and centred at y=-4, above the canvas. `Simulation.sourceStartStep` is null until the first active pour. Thereafter `sourceTime` derives from fixed-step elapsed time, so pausing or blocking emission does not stop the drift. Challenge preparation leaves the phase at zero; hidden pages and Finish freeze it because stepping stops. A fresh simulation restarts the phase.
+The opening is invisible and centred at y=-4, above the canvas. `Simulation.sourceStartStep` is null until its first active pour. Thereafter `sourceTime` derives from fixed-step elapsed time, so pausing or blocking emission does not stop drift. Challenge preparation leaves the phase at zero; Free Pour has already advanced through its preparation. Hidden pages and Finish freeze the clock because stepping stops. A fresh simulation restarts phase before any free-run preparation.
 
 `Simulation.sourceX` is `80 + 44 × sin(2π × sourceTime / 60)` with default tuning. The amplitude is bounded by the board width, opening width and grain radius. Emission samples seeded lanes around the current centre. Existing particles retain their velocity and receive no artificial sideways impulse from the moving opening. The challenge inherits these settings directly from the prototype instead of overriding the source height.
 
@@ -51,9 +60,11 @@ Reading the flow in debug tools or rendering cannot advance its sequence. It fol
 
 ## Persistent discovery
 
-`src/simulation/surface-discovery.js` owns a separate 160 × 200 logical visibility grid. It starts at zero, adds local exposure up to one, and never decays. It does not affect contacts, adhesion, random numbers or particle accounting. Fingers use a soft 6-unit radius and distance-normalized gain of 0.65 per pass, including initial taps. Each active pointer follows the same independent swept path used for grease and dislodging sand.
+`src/simulation/surface-discovery.js` owns a separate 160 × 200 logical visibility grid. It starts at zero, adds local exposure up to one, and never decays. It does not affect contacts, adhesion, random numbers or particle accounting. Fingers use a soft 10-unit radius and distance-normalized gain of 0.8 per pass, including initial taps. Each active pointer follows the same independent swept path used for grease and dislodging sand.
 
-Every six fixed steps (0.1 seconds), retained grains deposit time-normalized exposure along their swept paths. Only actual grain-radius contact with the triangle qualifies; the soft reveal halo extends two units around that contact. Rate is 0.24 per second at the kernel centre. Bound and sleeping grains continue uncovering the stone beneath them. Fully exposed stationary patches can be skipped until their grain moves; ground and offscreen grains reveal nothing. Per-grain sample position/step stays current even when the patch is complete.
+Every six fixed steps (0.1 seconds), retained grains deposit time-normalized exposure along their swept paths. Only actual grain-radius contact with the triangle qualifies; the soft reveal halo extends two units around that contact. Rate is 0.08 per second at the kernel centre. Bound and sleeping grains continue uncovering the stone beneath them. Fully exposed stationary patches can be skipped until their grain moves; ground and offscreen grains reveal nothing. Per-grain sample position/step stays current even when the patch is complete.
+
+Coverage is opacity-weighted over cells whose centres lie on the actual stone. A cached logical mask supplies the denominator; each successful stamp adds its actual Float32 level delta for those cells. Edge-overlapping texels outside the face can render softly but never increase completion. Reading coverage does not mutate the field. It remains bounded, persistent and independent of decaying grease.
 
 The renderer caches the landscape separately from transparent stone artwork, including its rim. It composes stone and fading grease, then masks both with the discovery bitmap. The composite refreshes when discovery grows, grease changes, or the 0.1-second fading interval elapses. Grains and bowls draw above/around it. No unrevealed outline or shadow is painted. Resizing rebuilds artwork without changing the logical grid. Reset and mode changes replace the field; Begin, hidden recovery and grease decay preserve it. The canvas's accessible description explains brushing without an opening overlay. Challenge v5 originally isolated these visibility conditions; the active v6 also includes variable delivery.
 
@@ -65,11 +76,19 @@ A soft radial kernel coats editable stone, with approximately one strength unit 
 
 Stroke orientation uses weighted `cos(2θ)` and `sin(2θ)` components. This treats opposite finger travel on the same slope identically, blends bends and opposing slopes, and allows perpendicular crossings to cancel guidance while retaining their coating strength. Bilinear sampling produces local strength, axis and directional coherence. Strength and both components decay together.
 
-For loose grains, the axis is oriented downhill. Gravity is partly projected along it, retaining a downward component across it. Drag across the axis is stronger than along it. Grip grows as `coherence × strength / (1 + strength)`; the speed cap still applies. Traces have no collision geometry and grains can drift off them. Horizontal strokes slow crossing but do not suspend grains indefinitely. Permanent stone capture is multiplied by `1 + 8 × strength × (1 − 0.9 × coherence)`, so coherent strokes favour sliding and taps retain stronger local capture. The sand-to-sand attachment rate and release cooldown are otherwise unchanged. Fading changes future grip/capture, without dissolving lower-face bonds.
+For loose grains, the axis is oriented downhill. Gravity is partly projected along it, retaining a downward component across it. Drag across the axis is stronger than along it. Base grip is `coherence × strength / (1 + strength)`, multiplied by `0.35 + 0.65 × min(1, abs(axis.y) / 0.35)`. Thus near-horizontal smears leak under gravity while meaningful slopes retain normal guidance. Cross/along drag remain 9 / 0.35; the speed cap still applies. Traces have no collision geometry and grains can drift off them. Permanent capture is multiplied by `1 + 8 × strength × (1 − 0.9 × coherence)`, so coherent strokes favour sliding and taps have stronger capture. Original sand attachment and the 2.5-second release cooldown remain. Fading changes future grip/capture, without dissolving lower-face bonds.
 
 The renderer draws a cached grid texture beneath the grains, refreshing after edits and at most every 0.1 simulation seconds while fading. Opacity is `0.52 × min(1, strength / 3)^0.75`. Revision 0.5.0 renders this as dark umber grease: stronger marks darken, and decay lightens them back toward the stone. The trace remains visible under reduced motion and after all contacts lift. Reset creates a fresh field; resize retains the existing one. Simulation time advances while the source is paused and before Challenge begins, but freezes when hidden or after Finish.
 
 Pointer Events use a map keyed by pointer ID. Each entry owns its previous point and capture. Ending, cancelling or losing capture removes only that contact. Reset, mode change and hiding cancel all contacts. Coalesced events are processed per finger. A swept footprint is checked against the triangle's three expanded half-planes, retaining segments that leave or cross the stone between sparse events. The field and grain brush clip their effects to stone; the bowls and invisible opening lie outside the mask.
+
+## Physical brush and material feedback
+
+The physical footprint is 14 units wide. `Simulation.brushStrokes` keeps independent residual sample spacing per pointer. `brushStamp()` dislodges actual grains, releases support descendants, pushes into banks and carries partly along travel (`brushCarry: 0.6`, brush speed 9). Samples are spaced at one sixth of the width across event boundaries; `endBrush()` flushes the remaining endpoint. A stationary continuation adds no samples. Sparse/coalesced event rates therefore cannot amplify the finger. `Game.endBrush()` clears Finish eligibility if a residual edit moves material; a late lift after Finish only discards state.
+
+Each affected grain records `brushedAt`, and `brushFeedback` records real movement/release events plus cumulative releases. Collection records its interpolated crossing and simulation time per bowl. The renderer can show a brief wake on recently brushed real grains, a small bowl-surface wave and a restrained rim response. No new particle mass is drawn. Reduced motion omits those embellishments.
+
+`MaterialAudio` creates Web Audio nodes only after explicit Sound opt-in. A separately seeded, filtered noise buffer gives short dry contacts whose intensity follows actual moved material. Two quiet bowl frequencies respond to actual count increases; moving streams can form a natural chord without a combo system. Scene changes do not replay old events. Mute/hide cuts texture gain and stops active voices. Sound remains muted by default. Automated signal measurements establish response and absence of clipping, not subjective sound quality.
 
 ## Ground and accounting
 

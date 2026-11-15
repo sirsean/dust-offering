@@ -227,6 +227,31 @@ canvas {
   color: var(--muted);
   font-variant-numeric: tabular-nums;
   padding: 0 4px;
+  align-items: center;
+  gap: 12px;
+}
+#discovery-status {
+  white-space: nowrap;
+}
+#discovery-progress {
+  appearance: none;
+  flex: 1;
+  min-width: 0;
+  height: 6px;
+  border: 1px solid #72563c;
+  border-radius: 1px;
+  background: #160e0a;
+}
+#discovery-progress::-webkit-meter-bar {
+  background: #160e0a;
+  border: 0;
+  border-radius: 0;
+}
+#discovery-progress::-webkit-meter-optimum-value {
+  background: linear-gradient(#d3aa77, #9e6e44);
+}
+#discovery-progress::-moz-meter-bar {
+  background: #b88e60;
 }
 #sound {
   font-size: clamp(9px, 2.5vw, 10px);

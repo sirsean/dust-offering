@@ -4,7 +4,7 @@ import { open, stroke } from './helpers.js';
 test('a visible trace remains after lifting, stacks with passes, fades, and clears on Reset', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   const sample = () =>
     page.evaluate(() => ({
       strength: dust.sim.surface.strengthAt(80.5, 100.5),
@@ -60,7 +60,7 @@ test('a visible trace remains after lifting, stacks with passes, fades, and clea
 test('brushing reaches the tip, bottom rim and side edges even when the finger ends beyond them', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await page.clock.runFor(100);
   const pixel = () =>
     page.evaluate(() =>
@@ -106,7 +106,7 @@ test('brushing reaches the tip, bottom rim and side edges even when the finger e
 test('an actual finger stroke guides falling material downhill while allowing it to drift', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   const seed = () =>
     page.evaluate(() => {
       dust.sim.config.stoneAdhesionRate = 0;
@@ -141,7 +141,7 @@ test('two fingers leave independent traces, one can lift while the other continu
   context,
 }, info) => {
   test.skip(info.project.name !== 'phone', 'Touch-enabled viewport only');
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   const rect = await page.locator('#field').boundingBox();
   const p = (x, y, id) => ({
     x: rect.x + (x / 160) * rect.width,
@@ -222,7 +222,7 @@ test('overlapping fingers add stickiness, and cancelling one does not cancel the
   context,
 }, info) => {
   test.skip(info.project.name !== 'phone', 'Touch-enabled viewport only');
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   const rect = await page.locator('#field').boundingBox();
   const p = (x, y, id) => ({
     x: rect.x + (x / 160) * rect.width,

@@ -1,10 +1,5 @@
 import { prototype } from '../config/prototype.js';
-import {
-  editableStone,
-  insideStone,
-  interpolate,
-  stoneRoughness,
-} from './geometry.js';
+import { editableStone, insideStone, stoneRoughness } from './geometry.js';
 import { seededRandom } from './random.js';
 import { SurfaceTreatment } from './surface-treatment.js';
 import { SurfaceDiscovery } from './surface-discovery.js';
@@ -31,6 +26,16 @@ export class Simulation {
     this.right = 0;
     this.spill = 0;
     this.lastBrushReleased = 0;
+    this.brushStrokes = new Map();
+    this.brushFeedback = {
+      serial: 0,
+      moved: 0,
+      released: 0,
+      distance: 0,
+      releasedTotal: 0,
+      time: -Infinity,
+    };
+    this.lastCollections = [null, null];
     this.cellSize = this.config.grainRadius * 2;
     this.columns = Math.ceil(this.config.width / this.cellSize) + 4;
     this.rows = Math.ceil(this.config.height / this.cellSize) + 4;
@@ -101,6 +106,7 @@ export class Simulation {
       missed: false,
       sleeping: false,
       quiet: 0,
+      brushedAt: -Infinity,
     };
     this.grains.push(grain);
     return grain;
@@ -352,11 +358,13 @@ export class Simulation {
       if (x >= c.leftMouth[0] && x <= c.leftMouth[1]) {
         if (grain.missed) this.spill--;
         this.left++;
+        this.lastCollections[0] = { time: this.time, x };
         return true;
       }
       if (x >= c.rightMouth[0] && x <= c.rightMouth[1]) {
         if (grain.missed) this.spill--;
         this.right++;
+        this.lastCollections[1] = { time: this.time, x };
         return true;
       }
       if (!grain.missed) {
@@ -428,7 +436,12 @@ export class Simulation {
   flow(grain, dt) {
     const c = this.config;
     const trace = this.surface.sampleAt(grain.x, grain.y, this.traceSample);
-    const grip = (trace.coherence * trace.strength) / (1 + trace.strength);
+    // Nearly horizontal smears leak under gravity. A wider finger must not
+    // turn a horizontal greasy patch into a long-lived invisible dam.
+    const slope = Math.min(1, Math.abs(trace.y) / c.traceGuideMinSlope);
+    const grip =
+      ((trace.coherence * trace.strength) / (1 + trace.strength)) *
+      (c.traceFlatGrip + (1 - c.traceFlatGrip) * slope);
     const guide = c.traceGuideGain * grip;
     // Gravity projected along the stroke, with residual downward acceleration
     // across it. Even a horizontal trace cannot carry sand uphill or suspend it.
@@ -518,43 +531,105 @@ export class Simulation {
       this.discovery.updateGrains(this.grains, this.steps);
   }
 
+  brushStamp(point, tx, ty, travel, stats) {
+    const radius = this.config.brushWidth / 2;
+    for (const grain of this.grains) {
+      if (grain.missed || !insideStone(grain.x, grain.y)) continue;
+      const dx = grain.x - point.x;
+      const dy = grain.y - point.y;
+      const distance = Math.hypot(dx, dy);
+      if (distance > radius + this.config.grainRadius) continue;
+      stats.released += this.release(grain);
+      const side = Math.sign(-dx * ty + dy * tx) || (grain.id % 2 ? 1 : -1);
+      const nx = -ty * side;
+      const ny = tx * side;
+      const push = Math.min(1.4, Math.max(0, radius - distance) * 0.65);
+      const carry =
+        Math.min(radius * 0.35, travel * this.config.brushCarry) *
+        Math.max(0, 1 - distance / (radius + this.config.grainRadius));
+      grain.x += nx * push + tx * carry;
+      grain.y += ny * push + ty * carry;
+      const along = 0.35 + 0.5 * this.config.brushCarry;
+      grain.vx =
+        nx * this.config.brushSpeed * (1 - along) +
+        tx * this.config.brushSpeed * along;
+      grain.vy =
+        ny * this.config.brushSpeed * (1 - along) +
+        ty * this.config.brushSpeed * along;
+      grain.brushedAt = this.time;
+      if (push > 0.01 || carry > 0.01) stats.moved.add(grain.id);
+      this.boundaries(grain);
+      this.capSpeed(grain);
+    }
+  }
+
+  recordBrush(stats, distance) {
+    this.lastBrushReleased = stats.released;
+    if (!stats.moved.size && !stats.released) return;
+    this.brushFeedback = {
+      serial: this.brushFeedback.serial + 1,
+      moved: stats.moved.size,
+      released: stats.released,
+      releasedTotal: this.brushFeedback.releasedTotal + stats.released,
+      distance,
+      time: this.time,
+    };
+    this.wakeStone();
+  }
+
   brush(a, b, stroke) {
     this.surface.paint(a, b, stroke);
     this.discovery.brush(a, b, stroke);
-    const radius = this.config.brushWidth / 2;
+    const id = stroke?.pointerId ?? 'direct';
+    const tracked = stroke?.pointerId !== undefined;
+    const spacing = this.config.brushWidth / 6;
     const length = Math.hypot(b.x - a.x, b.y - a.y);
     const tx = length > 1e-6 ? (b.x - a.x) / length : 0;
     const ty = length > 1e-6 ? (b.y - a.y) / length : 1;
-    let released = 0;
-    interpolate(a, b, radius / 2, (point) => {
-      for (const grain of this.grains) {
-        if (grain.missed || !insideStone(grain.x, grain.y)) continue;
-        const dx = grain.x - point.x;
-        const dy = grain.y - point.y;
-        const distance = Math.hypot(dx, dy);
-        if (distance > radius + this.config.grainRadius) continue;
-        released += this.release(grain);
-        // Push material toward the two banks of the finger's path, preserving
-        // its count. The released centre can then drain slowly under gravity.
-        const side = Math.sign(-dx * ty + dy * tx) || (grain.id % 2 ? 1 : -1);
-        const nx = -ty * side;
-        const ny = tx * side;
-        const push = Math.min(1.4, Math.max(0, radius - distance) * 0.65);
-        grain.x += nx * push;
-        grain.y += ny * push;
-        grain.vx =
-          nx * this.config.brushSpeed * 0.65 +
-          tx * this.config.brushSpeed * 0.35;
-        grain.vy =
-          ny * this.config.brushSpeed * 0.65 +
-          ty * this.config.brushSpeed * 0.35;
-        this.boundaries(grain);
-        this.capSpeed(grain);
+    const stats = { moved: new Set(), released: 0 };
+    let state = this.brushStrokes.get(id);
+    if (stroke?.start !== false || !state) {
+      state = { remaining: spacing, point: a, tx, ty };
+      this.brushStrokes.set(id, state);
+      this.brushStamp(a, tx, ty, 0, stats);
+    }
+    if (length > 1e-6) {
+      // Keep sample spacing across pointer events. A dense/coalesced event
+      // stream must not make the finger stronger than the same sparse path.
+      let distance = state.remaining;
+      while (distance <= length + 1e-9) {
+        const t = Math.min(1, distance / length);
+        this.brushStamp(
+          { x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t },
+          tx,
+          ty,
+          spacing,
+          stats,
+        );
+        distance += spacing;
       }
-    });
-    this.wakeStone();
-    this.lastBrushReleased = released;
+      state.remaining = distance - length;
+      state.point = b;
+      state.tx = tx;
+      state.ty = ty;
+    }
+    this.recordBrush(stats, length);
+    const released = stats.released;
+    if (!tracked) return released + this.endBrush(id);
     return released;
+  }
+
+  endBrush(id) {
+    const state = this.brushStrokes.get(id);
+    if (!state) return 0;
+    this.brushStrokes.delete(id);
+    const spacing = this.config.brushWidth / 6;
+    const remainder = spacing - state.remaining;
+    if (remainder <= 1e-6) return 0;
+    const stats = { moved: new Set(), released: 0 };
+    this.brushStamp(state.point, state.tx, state.ty, remainder, stats);
+    this.recordBrush(stats, remainder);
+    return stats.released;
   }
 
   snapshot() {

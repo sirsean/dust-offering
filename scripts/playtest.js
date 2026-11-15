@@ -55,6 +55,7 @@ async function state() {
     sourceX: dust.sim.sourceX,
     sourceTime: dust.sim.sourceTime,
     sourceRate: dust.sim.sourceRate,
+    brushFeedback: dust.sim.brushFeedback,
     aboveBoard: dust.sim.grains.filter((g) => g.y < 0).length,
     discovery: {
       touchedCells: dust.sim.discovery.active.size,
@@ -65,6 +66,7 @@ async function state() {
         (sum, index) => sum + dust.sim.discovery.levels[index],
         0,
       ),
+      coverage: dust.sim.discovery.coverage,
     },
   }));
 }
@@ -80,8 +82,9 @@ const report = stressOnly
       errors,
     };
 try {
-  await page.goto(`${base}/?debug`);
+  await page.goto(`${base}/?debug&seed=48`);
   await page.waitForFunction(() => window.dust);
+  await page.evaluate(() => document.fonts.ready);
   if (!stressOnly) {
     await page.evaluate(() => {
       window.pourSamples = [];
@@ -116,16 +119,19 @@ try {
         }),
       );
     }
-    assert.ok(report.sourceSweep[0].sourceX > 123);
-    assert.ok(Math.abs(report.sourceSweep[1].sourceX - 80) < 2);
-    assert.ok(report.sourceSweep[2].sourceX < 37);
+    for (const sample of report.sourceSweep) {
+      const expected =
+        80 + 44 * Math.sin((2 * Math.PI * sample.sourceTime) / 60);
+      assert.ok(Math.abs(sample.sourceX - expected) < 0.001);
+    }
     report.flow = await page.evaluate(() => {
       const samples = window.pourSamples;
       const bins = [];
+      const origin = Math.floor(samples[0].time);
       let gap = 0,
         longestGap = 0;
       for (const sample of samples) {
-        const second = Math.floor(sample.time);
+        const second = Math.floor(sample.time) - origin;
         bins[second] = (bins[second] ?? 0) + sample.born;
         gap = sample.born ? 0 : gap + 1;
         longestGap = Math.max(longestGap, gap);
@@ -133,7 +139,8 @@ try {
       const offsets = samples.flatMap((sample) => sample.offsets);
       return {
         seed: dust.sim.config.seed,
-        grainsPerSecond: bins.slice(0, -1),
+        sourceTimeStart: samples[0].time,
+        grainsPerSecond: bins.slice(1, -1),
         minimumRate: Math.min(...samples.map((sample) => sample.rate)),
         maximumRate: Math.max(...samples.map((sample) => sample.rate)),
         longestGapSeconds: longestGap / dust.sim.config.stepsPerSecond,
@@ -161,9 +168,16 @@ try {
     );
     await page.locator('#pour').click();
     report.pausedEmitted = (await state()).emitted;
-    await stroke([78, 28], [90, 115]);
+    const pile = await page.evaluate(() => {
+      const g = dust.sim.grains.find((g) => g.bond && g.y > 85 && g.y < 155);
+      return { x: g.x, y: g.y };
+    });
+    await stroke([pile.x, pile.y], [42.5, 170]);
     report.afterBrush = await state();
-    assert.ok(report.afterBrush.attached < report.beforeBrush.attached);
+    assert.ok(
+      report.afterBrush.brushFeedback.releasedTotal >
+        report.beforeBrush.brushFeedback.releasedTotal,
+    );
     assert.equal(report.afterBrush.emitted, report.pausedEmitted);
     await page.waitForTimeout(16000);
     report.rested = await state();
@@ -181,8 +195,7 @@ try {
         rested: report.rested,
       }),
     );
-    await page.locator('#reset').click();
-    await page.locator('#pour').click();
+    await page.locator('#challenge').click();
     const rect = await page.locator('#field').boundingBox();
     const point = (x, y, id) => ({
       x: rect.x + (x / 160) * rect.width,
@@ -252,6 +265,7 @@ try {
       for (let i = 0; i < 7; i++) {
         dust.sim.addGrain(65.5 + i * 1.5, 80, 0, 12);
         dust.sim.emitted++;
+        dust.sim.remaining--;
       }
     });
     const guidance = () =>

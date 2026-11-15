@@ -1,196 +1,253 @@
 {
-  "date": "2026-11-15T02:56:18.056Z",
-  "revision": "0.8.0 / stone-offering-v6",
+  "date": "2026-11-15T05:05:54.985Z",
+  "revision": "0.10.0 / stone-offering-v7",
   "browser": "156.0.8078.79",
   "node": "v24.22.1",
   "viewport": "390 × 844, Linux headless Chromium, emulated touch",
   "errors": [],
   "sourceSweep": [
     {
-      "emitted": 307,
-      "left": 1,
-      "right": 16,
-      "retained": 290,
-      "face": 252,
-      "attached": 32,
-      "stone": 18,
-      "sand": 14,
-      "ground": 38,
-      "restingGround": 1,
-      "aboveY36": 73,
-      "aboveY60": 105,
-      "remaining": null,
-      "sourceX": 123.9903500728932,
-      "sourceTime": 15.2,
-      "sourceRate": 23.244854107132316,
-      "aboveBoard": 14,
-      "discovery": {
-        "touchedCells": 8072,
-        "fullyRevealedCells": 66,
-        "visibleCellEquivalent": 1230.1995169666511
-      }
-    },
-    {
-      "emitted": 598,
+      "emitted": 498,
       "left": 2,
-      "right": 176,
-      "retained": 420,
-      "face": 360,
-      "attached": 158,
-      "stone": 49,
-      "sand": 109,
-      "ground": 60,
-      "restingGround": 58,
-      "aboveY36": 59,
-      "aboveY60": 76,
-      "remaining": null,
-      "sourceX": 78.77144789616297,
-      "sourceTime": 30.266666666666666,
-      "sourceRate": 30.942776066598306,
-      "aboveBoard": 16,
-      "discovery": {
-        "touchedCells": 9449,
-        "fullyRevealedCells": 628,
-        "visibleCellEquivalent": 2911.824781691794
-      }
-    },
-    {
-      "emitted": 950,
-      "left": 33,
-      "right": 244,
-      "retained": 673,
-      "face": 542,
-      "attached": 314,
-      "stone": 79,
-      "sand": 235,
-      "ground": 131,
-      "restingGround": 63,
-      "aboveY36": 50,
+      "right": 108,
+      "retained": 388,
+      "face": 333,
+      "attached": 98,
+      "stone": 35,
+      "sand": 63,
+      "ground": 55,
+      "restingGround": 26,
+      "aboveY36": 65,
       "aboveY60": 84,
       "remaining": null,
-      "sourceX": 36.03243167793267,
-      "sourceTime": 45.36666666666667,
-      "sourceRate": 15.50871655802755,
-      "aboveBoard": 9,
+      "sourceX": 104.92187442469266,
+      "sourceTime": 24.25,
+      "sourceRate": 19.76881147217722,
+      "brushFeedback": {
+        "serial": 0,
+        "moved": 0,
+        "released": 0,
+        "distance": 0,
+        "releasedTotal": 0,
+        "time": null
+      },
+      "aboveBoard": 12,
       "discovery": {
-        "touchedCells": 12181,
-        "fullyRevealedCells": 1557,
-        "visibleCellEquivalent": 5470.920930229988
+        "touchedCells": 7524,
+        "fullyRevealedCells": 66,
+        "visibleCellEquivalent": 682.5592895402605,
+        "coverage": 0.049969658709274625
+      }
+    },
+    {
+      "emitted": 836,
+      "left": 2,
+      "right": 239,
+      "retained": 595,
+      "face": 508,
+      "attached": 251,
+      "stone": 59,
+      "sand": 192,
+      "ground": 87,
+      "restingGround": 40,
+      "aboveY36": 66,
+      "aboveY60": 99,
+      "remaining": null,
+      "sourceX": 43.52234680757816,
+      "sourceTime": 39.333333333333336,
+      "sourceRate": 22.99366004267742,
+      "brushFeedback": {
+        "serial": 0,
+        "moved": 0,
+        "released": 0,
+        "distance": 0,
+        "releasedTotal": 0,
+        "time": null
+      },
+      "aboveBoard": 6,
+      "discovery": {
+        "touchedCells": 10298,
+        "fullyRevealedCells": 507,
+        "visibleCellEquivalent": 1818.5762849755886,
+        "coverage": 0.13255811518752256
+      }
+    },
+    {
+      "emitted": 1154,
+      "left": 126,
+      "right": 244,
+      "retained": 784,
+      "face": 631,
+      "attached": 373,
+      "stone": 97,
+      "sand": 276,
+      "ground": 153,
+      "restingGround": 152,
+      "aboveY36": 56,
+      "aboveY60": 99,
+      "remaining": null,
+      "sourceX": 55.714772646269395,
+      "sourceTime": 54.416666666666664,
+      "sourceRate": 29.797862342684788,
+      "brushFeedback": {
+        "serial": 0,
+        "moved": 0,
+        "released": 0,
+        "distance": 0,
+        "releasedTotal": 0,
+        "time": null
+      },
+      "aboveBoard": 17,
+      "discovery": {
+        "touchedCells": 13394,
+        "fullyRevealedCells": 995,
+        "visibleCellEquivalent": 2873.327304014122,
+        "coverage": 0.20956344290615828
       }
     }
   ],
   "flow": {
     "seed": 48,
+    "sourceTimeStart": 9.15,
     "grainsPerSecond": [
-      24, 24, 23, 19, 23, 21, 14, 6, 16, 17, 18, 21, 23, 26, 26, 24, 24, 25, 24,
-      15, 11, 23, 23, 21, 18, 13, 12, 12, 19, 24, 34, 37, 37, 28, 10, 24, 23,
-      28, 21, 8, 27, 23, 21, 16, 16
+      18, 21, 23, 26, 26, 24, 24, 25, 24, 15, 11, 23, 23, 21, 18, 13, 12, 12,
+      19, 24, 34, 37, 37, 28, 10, 24, 23, 28, 21, 8, 27, 23, 21, 16, 16, 16, 20,
+      21, 24, 30, 30, 21, 9, 27
     ],
     "minimumRate": 0,
     "maximumRate": 39.48852142494621,
     "longestGapSeconds": 0.35,
-    "openingCoverage": 32.75065662490981,
+    "openingCoverage": 32.75933854380467,
     "maximumBornInOneStep": 1
   },
   "beforeBrush": {
-    "emitted": 951,
-    "left": 33,
+    "emitted": 1157,
+    "left": 127,
     "right": 244,
-    "retained": 674,
-    "face": 542,
-    "attached": 317,
-    "stone": 80,
-    "sand": 237,
-    "ground": 132,
-    "restingGround": 60,
-    "aboveY36": 49,
-    "aboveY60": 82,
+    "retained": 786,
+    "face": 633,
+    "attached": 374,
+    "stone": 97,
+    "sand": 277,
+    "ground": 153,
+    "restingGround": 152,
+    "aboveY36": 56,
+    "aboveY60": 99,
     "remaining": null,
-    "sourceX": 36.052529956976905,
-    "sourceTime": 45.46666666666667,
-    "sourceRate": 15.915904549651312,
-    "aboveBoard": 9,
+    "sourceX": 56.16483874755944,
+    "sourceTime": 54.53333333333333,
+    "sourceRate": 30.346712957897058,
+    "brushFeedback": {
+      "serial": 0,
+      "moved": 0,
+      "released": 0,
+      "distance": 0,
+      "releasedTotal": 0,
+      "time": null
+    },
+    "aboveBoard": 17,
     "discovery": {
-      "touchedCells": 12200,
-      "fullyRevealedCells": 1562,
-      "visibleCellEquivalent": 5483.804970954787
+      "touchedCells": 13396,
+      "fullyRevealedCells": 999,
+      "visibleCellEquivalent": 2879.3412802694666,
+      "coverage": 0.2099963086014049
     }
   },
-  "pausedEmitted": 953,
+  "pausedEmitted": 1162,
   "afterBrush": {
-    "emitted": 953,
-    "left": 45,
+    "emitted": 1162,
+    "left": 149,
     "right": 244,
-    "retained": 664,
-    "face": 523,
-    "attached": 303,
-    "stone": 82,
-    "sand": 221,
-    "ground": 141,
-    "restingGround": 43,
-    "aboveY36": 28,
-    "aboveY60": 56,
+    "retained": 769,
+    "face": 616,
+    "attached": 342,
+    "stone": 83,
+    "sand": 259,
+    "ground": 153,
+    "restingGround": 153,
+    "aboveY36": 47,
+    "aboveY60": 65,
     "remaining": null,
-    "sourceX": 36.70905833092417,
-    "sourceTime": 46.71666666666667,
-    "sourceRate": 20.617014610650603,
+    "sourceX": 61.61384875275262,
+    "sourceTime": 55.88333333333333,
+    "sourceRate": 23.87215176324934,
+    "brushFeedback": {
+      "serial": 19,
+      "moved": 3,
+      "released": 0,
+      "releasedTotal": 47,
+      "distance": 4.421829376072812,
+      "time": 55.81666666666667
+    },
     "aboveBoard": 0,
     "discovery": {
-      "touchedCells": 12470,
-      "fullyRevealedCells": 1878,
-      "visibleCellEquivalent": 5929.917709469419
+      "touchedCells": 13402,
+      "fullyRevealedCells": 1188,
+      "visibleCellEquivalent": 3586.43040022696,
+      "coverage": 0.262438133539376
     }
   },
   "rested": {
-    "emitted": 953,
-    "left": 167,
-    "right": 247,
-    "retained": 539,
-    "face": 373,
-    "attached": 372,
-    "stone": 95,
-    "sand": 277,
-    "ground": 166,
-    "restingGround": 166,
+    "emitted": 1162,
+    "left": 294,
+    "right": 244,
+    "retained": 624,
+    "face": 440,
+    "attached": 433,
+    "stone": 93,
+    "sand": 340,
+    "ground": 184,
+    "restingGround": 184,
     "aboveY36": 0,
     "aboveY60": 0,
     "remaining": null,
-    "sourceX": 92.42302410108655,
-    "sourceTime": 62.733333333333334,
-    "sourceRate": 27.52573545024936,
+    "sourceX": 121.67725222082527,
+    "sourceTime": 71.88333333333334,
+    "sourceRate": 24.454582598860597,
+    "brushFeedback": {
+      "serial": 19,
+      "moved": 3,
+      "released": 0,
+      "releasedTotal": 47,
+      "distance": 4.421829376072812,
+      "time": 55.81666666666667
+    },
     "aboveBoard": 0,
     "discovery": {
-      "touchedCells": 13458,
-      "fullyRevealedCells": 2515,
-      "visibleCellEquivalent": 6945.908842950654
+      "touchedCells": 13601,
+      "fullyRevealedCells": 1838,
+      "visibleCellEquivalent": 4245.800171883815,
+      "coverage": 0.3102031852835898
     }
   },
   "traceContacts": 2,
   "twoFingerTraces": {
-    "left": 0.956096531701448,
-    "right": 0.9560965317014479,
+    "left": 0.9818960629484506,
+    "right": 0.9818960629484506,
     "middle": 0,
     "contacts": 0
   },
   "twoFingerDiscovery": {
-    "touchedCells": 1886,
-    "fullyRevealedCells": 6,
-    "visibleCellEquivalent": 587.5793560268867
+    "touchedCells": 3384,
+    "fullyRevealedCells": 90,
+    "visibleCellEquivalent": 1260.2216376978358,
+    "coverage": 0.09383630958286193
   },
   "layeredTraces": {
-    "left": 2.4822600825996846,
-    "right": 0.7676717825733057,
+    "left": 2.543633409780793,
+    "right": 0.7838460426216957,
     "middle": 0,
     "contacts": 0
   },
   "layeredDiscovery": {
-    "touchedCells": 1887,
-    "fullyRevealedCells": 428,
-    "visibleCellEquivalent": 895.8020709773518
+    "touchedCells": 3388,
+    "fullyRevealedCells": 883,
+    "visibleCellEquivalent": 1741.4675814532507,
+    "coverage": 0.1296699613889241
   },
   "decayedTraces": {
-    "left": 1.2316080249283146,
-    "right": 0.38089108170249064,
+    "left": 1.2596316165916148,
+    "right": 0.38816806463931264,
     "middle": 0,
     "contacts": 0
   },
@@ -201,12 +258,12 @@
     "attached": 0
   },
   "guidanceAfter": {
-    "x": 86.8376691240549,
-    "y": 139.2750584487766,
+    "x": 92.3623513158547,
+    "y": 138.08918992899063,
     "retained": 7,
     "attached": 0
   },
-  "pourWallSeconds": 45.980632142000005,
+  "pourWallSeconds": 45.977682461,
   "challenge": {
     "emitted": 960,
     "left": 169,
@@ -224,11 +281,20 @@
     "sourceX": 96.97986586226997,
     "sourceTime": 63.78333333333333,
     "sourceRate": 28.748169900015522,
+    "brushFeedback": {
+      "serial": 0,
+      "moved": 0,
+      "released": 0,
+      "distance": 0,
+      "releasedTotal": 0,
+      "time": null
+    },
     "aboveBoard": 0,
     "discovery": {
       "touchedCells": 13457,
-      "fullyRevealedCells": 2162,
-      "visibleCellEquivalent": 6578.17474687721
+      "fullyRevealedCells": 1291,
+      "visibleCellEquivalent": 3225.02158470518,
+      "coverage": 0.2352677509533557
     }
   },
   "result": {
@@ -240,18 +306,18 @@
   },
   "fullFaceFrames": {
     "retained": 6000,
-    "meanMilliseconds": 21.428571428571427,
+    "meanMilliseconds": 20.977622377622296,
     "p95Milliseconds": 33.39999999999418
   },
-  "brushPointerMilliseconds": 68.19143299999996,
+  "brushPointerMilliseconds": 71.38482999999542,
   "stressAfterBrush": {
     "emitted": 6000,
     "left": 0,
     "right": 0,
     "retained": 6000,
     "face": 6000,
-    "attached": 5954,
-    "stone": 5954,
+    "attached": 5874,
+    "stone": 5874,
     "sand": 0,
     "ground": 0,
     "restingGround": 0,
@@ -261,12 +327,21 @@
     "sourceX": 80,
     "sourceTime": 0,
     "sourceRate": 0,
+    "brushFeedback": {
+      "serial": 1,
+      "moved": 105,
+      "released": 126,
+      "releasedTotal": 126,
+      "distance": 0,
+      "time": 4.383333333333334
+    },
     "aboveBoard": 0,
     "discovery": {
       "touchedCells": 9167,
-      "fullyRevealedCells": 8911,
-      "visibleCellEquivalent": 9024.975927162915
+      "fullyRevealedCells": 4489,
+      "visibleCellEquivalent": 8733.945847142488,
+      "coverage": 0.6456421901711158
     }
   },
-  "stressDate": "2026-11-15T02:58:44.810Z"
+  "stressDate": "2026-11-15T05:08:22.234Z"
 }

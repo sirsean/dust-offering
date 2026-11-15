@@ -2,10 +2,11 @@
 
 A quiet dust-on-stone browser prototype at the Black Pyramid, in warm umber and desert dusk. Discover an initially invisible stone through falling sand and brushing with fingers, a pen, or a mouse. Repeated contact gradually uncovers the touched areas. Your stroke also loosens sand and leaves a dark greasy mark that gently guides later grains downhill. Repeated passes deepen the mark and strengthen its grip; sand can still slide along it and drift away. Missed sand stays visible in piles below the stone.
 
-**Current revision: 0.9.0, challenge `stone-offering-v6`.** The owner's FringeV2 lettering now appears throughout the game, with worn mechanical controls in recessed housings. A fresh visit goes straight into Free Pour without an explanation overlay. A wide invisible opening sways above the board, feeding an uneven stream that swells, thins and occasionally sputters. The grain motion stays gentle. The triangle and its rim start hidden; fingers and sand reveal the local surface. Discovery lasts for the run, even after grease fades. Reset hides it again. Multiple fingers can brush independently, and grease marks fade with a six-second strength half-life. Pause, Reset, optional Challenge, local bests, sharing, and muted-by-default sound remain available.
+**Current revision: 0.10.0, challenge `stone-offering-v7`.** Free Pour begins with dust already in flight and ready to touch. A broader finger sweeps real sand into banks and carries it along the swipe, with clearer material and bowl feedback. Uncover the stone at your own pace: a small meter leads to “Stone found,” then “New stone,” while you can keep playing on the same creation. Each free run varies its shower and mineral weathering. The slow variable pour, persistent discovery, fading grease, multi-touch, Fringe lettering and worn mechanical controls remain. Sound is optional and starts muted; enabling it adds dry brushing texture and quiet bowl tones. There is no explanation overlay, timer or forced reset.
 
 - Play: <https://dust-offering.sirsean.me>
 - [Current direction](docs/stone-sand-plan.md) · [Architecture](docs/architecture.md) · [Status](docs/status.md)
+- [Extensive gameplay review, experiments and before/after evidence](docs/gameplay-review.md)
 - [Desert visual direction and screenshots](docs/visual-style.md)
 - [Physics measurements](docs/physics-results.md) · [Playtest evidence](docs/playtest.md) · [Deployment](docs/deployment.md)
 - [Original Fringe plan](https://chatgpt.com/space/page_ad5cbe9d6d2881919e3df3cfb9f08feb) and [historical v2 results](docs/archive/v2/playtest.md)
@@ -36,12 +37,12 @@ Use the configured Cloudflare environment token for direct Wrangler deployment:
 
 ```sh
 npm run deploy
-npm run deploy:branch -- fringe-controls
-npm run deploy:branch:delete -- fringe-controls
+npm run deploy:branch -- gameplay-feel
+npm run deploy:branch:delete -- gameplay-feel
 ```
 
 GitHub Actions runs code and browser checks. Automated deployments remain deferred by the owner; no Actions deployment secret is required for direct deployment. Deleting a branch alone does not remove its manually deployed preview. See the deployment runbook for writable cache/config directories in restricted environments.
 
 ## Continue development
 
-Follow [AGENTS.md](AGENTS.md) and the current sand-on-stone plan. Preserve the literal grains on both stone and ground, bond-release behavior, seeded replay, and accounting. Grease-mark depth, adhesion and downhill guidance use the same decaying field; persistent stone discovery uses a separate field. Each active pointer owns its own stroke. The next evaluation is how discovering the dusty stone and leaving greasy finger marks feels under real fingers.
+Follow [AGENTS.md](AGENTS.md) and the current plan. Preserve literal grains, bond releases, seeded replay and accounting. Grease depth, adhesion and guidance share a decaying field; persistent discovery is separate. Each pointer owns its captured path and physical sampling residual. The next human evaluation is whether shaping sand and uncovering a new stone invites another swipe; automated agency and pacing improvements do not establish human enjoyment or retention.

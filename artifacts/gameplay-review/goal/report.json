@@ -1,0 +1,24 @@
+{
+  "input": "Real mouse Pointer Events with accelerated fixed simulation time; a layout/reachability review, not human testing.",
+  "initial": {
+    "coverage": 0.010260494176604873,
+    "complete": false
+  },
+  "completed": {
+    "discovery": {
+      "coverage": 0.953529736702556,
+      "complete": true
+    },
+    "phase": "running",
+    "action": "New stone",
+    "grains": 218
+  },
+  "fresh": {
+    "seed": 3681153005,
+    "discovery": {
+      "coverage": 0.00034803521017822244,
+      "complete": false
+    },
+    "action": "Reset"
+  }
+}

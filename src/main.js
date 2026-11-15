@@ -1,17 +1,24 @@
 import './styles.css';
 import { Game } from './game/game.js';
 import { challenge } from './config/challenge.js';
+import { freePour } from './config/free-pour.js';
 import { bestScore, saveBest } from './game/storage.js';
 import { shareScore } from './game/share.js';
 import { Renderer } from './rendering/renderer.js';
-import { BowlAudio } from './rendering/audio.js';
+import { MaterialAudio } from './rendering/audio.js';
 import { bindPointer } from './input/pointer.js';
 
 const $ = (selector) => document.querySelector(selector);
 const params = new URLSearchParams(location.search);
 const renderer = new Renderer($('#field'));
-const audio = new BowlAudio();
-const game = new Game(params.has('challenge') ? 'challenge' : 'free');
+const audio = new MaterialAudio();
+const debugSeed =
+  params.has('debug') && /^\d{1,10}$/.test(params.get('seed') ?? '')
+    ? Number(params.get('seed')) >>> 0
+    : undefined;
+const game = new Game(params.has('challenge') ? 'challenge' : 'free', {
+  seed: debugSeed,
+});
 let storage;
 try {
   storage = window.localStorage;
@@ -36,7 +43,10 @@ const pointer = bindPointer($('#field'), {
   edit: (a, b, stroke) => game.edit(a, b, stroke),
   brush: (id, point) => {
     if (point) renderer.brushes.set(id, point);
-    else renderer.brushes.delete(id);
+    else {
+      game.endBrush(id);
+      renderer.brushes.delete(id);
+    }
   },
   canEdit: () => game.phase !== 'finished',
 });
@@ -44,7 +54,17 @@ const pointer = bindPointer($('#field'), {
 function syncUI() {
   const sim = game.sim;
   const scored = game.mode === 'challenge';
-  $('#hud').hidden = !scored;
+  $('#discovery-status').hidden = scored;
+  $('#discovery-progress').hidden = scored;
+  $('#supply').hidden = !scored;
+  $('#best').hidden = !scored;
+  $('#discovery-progress').max = freePour.discoveryGoal;
+  $('#discovery-progress').value = game.discovery.coverage;
+  $('#discovery-status').textContent = game.discovery.complete
+    ? 'Stone found'
+    : `Uncovered ${Math.floor(game.discovery.coverage * 100)}%`;
+  $('#reset').textContent =
+    !scored && game.discovery.complete ? 'New stone' : 'Reset';
   $('#free').setAttribute('aria-pressed', !scored);
   $('#challenge').setAttribute('aria-pressed', scored);
   $('#supply').textContent = `${sim.remaining.toLocaleString()} remaining`;
@@ -66,7 +86,7 @@ function syncUI() {
     sim.remaining === 0 &&
     !game.canFinish;
   $('#accessible-state').textContent =
-    `Left bowl ${sim.left}${scored ? ` of ${challenge.leftTarget}` : ''}. Right bowl ${sim.right}${scored ? ` of ${challenge.rightTarget}` : ''}. ${sim.attachedCount} grains attached to stone or sand. ${sim.spill} grains on the ground or falling toward it. ${scored ? `${sim.remaining} grains remaining.` : ''}`;
+    `Left bowl ${sim.left}${scored ? ` of ${challenge.leftTarget}` : ''}. Right bowl ${sim.right}${scored ? ` of ${challenge.rightTarget}` : ''}. ${sim.attachedCount} grains attached to stone or sand. ${sim.spill} grains on the ground or falling toward it. ${scored ? `${sim.remaining} grains remaining.` : `${Math.floor(game.discovery.coverage * 100)}% of the stone uncovered.`}`;
   $('#field').setAttribute(
     'aria-description',
     $('#accessible-state').textContent,
@@ -173,6 +193,7 @@ document.addEventListener('visibilitychange', () => {
   lastTime = null;
   accumulator = 0;
   pointer.cancel();
+  if (document.hidden) audio.quiet();
 });
 function frame(time) {
   if (!document.hidden) {
@@ -214,5 +235,6 @@ if (params.has('debug'))
       return game.sim;
     },
     renderer,
+    audio,
     syncUI,
   };

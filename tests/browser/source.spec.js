@@ -4,7 +4,7 @@ import { open, hidden, state } from './helpers.js';
 test('dust enters from above without a top marker, sways gently, and preserves its phase through hiding and resizing', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await page.clock.runFor(100);
   const top = await page.evaluate(() => {
     const r = dust.renderer,
@@ -21,7 +21,7 @@ test('dust enters from above without a top marker, sways gently, and preserves i
     };
   });
   expect(top.actual).toEqual(top.stone);
-  await page.locator('#free').click();
+  await page.locator('#pour').click();
   await page.clock.runFor(150);
   expect(await page.evaluate(() => dust.sim.grains.length)).toBeGreaterThan(0);
   expect(
@@ -81,7 +81,7 @@ test('dust enters from above without a top marker, sways gently, and preserves i
 test('a broad stream swells, thins and briefly sputters while every grain stays accounted for', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v6');
+  await open(page, 'challenge=stone-offering-v7');
   await page.evaluate(() => {
     window.pourSamples = [];
     const sim = dust.sim,

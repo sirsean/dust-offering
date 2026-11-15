@@ -1,5 +1,22 @@
 import { editableStone, touchesStone } from './geometry.js';
 
+const coverageMasks = new Map();
+function coverageMask(columns, rows, cellSize) {
+  const key = `${columns},${rows},${cellSize}`;
+  if (coverageMasks.has(key)) return coverageMasks.get(key);
+  const cells = new Uint8Array(columns * rows);
+  let total = 0;
+  for (let row = 0; row < rows; row++)
+    for (let column = 0; column < columns; column++)
+      if (editableStone((column + 0.5) * cellSize, (row + 0.5) * cellSize)) {
+        cells[row * columns + column] = 1;
+        total++;
+      }
+  const mask = { cells, total };
+  coverageMasks.set(key, mask);
+  return mask;
+}
+
 // Persistent knowledge of the stone, separate from the fading grease field.
 // This state never participates in contacts, adhesion, or seeded randomness.
 export class SurfaceDiscovery {
@@ -12,6 +29,12 @@ export class SurfaceDiscovery {
     this.paintable = new Uint8Array(this.levels.length);
     this.active = new Set();
     this.version = 0;
+    this.coverageMask = coverageMask(this.columns, this.rows, this.cellSize);
+    this.revealed = 0;
+  }
+
+  get coverage() {
+    return Math.min(1, this.revealed / this.coverageMask.total);
   }
 
   levelAt(x, y) {
@@ -73,6 +96,8 @@ export class SurfaceDiscovery {
         if (next < 1) complete = false;
         if (next > previous) {
           this.levels[index] = next;
+          if (this.coverageMask.cells[index])
+            this.revealed += this.levels[index] - previous;
           this.active.add(index);
           changed = true;
         }

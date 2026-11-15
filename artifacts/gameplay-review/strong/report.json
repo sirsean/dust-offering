@@ -1,0 +1,280 @@
+{
+  "date": "2026-11-15T04:35:25.889Z",
+  "label": "strong",
+  "base": "http://127.0.0.1:5173",
+  "options": {
+    "brushCarry": 1
+  },
+  "browser": "156.0.8078.79",
+  "input": "Native emulated touch, real browser time; not a human enjoyment study.",
+  "gestures": [
+    {
+      "name": "opening diagonal swipe",
+      "wallMilliseconds": 1443.64963,
+      "movedDuringGesture": 191,
+      "directEffect": {
+        "moved": 38,
+        "released": 10,
+        "firstHitMilliseconds": 33.30000000074506
+      },
+      "before": {
+        "time": 10.55,
+        "emitted": 198,
+        "left": 0,
+        "right": 0,
+        "retained": 198,
+        "attached": 13,
+        "missed": 0,
+        "revealEquivalent": 63.18635145465595,
+        "feedback": {
+          "serial": 0,
+          "moved": 0,
+          "released": 0,
+          "distance": 0,
+          "time": null
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 12.016666666666667,
+        "emitted": 229,
+        "left": 0,
+        "right": 0,
+        "retained": 229,
+        "attached": 11,
+        "missed": 0,
+        "revealEquivalent": 795.1294545700241,
+        "feedback": {
+          "serial": 26,
+          "moved": 3,
+          "released": 0,
+          "distance": 1.9970104033373395,
+          "time": 12
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "cross the incoming stream",
+      "wallMilliseconds": 1375.0507180000004,
+      "movedDuringGesture": 223,
+      "directEffect": {
+        "moved": 10,
+        "released": 5,
+        "firstHitMilliseconds": 392.4000000022352
+      },
+      "before": {
+        "time": 18.033333333333335,
+        "emitted": 377,
+        "left": 2,
+        "right": 66,
+        "retained": 309,
+        "attached": 30,
+        "missed": 44,
+        "revealEquivalent": 1030.5380589003416,
+        "feedback": {
+          "serial": 26,
+          "moved": 3,
+          "released": 0,
+          "distance": 1.9970104033373395,
+          "time": 12
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 19.416666666666668,
+        "emitted": 410,
+        "left": 2,
+        "right": 80,
+        "retained": 328,
+        "attached": 30,
+        "missed": 44,
+        "revealEquivalent": 1510.5937868206208,
+        "feedback": {
+          "serial": 41,
+          "moved": 3,
+          "released": 0,
+          "distance": 0.8681992112240171,
+          "time": 19.416666666666668
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "scoop down and left",
+      "wallMilliseconds": 1379.0164809999987,
+      "movedDuringGesture": 176,
+      "directEffect": {
+        "moved": 2,
+        "released": 0,
+        "firstHitMilliseconds": 25.900000002235174
+      },
+      "before": {
+        "time": 27.516666666666666,
+        "emitted": 542,
+        "left": 2,
+        "right": 180,
+        "retained": 360,
+        "attached": 121,
+        "missed": 45,
+        "revealEquivalent": 1917.8009408050862,
+        "feedback": {
+          "serial": 41,
+          "moved": 3,
+          "released": 0,
+          "distance": 0.8681992112240171,
+          "time": 19.416666666666668
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 28.916666666666668,
+        "emitted": 565,
+        "left": 2,
+        "right": 193,
+        "retained": 370,
+        "attached": 140,
+        "missed": 47,
+        "revealEquivalent": 2542.969744067258,
+        "feedback": {
+          "serial": 42,
+          "moved": 2,
+          "released": 0,
+          "distance": 0,
+          "time": 27.566666666666666
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "slow curve",
+      "wallMilliseconds": 2261.0294330000033,
+      "movedDuringGesture": 262,
+      "directEffect": {
+        "moved": 46,
+        "released": 6,
+        "firstHitMilliseconds": 31.699999999254942
+      },
+      "before": {
+        "time": 35.416666666666664,
+        "emitted": 746,
+        "left": 3,
+        "right": 233,
+        "retained": 510,
+        "attached": 161,
+        "missed": 63,
+        "revealEquivalent": 3589.5716730863055,
+        "feedback": {
+          "serial": 61,
+          "moved": 7,
+          "released": 0,
+          "distance": 0.780830966161532,
+          "time": 35.416666666666664
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 37.68333333333333,
+        "emitted": 803,
+        "left": 4,
+        "right": 265,
+        "retained": 534,
+        "attached": 174,
+        "missed": 70,
+        "revealEquivalent": 4487.477892140829,
+        "feedback": {
+          "serial": 86,
+          "moved": 7,
+          "released": 0,
+          "distance": 1.2039408948266614,
+          "time": 37.666666666666664
+        },
+        "progress": null
+      }
+    },
+    {
+      "name": "paused pour: reshape a deposit",
+      "wallMilliseconds": 1462.0195179999937,
+      "movedDuringGesture": 281,
+      "directEffect": {
+        "moved": 19,
+        "released": 12,
+        "firstHitMilliseconds": 33
+      },
+      "before": {
+        "time": 41.75,
+        "emitted": 886,
+        "left": 19,
+        "right": 280,
+        "retained": 587,
+        "attached": 225,
+        "missed": 79,
+        "revealEquivalent": 4721.993654444214,
+        "feedback": {
+          "serial": 86,
+          "moved": 7,
+          "released": 0,
+          "distance": 1.2039408948266614,
+          "time": 37.666666666666664
+        },
+        "progress": null
+      },
+      "after": {
+        "time": 43.233333333333334,
+        "emitted": 886,
+        "left": 25,
+        "right": 283,
+        "retained": 578,
+        "attached": 225,
+        "missed": 84,
+        "revealEquivalent": 5050.204609603561,
+        "feedback": {
+          "serial": 107,
+          "moved": 2,
+          "released": 0,
+          "distance": 0.48852958806575386,
+          "time": 43.21666666666667
+        },
+        "progress": null
+      }
+    }
+  ],
+  "errors": [],
+  "initial": {
+    "time": 10.45,
+    "emitted": 196,
+    "left": 0,
+    "right": 0,
+    "retained": 196,
+    "attached": 13,
+    "missed": 0,
+    "revealEquivalent": 58.678530043810866,
+    "feedback": {
+      "serial": 0,
+      "moved": 0,
+      "released": 0,
+      "distance": 0,
+      "time": null
+    },
+    "progress": null
+  },
+  "final": {
+    "time": 47.233333333333334,
+    "emitted": 886,
+    "left": 63,
+    "right": 315,
+    "retained": 508,
+    "attached": 283,
+    "missed": 113,
+    "revealEquivalent": 5240.928604686973,
+    "feedback": {
+      "serial": 107,
+      "moved": 2,
+      "released": 0,
+      "distance": 0.48852958806575386,
+      "time": 43.21666666666667
+    },
+    "progress": null
+  },
+  "wallSeconds": 38.62372139
+}

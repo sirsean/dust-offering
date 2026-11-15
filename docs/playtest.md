@@ -1,50 +1,52 @@
-# Wider, uneven pour — playtest
+# Tactile playthrough and load review
 
-> Physical and real-time baseline for revision 0.8.0, retained by the 0.9.0 interface pass. Current Fringe typography, controls and direct-entry captures are in [visual-style.md](visual-style.md).
+Revision 0.10.0 / `stone-offering-v7` improves the physical brush and the free-play loop while retaining the quiet desert direction. The design comparison and rejected trials are in [gameplay-review.md](gameplay-review.md).
 
-Revision 0.8.0 widens the offscreen aperture to 34 logical units and gives the stream slow swells, smaller ripples and occasional brief sputters. The opening still sways gently, grains retain their slow motion, and fingers and sand continue discovering the hidden stone.
+## Real-time native emulated touch
 
-## Real-time simulated play
+Several sessions used headless Chromium 156 at 390 × 844 with native emulated touch, real browser time and the same gesture plan. No physical phone or human participant was used. The frozen 0.9.0 baseline catches no material on its opening diagonal swipe; the selected prepared scene moves 38 grains and releases ten. Its first physical response is recorded about 32 ms into that gesture, including dispatch/path timing rather than a pure rendering-latency benchmark.
 
-The scripted player observes 45 seconds of uninterrupted flow, then pauses, brushes, checks two-finger discovery and grease decay, completes a challenge and exercises a 6,000-grain fixture. Raw evidence is in [stone-playtest-report.json](../artifacts/stone-playtest-report.json). The run uses Node 24.22.1 and Linux headless Chromium 156 at 390 × 844 with emulated touch; no physical phone is used.
+The selected session performs initial diagonals, a stream crossing, a scoop, two independent fingers, a slow curve, paused-pour reshaping and an opted-in sound sweep. It ends with 888 emitted = 80 left + 293 right + 515 retained, including 140 misses. The source has advanced nine preparation seconds plus actual play time, so final collection totals must not be compared directly with the cold baseline's shorter physical age. Matched active/idle simulations provide the causal comparison instead.
 
-The player records each fixed step's births and rate during the opening sequence. It verifies that actual birth positions span over 30 units, one-second emission counts include both quiet and busy periods, and there are real brief gaps during sputters. Default flow emits at most one grain per step. The rate stays below 44 grains/s; no paused or blocked emission is saved up for a later burst.
+The audio phase records 23 material-contact texture events and eight bowl tones, with measured signal peak 0.02465 on a normalized scale where clipping begins at one. Muting suspends the context and clears contact sound. This establishes functioning quiet signal and cleanup, not subjective audio quality.
 
-| Measured observation                        | Result                                                |
-| ------------------------------------------- | ----------------------------------------------------- |
-| Actual birth coverage across the aperture   | 32.75 units across its 34-unit width                  |
-| Quietest / busiest complete seconds         | 6 / 37 grains                                         |
-| Peak instantaneous rate / longest birth gap | 39.49 grains/s / 0.35 seconds                         |
-| Attached grains before / after brushing     | 317 / 303                                             |
-| Paused pour after settling                  | 167 left + 247 right + 539 retained = 953 emitted     |
-| Unattended challenge pour                   | 960 grains in 45.98 real seconds                      |
-| Challenge after settling                    | 169 left + 244 right + 156 ground + 391 on face = 960 |
-| 6,000 retained grains                       | 21.43 ms mean frame, 33.4 ms at the 95th percentile   |
-| Load-fixture brush                          | 68.2 ms, releasing 46 grains with none lost           |
-| Browser JavaScript errors                   | None                                                  |
+Silent first-twelve-second recordings: [before](../artifacts/gameplay-review/before.webm), [after](../artifacts/gameplay-review/after.webm). Full gesture/state records: [baseline](../artifacts/gameplay-review/baseline/report.json), [selected](../artifacts/gameplay-review/final/report.json).
 
-The wider stream gradually uncovers a broader part of the stone. Uneven arrival density leaves alternating sparse sections and small clusters in flight. Existing grains continue falling gently through the changes. Brushing still releases deposits, grease fades while discovery persists, and missed grains remain visible on the ground. These checks establish observable responses; the owner's real-finger evaluation determines the feel.
+| Opening selected play                                                                      | A later scoop                                                                    |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| ![Prepared dust and a wider immediate swipe](../artifacts/gameplay-review/final/early.png) | ![A broad scoop through real sand](../artifacts/gameplay-review/final/scoop.png) |
 
-| Early sand discovery                                                  | Later sand discovery                                                           |
-| --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| ![Wider flow after about 15 seconds](../artifacts/stone-sand-15s.png) | ![More stone revealed after about 45 seconds](../artifacts/stone-sand-45s.png) |
+## A quiet purpose
 
-Additional real-time captures: [30 seconds](../artifacts/stone-sand-30s.png), [after brushing and settling](../artifacts/stone-after.png), [two fingers](../artifacts/stone-traces.png), [layering](../artifacts/stone-layered-traces.png), [six-second fading](../artifacts/stone-faded-traces.png), [challenge result](../artifacts/stone-result.png) and [retained-material load](../artifacts/stone-stress.png).
+A scripted uncovering pattern reaches the 82% goal after 36.8 simulation seconds in each of three seeds. At 42 seconds it has about 99% coverage; passive play has about 17–20%. The goal is reachable and primarily driven by brushing, without a countdown. “Stone found” and “New stone” do not end play or discard the creation. This remains a human design hypothesis: completion may give useful purpose or may feel like a cleaning task.
 
-## Browser and numerical checks
+![Completion without a modal or forced reset](../artifacts/gameplay-review/goal/stone-found.png)
 
-All 52 numerical/unit checks and 27 browser scenarios pass. Three desktop duplicates of touch-only cases are skipped. New coverage checks rate bounds, smooth swells, genuine sputter gaps, a profile that does not repeat with the one-minute sway, seed/sample-order independence, wider physical births, no consumption of particle randomness, no backlog, finite supply, conservation and pause/hidden/reset lifecycle. Existing discovery, grease, multi-touch, material and challenge checks remain.
+[Goal-on/off layout captures and fresh-stone results](../artifacts/gameplay-review/goal/report.json) accompany [narrow](../artifacts/gameplay-review/goal/narrow.png), [landscape](../artifacts/gameplay-review/goal/landscape.png) and [desktop](../artifacts/gameplay-review/goal/desktop.png) views.
 
-The browser observes the actual game's births for 36 seconds and checks broad coverage, busy and quiet seconds, short interruptions and conservation. Its [variable-pour capture](../artifacts/stone-variable-pour.png) uses accelerated fixed simulation time. Discovery checks preserve [initial invisibility](../artifacts/stone-hidden.png), [local repeated brushing](../artifacts/stone-brush-reveal.png), [grain-only reveal](../artifacts/stone-grain-reveal.png) and [all triangle edges](../artifacts/stone-edges.png).
+## Isolated full playthrough
 
-Three unattended two-minute numerical pours have zero blocked steps and conserve every grain. Peak rates stay around 39–40 grains/s, and no upper adhesive cap develops. Raw numbers and reproduction are in [physics-results.md](physics-results.md). The optional challenge retains 960 grains and targets 360 / 600; the delivery conditions now use `stone-offering-v6`, with variable pour duration and no time penalty.
+The refreshed `npm run playtest` report is [stone-playtest-report.json](../artifacts/stone-playtest-report.json). It observes 45 real seconds of the prepared shower, then pauses, targets a real deposit and settles:
 
-## Reproduction
+| Observation                                 | Result                                                                |
+| ------------------------------------------- | --------------------------------------------------------------------- |
+| Brush release                               | 47 actual bond releases; attached count 374 → 342                     |
+| Paused pour after settling                  | 294 left + 244 right + 624 retained = 1,162 emitted                   |
+| Ground material                             | 184 real resting grains                                               |
+| Layered left grease, then six seconds later | 2.544 → 1.260, with discovery unchanged in the isolated empty scene   |
+| Seven-grain sloping-guide control           | Mean (70,80) → (92.36,138.09) in four seconds; all seven remain loose |
+| Unattended challenge                        | All 960 grains in 45.98 real seconds; final score 430                 |
+| Challenge accounting                        | 169 left + 244 right + 156 ground + 391 face = 960                    |
+| Retained 6,000-grain fixture                | 20.98 ms mean frame, 33.4 ms at the 95th percentile                   |
+| Large-fixture tap                           | 71.4 ms, releasing 126 grains; all 6,000 remain accounted for         |
+| Browser JavaScript errors                   | None                                                                  |
 
-```sh
-npm run check
-npm run test:physics
-PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:browser
-```
+The load check runs separately from other CPU-heavy reviews. It is a cloud-machine measurement, not a phone benchmark. Ordinary and reduced-motion browser scenarios preserve actual sand, grease, discovery and piles. The retained-material cap never deletes particles.
 
-With Vite running, `npm run playtest` refreshes real-time evidence in roughly three minutes. The load check is a cloud-machine measurement, separate from hardware evaluation. Previous narrow, constant-rate discovery evidence is retained in [archive/stone-v5/](archive/stone-v5/playtest.md); the palette baseline remains in [visual-style.md](visual-style.md).
+## Reproduction and limits
+
+All 63 numerical/unit tests and 33 browser scenarios pass; three desktop duplicates of touch-only cases are skipped. Coverage includes first-use material, no hint, local reveal, goal/reset, sparse/dense and stationary input, independent touches, collection response, opt-in/mute/hidden sound, full supply, mass, scoring/sharing, layout and hidden recovery. The Web Audio mute assertion waits for the audio rendering quantum rather than assuming synchronous parameter readback.
+
+Run `npm run check`, `npm run test:browser` and `npm run test:physics`. With Vite running, `npm run playtest` refreshes the isolated real-time/load evidence. For recorded native-touch review, install Playwright's ffmpeg and run `node scripts/feel-playtest.js http://127.0.0.1:5173 candidate`; system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE`. In a restricted environment use a writable `PLAYWRIGHT_BROWSERS_PATH` for ffmpeg.
+
+Observed improvements are immediacy, material reach, directional control, feedback and a completion opportunity. Human enjoyment, desire for another swipe, long-session interest and repeat visits have not been measured. The next playtest should decide those questions directly rather than treating automated success as enjoyment.

@@ -1,5 +1,7 @@
 # Fringe lettering and desert hardware — revision 0.9.0
 
+> Interface baseline. Revision 0.10.0 retains these materials and lettering, adds a small Free Pour discovery readout and material feedback, and varies stone weathering by seed. Current captures and the gameplay rationale are in [gameplay-review.md](gameplay-review.md).
+
 The owner's supplied FringeV2 font now covers all game text: the title, controls, notices, challenge HUD, results, copy field and Canvas bowl counts. A fresh visit opens directly into Free Pour, with the hidden stone and falling dust unobstructed. The former explanation box, saved dismissal state and pointer dismissal callback have been removed. The accessible canvas action description remains.
 
 ## Typeface and controls

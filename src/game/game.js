@@ -1,5 +1,7 @@
 import { Simulation } from '../simulation/simulation.js';
 import { challenge } from '../config/challenge.js';
+import { freePour } from '../config/free-pour.js';
+import { SurfaceDiscovery } from '../simulation/surface-discovery.js';
 
 export function scoreOffering(left, right, config = challenge) {
   const error =
@@ -13,15 +15,38 @@ export function scoreOffering(left, right, config = challenge) {
 }
 
 export class Game {
-  constructor(mode = 'free') {
+  constructor(mode = 'free', freeOptions = {}) {
+    this.freeOptions = freeOptions;
     this.reset(mode);
   }
 
   reset(mode = this.mode) {
     this.mode = mode;
     this.phase = mode === 'challenge' ? 'ready' : 'running';
-    this.sim = new Simulation(mode === 'challenge' ? challenge : {});
+    const options =
+      mode === 'challenge'
+        ? challenge
+        : {
+            ...this.freeOptions,
+            seed:
+              this.freeOptions.seed ??
+              crypto.getRandomValues(new Uint32Array(1))[0],
+          };
+    this.sim = new Simulation(options);
     this.sim.pouring = mode === 'free';
+    if (mode === 'free') {
+      const seconds = this.freeOptions.warmupSeconds ?? freePour.warmupSeconds;
+      for (
+        let i = 0;
+        i < Math.round(seconds * this.sim.config.stepsPerSecond);
+        i++
+      )
+        this.sim.step();
+      // The shower is already in flight, but the player has not discovered the
+      // stone. Do not reveal its silhouette during the preparation work.
+      this.sim.discovery = new SurfaceDiscovery(this.sim.config);
+      for (const grain of this.sim.grains) grain.revealComplete = false;
+    }
     this.quietSteps = 0;
     this.exhaustedSteps = 0;
     this.canFinish = false;
@@ -32,6 +57,13 @@ export class Game {
     if (this.phase !== 'ready') return;
     this.phase = 'running';
     this.sim.pouring = true;
+  }
+
+  get discovery() {
+    return {
+      coverage: this.sim.discovery.coverage,
+      complete: this.sim.discovery.coverage >= freePour.discoveryGoal,
+    };
   }
 
   togglePour() {
@@ -45,6 +77,20 @@ export class Game {
     this.quietSteps = 0;
     this.exhaustedSteps = 0;
     this.canFinish = false;
+  }
+
+  endBrush(id) {
+    if (this.phase === 'finished') {
+      this.sim.brushStrokes.delete(id);
+      return;
+    }
+    const before = this.sim.brushFeedback.serial;
+    this.sim.endBrush(id);
+    if (this.sim.brushFeedback.serial !== before) {
+      this.quietSteps = 0;
+      this.exhaustedSteps = 0;
+      this.canFinish = false;
+    }
   }
 
   step() {

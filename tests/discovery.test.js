@@ -10,12 +10,31 @@ function advance(sim, steps) {
   for (let i = 0; i < steps; i++) sim.step();
 }
 
+test('discovery coverage measures revealed stone, stays bounded, and persists independently of grease', () => {
+  const field = new SurfaceDiscovery(prototype);
+  assert.equal(field.coverage, 0);
+  field.brush(point, point);
+  assert.ok(field.coverage > 0 && field.coverage < 0.02);
+  const before = field.coverage;
+  field.brush({ x: 10, y: -10 }, { x: 150, y: -10 });
+  assert.equal(field.coverage, before);
+  for (let pass = 0; pass < 2; pass++)
+    for (let y = 10; y <= 175; y += 8) field.brush({ x: 0, y }, { x: 160, y });
+  assert.ok(field.coverage > 0.9 && field.coverage <= 1);
+  const sum = [...field.active].reduce(
+    (value, index) =>
+      value + field.levels[index] * field.coverageMask.cells[index],
+    0,
+  );
+  assert.ok(Math.abs(field.coverage - sum / field.coverageMask.total) < 1e-9);
+});
+
 test('the stone starts undiscovered; brushing reveals only the touched area and stacks to full visibility', () => {
   const field = new SurfaceDiscovery(prototype);
   assert.deepEqual(field.snapshot(), []);
   field.brush(point, point);
   const once = field.levelAt(point.x, point.y);
-  assert.ok(once > 0.6 && once < 0.7);
+  assert.ok(once > 0.75 && once < 0.85);
   field.brush(point, point);
   assert.equal(field.levelAt(point.x, point.y), 1);
   assert.equal(field.levelAt(110, 120), 0);
@@ -51,7 +70,7 @@ test('sand contact accumulates by time and path, while off-stone and ground grai
     b = new SurfaceDiscovery(prototype);
   a.grainContact(point, point, 1);
   for (let i = 0; i < 10; i++) b.grainContact(point, point, 0.1);
-  assert.ok(Math.abs(a.levelAt(point.x, point.y) - 0.24) < 1e-6);
+  assert.ok(Math.abs(a.levelAt(point.x, point.y) - 0.08) < 1e-6);
   assert.ok(
     Math.abs(a.levelAt(point.x, point.y) - b.levelAt(point.x, point.y)) < 1e-6,
   );

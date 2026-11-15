@@ -1,0 +1,35 @@
+{
+  "note": "Reachability and player authorship of an explicit uncovering goal; no human engagement claim.",
+  "results": [
+    {
+      "seed": 48,
+      "strokes": 21,
+      "wallSimulationSeconds": 42,
+      "foundAtSeconds": 36.8,
+      "activeCoverage": 0.9895965906771277,
+      "idleCoverage": 0.19501529773190698,
+      "emitted": 1085,
+      "accounted": 1085
+    },
+    {
+      "seed": 2026,
+      "strokes": 21,
+      "wallSimulationSeconds": 42,
+      "foundAtSeconds": 36.8,
+      "activeCoverage": 0.9902193275455747,
+      "idleCoverage": 0.18369941216608227,
+      "emitted": 1040,
+      "accounted": 1040
+    },
+    {
+      "seed": 914,
+      "strokes": 21,
+      "wallSimulationSeconds": 42,
+      "foundAtSeconds": 36.8,
+      "activeCoverage": 0.9877909021442358,
+      "idleCoverage": 0.16557821092223493,
+      "emitted": 999,
+      "accounted": 999
+    }
+  ]
+}
