@@ -24,7 +24,11 @@ export default [
     },
   },
   {
-    files: ['scripts/playtest.js', 'scripts/feel-playtest.js'],
+    files: [
+      'scripts/playtest.js',
+      'scripts/feel-playtest.js',
+      'scripts/dust-playtest.js',
+    ],
     languageOptions: {
       globals: {
         ...globals.node,

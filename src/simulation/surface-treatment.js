@@ -14,6 +14,10 @@ export class SurfaceTreatment {
     this.orientationCos = new Float32Array(this.strength.length);
     this.orientationSin = new Float32Array(this.strength.length);
     this.updated = new Float64Array(this.strength.length);
+    // Many fine grains read a cell during one fixed step. Reuse its exact
+    // decayed value; painting invalidates that cell even at the same time.
+    this.sampleTimes = new Float64Array(this.strength.length);
+    this.sampleValues = new Float64Array(this.strength.length);
     this.active = new Set();
     this.time = 0;
     this.version = 0;
@@ -26,10 +30,14 @@ export class SurfaceTreatment {
   cellStrength(index) {
     const stored = this.strength[index];
     if (!stored) return 0;
+    if (this.sampleTimes[index] === this.time) return this.sampleValues[index];
     const value =
       stored *
       0.5 ** ((this.time - this.updated[index]) / this.config.traceHalfLife);
-    return value >= this.config.traceMinStrength ? value : 0;
+    this.sampleTimes[index] = this.time;
+    this.sampleValues[index] =
+      value >= this.config.traceMinStrength ? value : 0;
+    return this.sampleValues[index];
   }
 
   strengthAt(x, y) {
@@ -59,7 +67,7 @@ export class SurfaceTreatment {
     out.x = 0;
     out.y = 1;
     out.coherence = 0;
-    if (!editableStone(x, y)) return out;
+    if (!this.active.size || !editableStone(x, y)) return out;
     const gx = x / this.cellSize - 0.5,
       gy = y / this.cellSize - 0.5;
     const left = Math.floor(gx),
@@ -137,6 +145,7 @@ export class SurfaceTreatment {
         this.orientationSin[index] =
           (this.orientationSin[index] * decay + deposited * sine) * capped;
         this.strength[index] = next;
+        this.sampleTimes[index] = -1;
         this.updated[index] = this.time;
         this.active.add(index);
         changed = true;

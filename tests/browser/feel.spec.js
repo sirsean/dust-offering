@@ -59,7 +59,7 @@ test('real arrivals produce brief bowl feedback; material audio requires Sound o
 }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page, 'challenge=stone-offering-v7');
+  await open(page, 'challenge=stone-offering-v8');
   await page.clock.runFor(100);
   const rim = () =>
     page.evaluate(() => {
@@ -83,7 +83,10 @@ test('real arrivals produce brief bowl feedback; material audio requires Sound o
   });
   await page.clock.runFor(100);
   expect((await state(page)).left).toBe(1);
-  expect(await page.evaluate(() => dust.sim.lastCollections[0].x)).toBe(42.5);
+  expect(await page.evaluate(() => dust.sim.lastCollections[0].x)).toBeCloseTo(
+    42.5,
+    1,
+  );
   expect(await rim()).not.toEqual(original);
   expect(await page.evaluate(() => dust.audio.context)).toBeNull();
   await page.clock.runFor(1000);

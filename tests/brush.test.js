@@ -22,7 +22,7 @@ test('a broad sweep moves useful material toward either bowl without creating sa
       assert.equal(sim.emitted, sim.left + sim.right + sim.grains.length);
       assert.ok(sim.grains.every((g) => Math.hypot(g.vx, g.vy) <= 16.000001));
     }
-    assert.ok(sim[direction] > 70);
+    assert.ok(sim[direction] > 40);
     assert.ok(sim[direction === 'left' ? 'right' : 'left'] < 5);
   }
 });

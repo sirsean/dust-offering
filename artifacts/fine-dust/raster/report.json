@@ -1,0 +1,179 @@
+{
+  "base": "http://127.0.0.1:5173",
+  "browser": "156.0.8078.79",
+  "viewport": "390 × 844, DPR 2, headless Chromium, emulated touch",
+  "phases": [
+    {
+      "label": "entry",
+      "frames": {
+        "mean": 16.666666666666668,
+        "p95": 16.700000000000273
+      },
+      "steps": {
+        "mean": 1.4966850828743432,
+        "p95": 2.199999999953434
+      },
+      "draws": {
+        "mean": 1.703314917124113,
+        "p95": 6
+      },
+      "wallSeconds": 3.0075999999999765,
+      "simulationSeconds": 3.0166666666666657,
+      "retained": 1160,
+      "emitted": 1160,
+      "left": 0,
+      "right": 0,
+      "attached": 83,
+      "missed": 0,
+      "released": 0
+    },
+    {
+      "label": "two-minute-pour",
+      "frames": {
+        "mean": 16.665555555555553,
+        "p95": 16.700000000000728
+      },
+      "steps": {
+        "mean": 5.479558011047408,
+        "p95": 8.800000000046566
+      },
+      "draws": {
+        "mean": 2.9469613259701952,
+        "p95": 7.699999999953434
+      },
+      "wallSeconds": 3.0053000000000467,
+      "simulationSeconds": 3.0166666666666657,
+      "retained": 7680,
+      "emitted": 13048,
+      "left": 2379,
+      "right": 2989,
+      "attached": 4788,
+      "missed": 1535,
+      "released": 0
+    },
+    {
+      "label": "full-retained",
+      "frames": {
+        "mean": 21.017222222222234,
+        "p95": 50
+      },
+      "steps": {
+        "mean": 12.898947368424974,
+        "p95": 33
+      },
+      "draws": {
+        "mean": 4.691712707183993,
+        "p95": 11.599999999976717
+      },
+      "wallSeconds": 3.78270000000007,
+      "simulationSeconds": 3.1666666666666665,
+      "retained": 30000,
+      "emitted": 30000,
+      "left": 0,
+      "right": 0,
+      "attached": 30000,
+      "missed": 0,
+      "released": 0
+    },
+    {
+      "label": "full-brushed",
+      "frames": {
+        "mean": 36.01722222222225,
+        "p95": 66.70000000000437
+      },
+      "steps": {
+        "mean": 27.527071823209052,
+        "p95": 49.09999999997672
+      },
+      "draws": {
+        "mean": 5.927624309389821,
+        "p95": 12.800000000046566
+      },
+      "wallSeconds": 6.515,
+      "simulationSeconds": 3.0166666666666666,
+      "retained": 29590,
+      "emitted": 30000,
+      "left": 210,
+      "right": 200,
+      "attached": 24650,
+      "missed": 36,
+      "released": 6078
+    }
+  ],
+  "errors": [],
+  "config": {
+    "width": 160,
+    "height": 200,
+    "seed": 48,
+    "sourceX": 80,
+    "sourceY": -4,
+    "sourceSwayAmplitude": 44,
+    "sourceSwaySeconds": 60,
+    "collectionY": 181,
+    "leftMouth": [18, 67],
+    "rightMouth": [93, 142],
+    "grainRadius": 0.13,
+    "brushWidth": 14,
+    "stepsPerSecond": 60,
+    "collisionSubsteps": 3,
+    "contactPasses": 2,
+    "gravity": 12,
+    "maxSpeed": 16,
+    "sourceRate": 120,
+    "sourceWidth": 34,
+    "sourceFlowVariation": 0.6,
+    "sourceFlowSeconds": 4.5,
+    "sourceRippleSeconds": 0.75,
+    "sourceSputterInterval": 12,
+    "sourceSputterSeconds": 1.4,
+    "launchSpeed": 0.65,
+    "sourceSpeed": 3,
+    "sourceLanes": 24,
+    "airResistance": 0.16,
+    "airReferenceRadius": 0.65,
+    "airSpeed": 2.8,
+    "airLift": 0.45,
+    "airCellSize": 20,
+    "stoneAirExposure": 0.4,
+    "grainFriction": 0.3,
+    "contactVelocityBlend": 0.35,
+    "stoneAdhesionRate": 0.025,
+    "sandAdhesionRate": 1.6,
+    "adhesionSpeed": 7,
+    "inletClearY": 45,
+    "inletBlendY": 72,
+    "inletBondSeconds": 2.5,
+    "brushReleaseSeconds": 2.5,
+    "brushSpeed": 9,
+    "brushCarry": 0.6,
+    "traceCellSize": 1,
+    "tracePassGain": 1,
+    "traceMaxStrength": 6,
+    "traceHalfLife": 6,
+    "traceMinStrength": 0.002,
+    "traceAdhesionGain": 8,
+    "traceSlideCaptureReduction": 0.9,
+    "traceGuideGain": 0.85,
+    "traceCrossDrag": 9,
+    "traceFlatGrip": 0.35,
+    "traceGuideMinSlope": 0.35,
+    "traceAlongDrag": 0.35,
+    "revealCellSize": 1,
+    "revealBrushRadius": 10,
+    "revealBrushGain": 0.8,
+    "revealGrainRadius": 2,
+    "revealGrainRate": 0.016,
+    "revealIntervalSteps": 6,
+    "sleepSpeed": 0.45,
+    "sleepMovement": 0.02,
+    "sleepSteps": 30,
+    "freePourCap": 30000,
+    "challengeId": "stone-offering-v8",
+    "startingSupply": 4800,
+    "leftTarget": 1800,
+    "rightTarget": 3000,
+    "finishDelaySeconds": 18
+  },
+  "advanceTo120Milliseconds": 20705.900000000023,
+  "twoFingerWallMilliseconds": 1282.0696120000066
+}

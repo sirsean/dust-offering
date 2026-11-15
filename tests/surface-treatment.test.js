@@ -117,7 +117,11 @@ test('orientation follows stroke slopes rather than finger direction, blends at 
 
 test('coated stone catches a grain sooner, and fully decayed coating behaves like bare stone', () => {
   function scene(passes, aged = false) {
-    const sim = new Simulation({ sourceRate: 0, sandAdhesionRate: 0 });
+    const sim = new Simulation({
+      sourceRate: 0,
+      sandAdhesionRate: 0,
+      airResistance: 0,
+    });
     for (let i = 0; i < passes; i++) sim.brush(point, point);
     assert.equal(sim.grains.length, 0);
     if (aged) {

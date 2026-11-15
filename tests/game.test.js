@@ -5,15 +5,15 @@ import { challenge } from '../src/config/challenge.js';
 import { bestScore, saveBest } from '../src/game/storage.js';
 import { challengeUrl, shareScore, shareText } from '../src/game/share.js';
 
-test('new 960-grain challenge scores exact targets, single errors, underfill, overfill and total spill', () => {
-  assert.equal(challenge.id, 'stone-offering-v7');
+test('new 4800-grain challenge scores exact targets, single errors, underfill, overfill and total spill', () => {
+  assert.equal(challenge.id, 'stone-offering-v8');
   for (const [left, right, expected] of [
-    [360, 600, 1000],
-    [359, 600, 998],
-    [340, 600, 979],
-    [180, 300, 500],
-    [400, 560, 916],
-    [0, 960, 250],
+    [1800, 3000, 1000],
+    [1799, 3000, 999],
+    [1700, 3000, 979],
+    [900, 1500, 500],
+    [2000, 2800, 916],
+    [0, 4800, 250],
     [0, 0, 0],
   ])
     assert.equal(scoreOffering(left, right), expected);
@@ -22,7 +22,7 @@ test('new 960-grain challenge scores exact targets, single errors, underfill, ov
 test('optional challenge begins explicitly, supports pauses and slow rescue, then finishes and resets all piles', () => {
   const game = new Game('challenge');
   for (let i = 0; i < 120; i++) game.step();
-  assert.equal(game.sim.remaining, 960);
+  assert.equal(game.sim.remaining, 4800);
   game.edit({ x: 80, y: 50 }, { x: 90, y: 140 });
   assert.equal(game.sim.grains.length, 0);
   game.begin();
@@ -37,7 +37,7 @@ test('optional challenge begins explicitly, supports pauses and slow rescue, the
       game.edit({ x: 80, y: 28 }, { x: 80, y: 65 });
     game.step();
     assert.equal(
-      960,
+      4800,
       game.sim.remaining +
         game.sim.left +
         game.sim.right +
@@ -48,10 +48,10 @@ test('optional challenge begins explicitly, supports pauses and slow rescue, the
   assert.equal(game.canFinish, true);
   const result = game.finish();
   assert.equal(game.phase, 'finished');
-  assert.equal(result.left + result.right + result.spill + result.onFace, 960);
+  assert.equal(result.left + result.right + result.spill + result.onFace, 4800);
   game.reset();
   assert.equal(game.phase, 'ready');
-  assert.equal(game.sim.remaining, 960);
+  assert.equal(game.sim.remaining, 4800);
   assert.equal(game.sim.grains.length, 0);
   assert.equal(game.sim.spill, 0);
   game.reset('free');
@@ -76,14 +76,14 @@ test('bests are isolated from the old physics, preserve ties and tolerate denied
     getItem: (key) => values.get(key) ?? null,
     setItem: (key, value) => values.set(key, value),
   };
-  saveBest(storage, 'stone-offering-v6', 999);
+  saveBest(storage, 'stone-offering-v7', 999);
   assert.equal(bestScore(storage, challenge.id), null);
   assert.deepEqual(saveBest(storage, challenge.id, 979), {
     best: 979,
     saved: true,
   });
   assert.equal(saveBest(storage, challenge.id, 500).best, 979);
-  assert.equal(bestScore(storage, 'stone-offering-v6'), 999);
+  assert.equal(bestScore(storage, 'stone-offering-v7'), 999);
   const denied = {
     getItem() {
       throw Error();
@@ -101,13 +101,13 @@ test('bests are isolated from the old physics, preserve ties and tolerate denied
 });
 
 test('sharing uses the new challenge and handles native, cancellation, clipboard and manual copy', async () => {
-  const result = { score: 979, left: 340, right: 600 };
+  const result = { score: 979, left: 1700, right: 3000 };
   const base = 'https://dust-offering.sirsean.me/?debug#test';
   assert.equal(
     challengeUrl(base),
-    'https://dust-offering.sirsean.me/?challenge=stone-offering-v7',
+    'https://dust-offering.sirsean.me/?challenge=stone-offering-v8',
   );
-  assert.match(shareText(result, base), /340 \/ 360/);
+  assert.match(shareText(result, base), /1,700 \/ 1,800/);
   assert.equal(
     (await shareScore(result, base, { share: async () => {} })).status,
     'shared',
@@ -135,7 +135,7 @@ test('sharing uses the new challenge and handles native, cancellation, clipboard
     ).status,
     'copied',
   );
-  assert.match(copied, /stone-offering-v7/);
+  assert.match(copied, /stone-offering-v8/);
   assert.equal(
     (
       await shareScore(result, base, {

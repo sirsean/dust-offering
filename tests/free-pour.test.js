@@ -25,7 +25,7 @@ test('Challenge retains its empty preparation, fixed seed and complete finite su
   for (let i = 0; i < 600; i++) game.step();
   assert.equal(game.sim.grains.length, 0);
   assert.equal(game.sim.sourceTime, 0);
-  assert.equal(game.sim.remaining, 960);
+  assert.equal(game.sim.remaining, 4800);
   assert.equal(game.sim.config.seed, 48);
 });
 

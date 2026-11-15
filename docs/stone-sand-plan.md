@@ -80,3 +80,11 @@ The owner requests an extensive fun review, experimentation and iteration. Corre
 - Brief wakes on touched grains and subtle bowl responses clarify physical outcomes. Optional dry brush noise and bowl tones use actual contacts/arrivals, stay muted by default and silence on hiding/muting. Reduced motion keeps physical sand and grease while omitting decorative motion feedback.
 
 Use `stone-offering-v7` for the changed brush/scoring conditions, retaining 960 grains and 360 / 600 targets. These changes have stronger measured immediacy and agency; human enjoyment and repeat interest remain for hands-on evaluation. Avoid substituting timers, streaks or fabricated retention claims for a good physical loop.
+
+## Fine dust and desert air — revision 0.11.0
+
+The owner requests five times smaller grains, five times more emission, and gentle air movement while keeping performance good. Use radius 0.13 (diameter 0.26), nominal flow 120/s, and 120 release lanes across the existing 34-unit aperture. Keep the slow variable/sputtering profile and 16-unit/s speed cap. Five times the count of disks one fifth the diameter gives one fifth the total projected area; preserve that lighter look rather than enlarging the dots.
+
+Introduce separately seeded, smoothly varying spatial airflow and size-dependent drag on loose awake grains. Sheltering over the stone preserves finger guidance; wind fades near the floor and cannot wake or unstick settled material on its own. Air follows source time, so waiting before Challenge begins cannot alter its incoming shower. Keep all physical grains, bonds, multi-touch, persistent bottom piles, discovery and quiet completion. Scale passive per-grain reveal to 0.016/contact-second to offset five times as many reveal contacts.
+
+Use three collision substeps and two passes, occupied-bin clearing, cached fixed contacts, cached grease decay and a subpixel disk bitmap renderer. Test the cached solver against forced rebuilds and retain all mass. Raise retained capacity to 30,000 so five times the flow does not fill the tray five times sooner. Scale finite supply and targets to 4,800 and 1,800 / 3,000; use challenge `stone-offering-v8`. Details and measured performance limits are in [fine-dust.md](fine-dust.md).

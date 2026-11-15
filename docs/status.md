@@ -1,28 +1,13 @@
-# Project status — tactile play and a quiet discovery loop
+# Project status — fine dust and gentle air
 
-Revision 0.10.0 follows an extensive gameplay review of 0.9.0. Free Pour now starts with real dust already in flight, uses a broader sweep with moderate carry, and gives clearer physical and optional audio feedback. Brushing has more authorship over discovery. A small uncovering meter leads to “Stone found” and an optional “New stone,” without interrupting play. Normal free runs vary their shower and weathering; Challenge remains fixed and uses `stone-offering-v7`.
+Revision 0.11.0 / `stone-offering-v8` changes the grains from radius 0.65 to 0.13 and nominal flow from 24 to 120 grains/s. A separately seeded breeze and size-dependent drag gently move loose dust. Finger sweeps, hidden-stone discovery, grease, bowls, permanent missed-sand piles, font, controls and quiet Free Pour completion remain.
 
-Current design: [stone-sand-plan.md](stone-sand-plan.md). Trial history, rejected ideas and before/after evidence: [gameplay-review.md](gameplay-review.md). Current architecture: [architecture.md](architecture.md). Numerical and real-time evidence: [physics-results.md](physics-results.md), [playtest.md](playtest.md) and `artifacts/gameplay-review/`.
+Current measurements, screenshots, implementation and limits: [fine-dust.md](fine-dust.md). Current design: [stone-sand-plan.md](stone-sand-plan.md). Code structure: [architecture.md](architecture.md). The preceding tactile-play experiment is preserved in [gameplay-review.md](gameplay-review.md), with its baseline reports and artifacts.
 
-## Selected behavior
+Challenge scales to 4,800 grains and targets 1,800 / 3,000, preserving the 3:5 ratio and approximate pour duration. Historical bests stay separate. Free Pour retains up to 30,000 actual grains, including ground piles. No particles are discarded or substituted for performance.
 
-- Free Pour prepares nine seconds of its actual offscreen emitter. Every grain, count and timestamp is retained; only discovery is cleared before entry. There is material to touch immediately. Fresh seeds vary normal runs; `?debug&seed=48` repeats a prepared scene. Challenge still begins empty at source time zero with seed 48 and all 960 grains.
-- A 14-unit finger moves actual sand into banks and carries some along its path (carry 0.6, brush speed 9). Independent residual spacing makes sparse/dense events agree. Holding still cannot pump sand. Lifts/cancels flush only that contact; late residual edits clear Finish eligibility.
-- Stone and sand adhesion, the 2.5-second release cooldown, 16-unit/s fall bound, 34-unit aperture and variable nominal 24-grain/s shower remain. Near-horizontal grease loses effective grip so broad marks do not become dams.
-- Finger reveal uses radius 10 and gain 0.8/pass; passive contact reveal is slower at 0.08/s. Discovery persists after grease fades. At 82% opacity-weighted face coverage, Free Pour acknowledges the stone and offers a fresh one. The creation remains playable, with no modal, countdown, streak or automatic reset.
-- Wakes on recently brushed real grains and brief bowl responses make effects visible. Optional filtered brushing texture and bowl tones respond to actual contacts/arrivals. Sound starts muted; hiding and muting silence it. Reduced motion omits the decorative wakes/waves.
-- The warm desert palette, Fringe font, mechanical controls, initially hidden face, independently tracked fingers, permanent ground piles, bests/sharing and direct entry remain.
+Verification: 69 unit checks and 35 browser scenarios pass (three touch-only desktop duplicates skipped). The isolated cloud benchmark measured about 60 fps at entry and after two minutes, about 56 fps with 30,000 pinned grains, and about 35 fps after releasing 6,078 grains with two fingers. In that extreme scene simulation advances at about 0.59 times wall time; no mass is lost. Phone hardware performance remains to be checked.
 
-## Verification and interpretation
+Fine disks render into one transparent pixel layer. The collision solver clears occupied bins, caches fixed grains and still queries sleeping face grains for adhesion. Brush/adhesion/collection/sleep transitions invalidate the cache. Per-cell grease decay is reused within a simulation timestamp. Physics uses three substeps and two contact passes at 60 Hz, with speed capped at 16 logical units/s.
 
-All 63 numerical/unit tests and 33 browser scenarios pass; three desktop duplicates of touch-only cases are skipped. The review also includes controlled deposits, three matched active/idle policies, preparation and discovery trials, rejected tuning variants, several real-time native emulated-touch sessions, an actual audio-signal check, layout captures and the isolated 6,000-grain load scene.
-
-The selected sweep moves about twice as much material in the controlled deposit. A scripted player's additional collection over idle rises from about 159 to 240 grains per minute across three seeds. These are improvements in control and pacing, not measurements of human enjoyment, addictiveness or retention. The next evaluation is whether the new response and gentle completion make a human want another swipe.
-
-## Repository and deployment
-
-Repository: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `gameplay-feel` and integrated into `main`. Preview: <https://gameplay-feel.dust-offering.sirsean.me>. The earlier interface build remains at <https://fringe-controls.dust-offering.sirsean.me> for human comparison.
-
-Revision 0.9.0 is `1f3ed66`; its material baseline is archived under `docs/archive/stone-v6/` and `artifacts/archive/stone-v6/`. The 0.9.0 interface captures remain in `artifacts/fringe-controls/`, and older evidence stays in its existing archives.
-
-Use direct Wrangler deployment; automated GitHub deployment remains deferred. Run `npm run deploy` for production or `npm run deploy:branch -- gameplay-feel` for the preview. No deployment secret should be configured until requested. See [deployment.md](deployment.md).
+Repository: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `fine-dust` and integrated into `main`, with preview <https://fine-dust.dust-offering.sirsean.me>. The previous revision remains at <https://gameplay-feel.dust-offering.sirsean.me> for comparison. Use direct Wrangler deployment; automated GitHub deployment remains deferred.

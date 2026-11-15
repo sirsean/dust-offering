@@ -2,6 +2,7 @@ import { seededRandom } from '../simulation/random.js';
 import { insideStone, stone as stoneShape } from '../simulation/geometry.js';
 import { challenge } from '../config/challenge.js';
 import { readPalette } from './palette.js';
+import { DustLayer } from './dust-layer.js';
 
 export class Renderer {
   constructor(canvas) {
@@ -23,7 +24,7 @@ export class Renderer {
     this.scale = this.canvas.width / 160;
     this.palette = readPalette(this.canvas);
     const p = this.palette;
-    this.grainSprites = null;
+    this.dustLayer = null;
     this.background = document.createElement('canvas');
     this.background.width = this.canvas.width;
     this.background.height = this.canvas.height;
@@ -266,7 +267,10 @@ export class Renderer {
       c.fillStyle = clay;
       c.fill();
       c.clip();
-      const fill = Math.min(count / (mode === 'challenge' ? target : 480), 1);
+      const fill = Math.min(
+        count / (mode === 'challenge' ? target : sim.config.startingSupply / 2),
+        1,
+      );
       const y = 193 - fill * 12;
       c.fillStyle = p.bowlDust;
       c.beginPath();
@@ -386,7 +390,8 @@ export class Renderer {
     this.drawBowls(sim, mode);
     if (!this.reducedMotion.matches) {
       c.strokeStyle = this.palette.sand + '24';
-      c.lineWidth = 0.4;
+      c.lineWidth = Math.min(0.4, sim.config.grainRadius * 0.6);
+      const trailScale = Math.min(1, sim.config.grainRadius / 0.65);
       c.beginPath();
       for (const grain of sim.grains)
         if (
@@ -394,55 +399,40 @@ export class Renderer {
           !grain.sleeping &&
           Math.hypot(grain.vx, grain.vy) > 6
         ) {
-          c.moveTo(grain.x - grain.vx * 0.045, grain.y - grain.vy * 0.045);
+          c.moveTo(
+            grain.x - grain.vx * 0.045 * trailScale,
+            grain.y - grain.vy * 0.045 * trailScale,
+          );
           c.lineTo(grain.x, grain.y);
         }
       c.stroke();
       c.strokeStyle = this.palette.mark + '65';
-      c.lineWidth = 0.5;
+      c.lineWidth = Math.min(0.5, sim.config.grainRadius * 0.6);
       c.beginPath();
       for (const grain of sim.grains)
         if (!grain.bond && sim.time - grain.brushedAt < 0.65) {
-          c.moveTo(grain.x - grain.vx * 0.09, grain.y - grain.vy * 0.09);
+          c.moveTo(
+            grain.x - grain.vx * 0.09 * trailScale,
+            grain.y - grain.vy * 0.09 * trailScale,
+          );
           c.lineTo(grain.x, grain.y);
         }
       c.stroke();
     }
-    if (!this.grainSprites || this.spriteRadius !== sim.config.grainRadius) {
+    if (!this.dustLayer || this.spriteRadius !== sim.config.grainRadius) {
       this.spriteRadius = sim.config.grainRadius;
-      const diameter = Math.ceil(sim.config.grainRadius * this.scale * 2 + 2);
-      this.grainSprites = [
-        this.palette.sand,
-        this.palette.sandOchre,
-        this.palette.sandLight,
-      ].map((color) => {
-        const canvas = document.createElement('canvas');
-        canvas.width = diameter;
-        canvas.height = diameter;
-        const sprite = canvas.getContext('2d');
-        sprite.fillStyle = color;
-        sprite.beginPath();
-        sprite.arc(
-          diameter / 2,
-          diameter / 2,
-          sim.config.grainRadius * this.scale,
-          0,
-          Math.PI * 2,
-        );
-        sprite.fill();
-        return canvas;
-      });
+      this.dustLayer = new DustLayer(
+        this.canvas.width,
+        this.canvas.height,
+        this.scale,
+        sim.config.grainRadius,
+        [this.palette.sand, this.palette.sandOchre, this.palette.sandLight],
+      );
     }
     c.setTransform(1, 0, 0, 1, 0, 0);
-    const offset = this.grainSprites[0].width / 2;
     // Missed grains remain here too: their visible ground piles are made from
     // the same particles and contacts as the deposits on the stone.
-    for (const grain of sim.grains)
-      c.drawImage(
-        this.grainSprites[grain.id % this.grainSprites.length],
-        grain.x * this.scale - offset,
-        grain.y * this.scale - offset,
-      );
+    this.dustLayer.draw(sim.grains, c);
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
     for (const [x, count, target] of [
       [42.5, sim.left, challenge.leftTarget],

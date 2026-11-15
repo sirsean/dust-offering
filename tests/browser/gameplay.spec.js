@@ -6,7 +6,7 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
 }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page, 'challenge=stone-offering-v7');
+  await open(page, 'challenge=stone-offering-v8');
   await expect(page.locator('.tools button')).toHaveCount(2);
   await expect(
     page.getByRole('button', { name: 'Draw', exact: true }),
@@ -20,7 +20,7 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
   const prepared = await state(page);
   await page.clock.runFor(3000);
   const early = await state(page);
-  expect(early.emitted - prepared.emitted).toBeLessThan(90);
+  expect(early.emitted - prepared.emitted).toBeLessThan(450);
   expect(
     await page.evaluate(
       (bornBefore) =>
@@ -101,13 +101,13 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   page,
 }) => {
   await page.addInitScript(() =>
-    localStorage.setItem('dust-offering:best:stone-offering-v6', '999'),
+    localStorage.setItem('dust-offering:best:stone-offering-v7', '999'),
   );
-  await open(page, 'challenge=stone-offering-v7');
+  await open(page, 'challenge=stone-offering-v8');
   await expect(page.locator('#best')).toHaveText('Best —');
   await expect(page.locator('#pour')).toHaveText('Begin');
   await page.clock.runFor(1000);
-  expect((await state(page)).remaining).toBe(960);
+  expect((await state(page)).remaining).toBe(4800);
   await page.locator('#pour').click();
   for (let i = 0; i < 3; i++) {
     await page.clock.runFor(10000);
@@ -118,8 +118,8 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   await expect(page.locator('#pour')).toBeEnabled();
   const final = await state(page);
   expect(final.remaining).toBe(0);
-  expect(final.emitted).toBe(960);
-  expect(final.left + final.right + final.retained).toBe(960);
+  expect(final.emitted).toBe(4800);
+  expect(final.left + final.right + final.retained).toBe(4800);
   expect(final.spill).toBeGreaterThan(0);
   await page.locator('#pour').click();
   await expect(page.locator('#result')).toBeVisible();
@@ -128,12 +128,12 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   expect(score).toBeLessThanOrEqual(1000);
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v7'),
+      localStorage.getItem('dust-offering:best:stone-offering-v8'),
     ),
   ).toBe(String(score));
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v6'),
+      localStorage.getItem('dust-offering:best:stone-offering-v7'),
     ),
   ).toBe('999');
   await page.evaluate(() => {
@@ -152,7 +152,7 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   });
   await page.locator('#share').click();
   await expect(page.locator('#manual-share')).toHaveValue(
-    /challenge=stone-offering-v7/,
+    /challenge=stone-offering-v8/,
   );
   await expect(page.locator('#result-uncollected')).toContainText(
     'on the ground',
@@ -257,7 +257,7 @@ test('rotation and hidden recovery preserve sand, piles and traces; bowls and sp
     await page.locator('#challenge').click();
     await page.locator('#free').click();
   }
-  expect((await state(page)).attached).toBeLessThan(15);
+  expect((await state(page)).attached).toBeLessThan(75);
   await expect(page.locator('#pour')).toHaveText('Pause pour');
 });
 
@@ -273,7 +273,7 @@ test('narrow phones and landscape fit, controls remain accessible, storage denia
       },
     }),
   );
-  await open(page, 'challenge=stone-offering-v7');
+  await open(page, 'challenge=stone-offering-v8');
   for (const viewport of [
     { width: 320, height: 568 },
     { width: 360, height: 640 },

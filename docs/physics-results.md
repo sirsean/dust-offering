@@ -1,5 +1,7 @@
 # Tactile brush and discovery measurements
 
+> Historical revision 0.10.0 baseline. Current fine-dust behavior and performance are in [fine-dust.md](fine-dust.md).
+
 Current model: revision 0.10.0 / `stone-offering-v7`. Defaults live in `src/config/prototype.js`; prepared entry and the discovery goal live in `src/config/free-pour.js`. The previous v6 baseline is in [archive/stone-v6/](archive/stone-v6/physics-results.md). The complete trial history is in [gameplay-review.md](gameplay-review.md).
 
 ## Physical defaults

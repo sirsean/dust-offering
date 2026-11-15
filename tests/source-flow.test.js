@@ -11,15 +11,15 @@ test('the flow swells gently, stays bounded, and has brief interrupted sputters 
       sourceFlow(config, i / 60),
     );
     const peak = Math.max(...rates);
-    assert.ok(peak > 32 && peak < 44);
+    assert.ok(peak > 160 && peak < 220);
     assert.equal(Math.min(...rates), 0);
     assert.ok(rates.filter((rate) => rate === 0).length > 300);
     for (let i = 1; i < 120; i++)
-      assert.ok(Math.abs(rates[i] - rates[i - 1]) < 0.3);
+      assert.ok(Math.abs(rates[i] - rates[i - 1]) < 1.5);
     let longestGap = 0,
       gap = 0;
     for (const rate of rates) {
-      assert.ok(rate >= 0 && rate < 44);
+      assert.ok(rate >= 0 && rate < 220);
       gap = rate === 0 ? gap + 1 : 0;
       longestGap = Math.max(longestGap, gap);
     }
@@ -47,7 +47,7 @@ test('source samples are seeded, order-independent and do not consume particle r
   for (let i = 0; i < 100; i++) void a.sourceRate;
   assert.equal(a.random(), b.random());
   assert.equal(sourceFlow({ ...a.config, sourceRate: 0 }, 7.2), 0);
-  assert.equal(sourceFlow({ ...a.config, sourceFlowVariation: 0 }, 7.2), 24);
+  assert.equal(sourceFlow({ ...a.config, sourceFlowVariation: 0 }, 7.2), 120);
 });
 
 test('the wider physical pour emits visibly different amounts and actual gaps without bursts or lost grains', () => {
@@ -59,15 +59,15 @@ test('the wider physical pour emits visibly different amounts and actual gaps wi
     const before = sim.emitted;
     sim.step();
     const born = sim.emitted - before;
-    assert.ok(born >= 0 && born <= 1);
+    assert.ok(born >= 0 && born <= 4);
     bins[Math.floor(step / 60)] += born;
     gap = born ? 0 : gap + 1;
     longestGap = Math.max(longestGap, gap);
     assert.equal(sim.blocked, false);
     assert.equal(sim.emitted, sim.left + sim.right + sim.grains.length);
   }
-  assert.ok(Math.min(...bins) < 10);
-  assert.ok(Math.max(...bins) > 32);
+  assert.ok(Math.min(...bins) < 50);
+  assert.ok(Math.max(...bins) > 160);
   assert.ok(longestGap > 12 && longestGap < 45);
 });
 
@@ -84,6 +84,6 @@ test('paused or capped emission follows the same flow clock and resumes without 
   sim.pouring = true;
   const before = sim.emitted;
   sim.step();
-  assert.ok(sim.emitted - before <= 1);
+  assert.ok(sim.emitted - before <= 4);
   assert.ok(sim.emissionFraction < 1);
 });

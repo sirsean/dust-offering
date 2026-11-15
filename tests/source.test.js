@@ -10,7 +10,7 @@ function advance(sim, steps) {
 test('grains are born fully above the board and fall into view without losing mass', () => {
   const sim = new Simulation();
   advance(sim, 3);
-  assert.equal(sim.emitted, 1);
+  assert.equal(sim.emitted, 5);
   const grain = sim.grains[0];
   assert.ok(grain.y < -sim.config.grainRadius);
   advance(sim, 60);
@@ -64,7 +64,7 @@ test('newly emitted grains follow the moving opening rather than a fixed centre'
       }
     assert.equal(sim.emitted, sim.left + sim.right + sim.grains.length);
   }
-  assert.ok(sim.emitted > 1000 && sim.emitted < 1800);
+  assert.ok(sim.emitted > 5000 && sim.emitted < 9000);
   assert.ok(right.length > 20 && left.length > 20);
   assert.ok(right.reduce((a, b) => a + b, 0) / right.length > 120);
   assert.ok(left.reduce((a, b) => a + b, 0) / left.length < 40);
@@ -85,9 +85,9 @@ test('challenge preparation does not shift the starting phase; pauses drift with
   assert.ok(Math.abs(game.sim.sourceX - 80) < 1e-8);
   game.togglePour();
   for (let i = 0; i < 5; i++) game.step();
-  assert.ok(game.sim.emitted > count && game.sim.emitted <= count + 4);
+  assert.ok(game.sim.emitted > count && game.sim.emitted <= count + 20);
   game.reset();
   assert.equal(game.sim.sourceTime, 0);
   assert.equal(game.sim.sourceX, 80);
-  assert.equal(game.sim.remaining, 960);
+  assert.equal(game.sim.remaining, 4800);
 });

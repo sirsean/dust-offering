@@ -9,7 +9,7 @@ test('the starting configuration respects the collision travel bound', () => {
 });
 
 test('challenge supply and integer targets preserve the planned 3:5 measure', () => {
-  assert.equal(config.startingSupply, 960);
+  assert.equal(config.startingSupply, 4800);
   assert.equal(config.leftTarget + config.rightTarget, config.startingSupply);
   assert.equal(config.leftTarget, (config.startingSupply * 3) / 8);
   assert.equal(config.rightTarget, (config.startingSupply * 5) / 8);

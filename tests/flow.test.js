@@ -12,6 +12,7 @@ function conserved(sim) {
 export function guidedGrain(passes, reverse = false, mirror = false) {
   const sim = new Simulation({
     sourceRate: 0,
+    airResistance: 0,
     stoneAdhesionRate: 0,
     sandAdhesionRate: 0,
   });
@@ -54,6 +55,7 @@ test('layered traces guide loosely downhill, independently of drawing direction,
 test('a horizontal trace slows crossing without suspending a grain or moving it uphill', () => {
   const sim = new Simulation({
     sourceRate: 0,
+    airResistance: 0,
     stoneAdhesionRate: 0,
     sandAdhesionRate: 0,
   });
@@ -71,7 +73,11 @@ test('a horizontal trace slows crossing without suspending a grain or moving it 
 });
 
 test('temporary upper bonds release their descendants while lower stone attachments remain', () => {
-  const sim = new Simulation({ sourceRate: 0, sandAdhesionRate: 0 });
+  const sim = new Simulation({
+    sourceRate: 0,
+    airResistance: 0,
+    sandAdhesionRate: 0,
+  });
   const root = sim.addGrain(80, 60),
     child = sim.addGrain(80, 58.7),
     lower = sim.addGrain(100, 120);
@@ -118,13 +124,14 @@ test('the wider inlet spans the pour and drains during two minutes without a bru
         }
     }
     assert.ok(max - min > 30);
-    assert.ok(sim.emitted > 2200 && sim.emitted < 3200);
+    assert.ok(sim.emitted > 11000 && sim.emitted < 16000);
     assert.equal(sim.blocked, false);
     assert.equal(sim.grains.filter((g) => g.bond && g.y < 45).length, 0);
     // The offscreen fall adds in-flight grains above the tip; they must keep
     // draining rather than forming a static cap at the old nozzle position.
-    assert.ok(sim.grains.filter((g) => g.y < 36).length < 85);
-    assert.ok(sim.grains.filter((g) => g.y < 60).length < 250);
+    // Drag extends the offscreen/inlet flight; those loose grains must drain.
+    assert.ok(sim.grains.filter((g) => g.y < 36).length < 600);
+    assert.ok(sim.grains.filter((g) => g.y < 60).length < 1250);
     assert.ok(
       sim.attachedCount > 100,
       'Deposits still accumulate on the rest of the stone',

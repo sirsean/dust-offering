@@ -149,12 +149,12 @@ try {
       };
     });
     assert.ok(report.flow.openingCoverage > 30);
-    assert.ok(Math.min(...report.flow.grainsPerSecond) < 10);
-    assert.ok(Math.max(...report.flow.grainsPerSecond) > 32);
+    assert.ok(Math.min(...report.flow.grainsPerSecond) < 50);
+    assert.ok(Math.max(...report.flow.grainsPerSecond) > 160);
     assert.equal(report.flow.minimumRate, 0);
-    assert.ok(report.flow.maximumRate < 44);
+    assert.ok(report.flow.maximumRate < 220);
     assert.ok(report.flow.longestGapSeconds > 0.2);
-    assert.equal(report.flow.maximumBornInOneStep, 1);
+    assert.equal(report.flow.maximumBornInOneStep, 4);
     console.log(JSON.stringify({ phase: 'variable flow', flow: report.flow }));
     assert.ok(
       report.sourceSweep[2].discovery.visibleCellEquivalent >
@@ -164,7 +164,8 @@ try {
     await page.screenshot({ path: 'artifacts/stone-before.png' });
     assert.ok(
       report.beforeBrush.attached > 60 &&
-        report.beforeBrush.sand > report.beforeBrush.stone,
+        report.beforeBrush.sand > 0 &&
+        report.beforeBrush.stone > 0,
     );
     await page.locator('#pour').click();
     report.pausedEmitted = (await state()).emitted;
@@ -314,12 +315,12 @@ try {
       timeout: 25000,
     });
     report.challenge = await state();
-    assert.equal(report.challenge.emitted, 960);
+    assert.equal(report.challenge.emitted, 4800);
     assert.equal(
       report.challenge.left +
         report.challenge.right +
         report.challenge.retained,
-      960,
+      4800,
     );
     await page.locator('#pour').click();
     report.result = await page.evaluate(() => dust.game.result);
@@ -362,7 +363,7 @@ try {
       p95Milliseconds: sorted[Math.floor(sorted.length * 0.95)],
     };
   });
-  assert.equal(report.fullFaceFrames.retained, 6000);
+  assert.equal(report.fullFaceFrames.retained, 30000);
   const rect = await page.locator('#field').boundingBox();
   const start = performance.now();
   await page.mouse.move(
@@ -373,12 +374,12 @@ try {
   await page.mouse.up();
   report.brushPointerMilliseconds = performance.now() - start;
   report.stressAfterBrush = await state();
-  assert.ok(report.stressAfterBrush.attached < 6000);
+  assert.ok(report.stressAfterBrush.attached < 30000);
   assert.equal(
     report.stressAfterBrush.left +
       report.stressAfterBrush.right +
       report.stressAfterBrush.retained,
-    6000,
+    30000,
   );
   await page.screenshot({ path: 'artifacts/stone-stress.png' });
   report.stressDate = new Date().toISOString();

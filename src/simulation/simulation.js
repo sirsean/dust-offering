@@ -4,6 +4,7 @@ import { seededRandom } from './random.js';
 import { SurfaceTreatment } from './surface-treatment.js';
 import { SurfaceDiscovery } from './surface-discovery.js';
 import { sourceFlow } from './source-flow.js';
+import { Air } from './air.js';
 
 export class Simulation {
   constructor(options = {}) {
@@ -12,6 +13,8 @@ export class Simulation {
     this.surface = new SurfaceTreatment(this.config);
     this.discovery = new SurfaceDiscovery(this.config);
     this.traceSample = {};
+    this.air = new Air(this.config);
+    this.airSample = {};
     this.grains = [];
     this.steps = 0;
     this.sourceStartStep = null;
@@ -36,11 +39,22 @@ export class Simulation {
       time: -Infinity,
     };
     this.lastCollections = [null, null];
-    this.cellSize = this.config.grainRadius * 2;
+    // The small margin is part of the broad phase too: a bonded neighbour
+    // just outside contact distance must remain reachable across cell borders.
+    this.contactReach = this.config.grainRadius * (2 + 0.03 / 0.65);
+    this.cellSize = this.contactReach;
     this.columns = Math.ceil(this.config.width / this.cellSize) + 4;
     this.rows = Math.ceil(this.config.height / this.cellSize) + 4;
     this.head = new Int32Array(this.columns * this.rows);
+    this.head.fill(-1);
+    this.fixedHead = new Int32Array(this.head.length);
+    this.fixedHead.fill(-1);
     this.next = new Int32Array(this.config.freePourCap);
+    this.fixedNext = new Int32Array(this.next.length);
+    this.occupied = [];
+    this.fixedOccupied = [];
+    this.staticDirty = true;
+    this.queries = new Uint8Array(this.config.freePourCap);
   }
 
   get faceCount() {
@@ -144,7 +158,9 @@ export class Simulation {
       let x;
       let available = false;
       for (let attempt = 0; attempt < this.config.sourceLanes; attempt++) {
-        const lane = (this.emitted * 5 + attempt) % this.config.sourceLanes;
+        // 37 is coprime with 120 (and the older 24): visit the entire opening
+        // rather than repeating only one fifth of the finer release lanes.
+        const lane = (this.emitted * 37 + attempt) % this.config.sourceLanes;
         x =
           centre -
           this.config.sourceWidth / 2 +
@@ -173,6 +189,7 @@ export class Simulation {
   }
 
   anchor(grain, bond, parent = null) {
+    this.staticDirty = true;
     grain.parent?.children.delete(grain);
     grain.bond = bond;
     grain.bondExpires =
@@ -187,6 +204,7 @@ export class Simulation {
   }
 
   release(grain) {
+    this.staticDirty = true;
     const stack = [grain];
     let released = 0;
     while (stack.length) {
@@ -210,11 +228,28 @@ export class Simulation {
   }
 
   buildHash() {
-    this.head.fill(-1);
-    if (this.next.length < this.grains.length)
+    // Fine dust expands the grid 25-fold. Clear only occupied bins, so cost
+    // follows retained material rather than the resolution of empty space.
+    for (const cell of this.occupied) this.head[cell] = -1;
+    this.occupied.length = 0;
+    if (this.next.length < this.grains.length) {
       this.next = new Int32Array(this.grains.length);
+      this.fixedNext = new Int32Array(this.grains.length);
+      this.queries = new Uint8Array(this.grains.length);
+      this.staticDirty = true;
+    }
+    // Anchored and sleeping ground grains cannot move. Cache their bins until
+    // a bond, wakeup, sleep transition or collection changes that partition.
+    // Both grids index the same retained array, so compaction invalidates it.
+    if (this.staticDirty) {
+      for (const cell of this.fixedOccupied) this.fixedHead[cell] = -1;
+      this.fixedOccupied.length = 0;
+    }
     for (let i = this.grains.length - 1; i >= 0; i--) {
       const grain = this.grains[i];
+      const query = !grain.bond && !(grain.sleeping && grain.missed);
+      this.queries[i] = query ? 1 : 0;
+      if (!query && !this.staticDirty) continue;
       const column = Math.max(
         1,
         Math.min(this.columns - 2, Math.floor(grain.x / this.cellSize) + 2),
@@ -224,23 +259,33 @@ export class Simulation {
         Math.min(this.rows - 2, Math.floor(grain.y / this.cellSize) + 2),
       );
       grain.cell = row * this.columns + column;
-      this.next[i] = this.head[grain.cell];
-      this.head[grain.cell] = i;
+      const heads = query ? this.head : this.fixedHead;
+      const next = query ? this.next : this.fixedNext;
+      const occupied = query ? this.occupied : this.fixedOccupied;
+      if (heads[grain.cell] === -1) occupied.push(grain.cell);
+      next[i] = heads[grain.cell];
+      heads[grain.cell] = i;
     }
+    this.staticDirty = false;
   }
 
   wakeAround(cell) {
     for (let y = -1; y <= 1; y++)
       for (let x = -1; x <= 1; x++) {
-        for (
-          let i = this.head[cell + y * this.columns + x];
-          i !== -1;
-          i = this.next[i]
-        ) {
-          const grain = this.grains[i];
-          if (!grain.bond) {
-            grain.sleeping = false;
-            grain.quiet = 0;
+        for (let group = 0; group < 2; group++) {
+          const heads = group ? this.fixedHead : this.head;
+          const next = group ? this.fixedNext : this.next;
+          for (
+            let i = heads[cell + y * this.columns + x];
+            i !== -1;
+            i = next[i]
+          ) {
+            const grain = this.grains[i];
+            if (!grain.bond) {
+              if (grain.sleeping && grain.missed) this.staticDirty = true;
+              grain.sleeping = false;
+              grain.quiet = 0;
+            }
           }
         }
       }
@@ -249,63 +294,71 @@ export class Simulation {
   contacts() {
     this.buildHash();
     const diameter = this.config.grainRadius * 2;
-    const reach = diameter + 0.03;
+    const reach = this.contactReach;
     for (let i = 0; i < this.grains.length; i++) {
+      if (!this.queries[i]) continue;
       const a = this.grains[i];
       for (let oy = -1; oy <= 1; oy++)
         for (let ox = -1; ox <= 1; ox++) {
-          for (
-            let j = this.head[a.cell + oy * this.columns + ox];
-            j !== -1;
-            j = this.next[j]
-          ) {
-            if (j <= i) continue;
-            const b = this.grains[j];
-            if ((a.bond && b.bond) || (a.sleeping && b.sleeping)) continue;
-            const dx = b.x - a.x;
-            const dy = b.y - a.y;
-            const distance2 = dx * dx + dy * dy;
-            if (distance2 > reach * reach) continue;
-            if (a.bond && !b.bond) b.candidate = a;
-            if (b.bond && !a.bond) a.candidate = b;
-            if (distance2 >= diameter * diameter) continue;
-            const distance = Math.sqrt(distance2);
-            const nx = distance > 1e-8 ? dx / distance : i % 2 ? 1 : -1;
-            const ny = distance > 1e-8 ? dy / distance : 0;
-            if (
-              (a.sleeping || b.sleeping) &&
-              Math.hypot(b.vx - a.vx, b.vy - a.vy) > this.config.sleepSpeed
+          for (let group = 0; group < 2; group++) {
+            const heads = group ? this.fixedHead : this.head;
+            const next = group ? this.fixedNext : this.next;
+            for (
+              let j = heads[a.cell + oy * this.columns + ox];
+              j !== -1;
+              j = next[j]
             ) {
-              this.wakeAround(a.cell);
-              this.wakeAround(b.cell);
-            }
-            const wa = a.bond || a.sleeping ? 0 : 1;
-            const wb = b.bond || b.sleeping ? 0 : 1;
-            const weight = wa + wb;
-            if (!weight) continue;
-            const correction = (diameter - distance) / weight;
-            a.x -= nx * correction * wa;
-            a.y -= ny * correction * wa;
-            b.x += nx * correction * wb;
-            b.y += ny * correction * wb;
-            const inward = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
-            if (inward < 0) {
-              const impulse = -inward / weight;
-              a.vx -= impulse * nx * wa;
-              a.vy -= impulse * ny * wa;
-              b.vx += impulse * nx * wb;
-              b.vy += impulse * ny * wb;
-              const tangent = -(b.vx - a.vx) * ny + (b.vy - a.vy) * nx;
-              const friction =
-                Math.sign(tangent) *
-                Math.min(
-                  Math.abs(tangent) / weight,
-                  impulse * this.config.grainFriction,
-                );
-              a.vx -= friction * ny * wa;
-              a.vy += friction * nx * wa;
-              b.vx += friction * ny * wb;
-              b.vy -= friction * nx * wb;
+              // Moving/sleeping-face pairs are owned by their lower index;
+              // fixed grains are queried only from the loose side, in either
+              // index order. Capture ownership before wakeups for this pass.
+              if (j === i || (this.queries[j] && j < i)) continue;
+              const b = this.grains[j];
+              if ((a.bond && b.bond) || (a.sleeping && b.sleeping)) continue;
+              const dx = b.x - a.x;
+              const dy = b.y - a.y;
+              const distance2 = dx * dx + dy * dy;
+              if (distance2 > reach * reach) continue;
+              if (a.bond && !b.bond) b.candidate = a;
+              if (b.bond && !a.bond) a.candidate = b;
+              if (distance2 >= diameter * diameter) continue;
+              const distance = Math.sqrt(distance2);
+              const nx = distance > 1e-8 ? dx / distance : i % 2 ? 1 : -1;
+              const ny = distance > 1e-8 ? dy / distance : 0;
+              if (
+                (a.sleeping || b.sleeping) &&
+                Math.hypot(b.vx - a.vx, b.vy - a.vy) > this.config.sleepSpeed
+              ) {
+                this.wakeAround(a.cell);
+                this.wakeAround(b.cell);
+              }
+              const wa = a.bond || a.sleeping ? 0 : 1;
+              const wb = b.bond || b.sleeping ? 0 : 1;
+              const weight = wa + wb;
+              if (!weight) continue;
+              const correction = (diameter - distance) / weight;
+              a.x -= nx * correction * wa;
+              a.y -= ny * correction * wa;
+              b.x += nx * correction * wb;
+              b.y += ny * correction * wb;
+              const inward = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+              if (inward < 0) {
+                const impulse = -inward / weight;
+                a.vx -= impulse * nx * wa;
+                a.vy -= impulse * ny * wa;
+                b.vx += impulse * nx * wb;
+                b.vy += impulse * ny * wb;
+                const tangent = -(b.vx - a.vx) * ny + (b.vy - a.vy) * nx;
+                const friction =
+                  Math.sign(tangent) *
+                  Math.min(
+                    Math.abs(tangent) / weight,
+                    impulse * this.config.grainFriction,
+                  );
+                a.vx -= friction * ny * wa;
+                a.vy += friction * nx * wa;
+                b.vx += friction * ny * wb;
+                b.vy -= friction * nx * wb;
+              }
             }
           }
         }
@@ -457,12 +510,27 @@ export class Simulation {
       grain.vx = along * trace.x - across * trace.y;
       grain.vy = along * trace.y + across * trace.x;
     }
+    if (c.airResistance > 0) {
+      const air = this.air.sample(grain.x, grain.y, this.airSample);
+      const exposure =
+        (insideStone(grain.x, grain.y) ? c.stoneAirExposure : 1) *
+        Math.max(0, Math.min(1, (198 - grain.y) / 20));
+      const blend = this.airBlend * exposure;
+      grain.vx += (air.x - grain.vx) * blend;
+      grain.vy += (air.y - grain.vy) * blend;
+    }
   }
 
   step() {
     this.emit();
     const c = this.config;
     const dt = 1 / c.stepsPerSecond / c.collisionSubsteps;
+    if (c.airResistance > 0) this.air.advanceTo(this.sourceTime);
+    this.airBlend =
+      1 -
+      Math.exp(
+        ((-c.airResistance * c.airReferenceRadius) / c.grainRadius) * dt,
+      );
     let weathered = false;
     for (const grain of this.grains) {
       if (grain.bond && this.time >= grain.bondExpires) {
@@ -508,6 +576,7 @@ export class Simulation {
         if (!grain.bond) this.adhere(grain, dt);
         if (!this.collect(grain)) this.grains[retained++] = grain;
       }
+      if (this.grains.length !== retained) this.staticDirty = true;
       this.grains.length = retained;
     }
     for (const grain of this.grains)
@@ -520,6 +589,7 @@ export class Simulation {
           grain.quiet++;
         else grain.quiet = 0;
         if (grain.quiet >= c.sleepSteps) {
+          if (grain.missed) this.staticDirty = true;
           grain.sleeping = true;
           grain.vx = 0;
           grain.vy = 0;

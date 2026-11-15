@@ -1,5 +1,7 @@
 # Tactile playthrough and load review
 
+> Historical revision 0.10.0 baseline. Current fine-dust behavior and performance are in [fine-dust.md](fine-dust.md).
+
 Revision 0.10.0 / `stone-offering-v7` improves the physical brush and the free-play loop while retaining the quiet desert direction. The design comparison and rejected trials are in [gameplay-review.md](gameplay-review.md).
 
 ## Real-time native emulated touch

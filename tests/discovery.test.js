@@ -70,7 +70,9 @@ test('sand contact accumulates by time and path, while off-stone and ground grai
     b = new SurfaceDiscovery(prototype);
   a.grainContact(point, point, 1);
   for (let i = 0; i < 10; i++) b.grainContact(point, point, 0.1);
-  assert.ok(Math.abs(a.levelAt(point.x, point.y) - 0.08) < 1e-6);
+  assert.ok(
+    Math.abs(a.levelAt(point.x, point.y) - prototype.revealGrainRate) < 1e-6,
+  );
   assert.ok(
     Math.abs(a.levelAt(point.x, point.y) - b.levelAt(point.x, point.y)) < 1e-6,
   );
