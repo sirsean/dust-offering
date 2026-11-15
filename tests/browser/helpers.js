@@ -5,6 +5,7 @@ export async function open(page, query = '') {
   await page.goto(`/?debug&${query}`);
   await expect(page.locator('#field')).toBeVisible();
   await page.waitForFunction(() => window.dust);
+  await page.evaluate(() => document.fonts.ready);
 }
 export async function stroke(page, a, b, steps = 18) {
   const rect = await page.locator('#field').boundingBox();

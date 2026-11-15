@@ -227,7 +227,10 @@ export class Renderer {
       this.compositeTreatmentVersion = sim.surface.version;
       this.compositeTime = sim.surface.time;
     }
-    this.ctx.drawImage(this.stoneComposite, 0, 0, 160, 200);
+    this.ctx.save();
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.drawImage(this.stoneComposite, 0, 0);
+    this.ctx.restore();
   }
 
   drawBowls(sim, mode) {
@@ -331,8 +334,11 @@ export class Renderer {
 
   draw(sim, mode = 'free') {
     const c = this.ctx;
+    // Cached artwork already matches the backing store. A second resize can
+    // resample colors when CSS sizing rounds its height to a fractional pixel.
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.drawImage(this.background, 0, 0);
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
-    c.drawImage(this.background, 0, 0, 160, 200);
     this.drawStone(sim);
     this.drawBowls(sim, mode);
     if (!this.reducedMotion.matches) {
@@ -391,7 +397,7 @@ export class Renderer {
       [117.5, sim.right, challenge.rightTarget],
     ]) {
       c.fillStyle = this.palette.text;
-      c.font = `${Math.max(6, 12 / (this.canvas.clientWidth / 160))}px system-ui`;
+      c.font = `${Math.max(6, 13 / (this.canvas.clientWidth / 160))}px ${this.palette.fontFamily}`;
       c.textAlign = 'center';
       c.fillText(
         mode === 'challenge'
@@ -399,6 +405,7 @@ export class Renderer {
           : count.toLocaleString(),
         x,
         199,
+        66,
       );
     }
     for (const point of this.brushes.values()) {
@@ -412,9 +419,10 @@ export class Renderer {
     }
     if (sim.blocked && sim.blockReason === 'full') {
       c.fillStyle = this.palette.text;
-      c.font = '4.3px system-ui';
+      c.font = `4.8px ${this.palette.fontFamily}`;
       c.textAlign = 'center';
-      c.fillText('A full tray. Reset for a fresh pour.', 80, 23);
+      c.fillText('A full tray.', 80, 20, 144);
+      c.fillText('Reset for a fresh pour.', 80, 28, 144);
     }
   }
 }

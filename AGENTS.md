@@ -16,6 +16,10 @@ The entire stone starts invisible, including its rim. Fingers and sand progressi
 
 Use the owner's desert palette: brown, umber, dusk orange and sand, grounded in the Fringe's Scablands references. The triangle is worn old stone, the grains are pale dust, and brushed traces read as dark greasy finger marks. Layering makes the marks darker; fading returns them toward the stone's color. Keep the physical grains legible over both stone and grease. The palette is defined by CSS custom properties in `src/styles.css`; `src/rendering/palette.js` reads the canvas colors when rebuilding cached artwork. Avoid green/sage coatings, luminous painted rails, invented lore glyphs and extra interface clutter. See `docs/visual-style.md` for references and current screenshots. Styling alone does not change the challenge identifier.
 
+Use the owner's `src/assets/fonts/FringeV2.otf` for all game text, including Canvas bowl counts and notices. Serve it locally with the CSS font face and preload; the renderer reads the inherited font family with its palette. Preserve the original font file. Its wide glyphs need responsive label sizing, room in landscape and bounded Canvas count widths. Buttons should feel like sand-blasted mechanical cassette-futurism hardware: recessed housings, worn bronze key faces, physical bevels, amber selection indicators and a visible depressed state. Keep semantic buttons, clear keyboard focus and at least 44 CSS pixels of touch height. No animated grit or extra labels/glyphs.
+
+Enter gameplay directly. The opening explanation box and its storage/callback logic have been removed; do not reintroduce a hint overlay or first-use dismissal gate. Keep the canvas's accessible action description.
+
 ## Code and simulation
 
 - Use Vite, vanilla JavaScript ES modules, semantic HTML, CSS, Canvas 2D, and optional Web Audio. No framework or full physics engine.

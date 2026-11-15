@@ -1,6 +1,30 @@
-# Desert dusk — revision 0.5.0
+# Fringe lettering and desert hardware — revision 0.9.0
 
-> Appearance baseline for revision 0.5.0. Revision 0.8.0 retains this palette, hides the stone until discovered and widens the invisible source with variable flow; current screenshots are in [playtest.md](playtest.md).
+The owner's supplied FringeV2 font now covers all game text: the title, controls, notices, challenge HUD, results, copy field and Canvas bowl counts. A fresh visit opens directly into Free Pour, with the hidden stone and falling dust unobstructed. The former explanation box, saved dismissal state and pointer dismissal callback have been removed. The accessible canvas action description remains.
+
+## Typeface and controls
+
+The unmodified [FringeV2.otf](../src/assets/fonts/FringeV2.otf) is stored locally, registered in CSS as Fringe and preloaded by the HTML. Vite produces a hashed asset for both references. The renderer reads the canvas's inherited CSS font family, keeping the interface and game text consistent. No external font service is used. Wide lettering needs deliberate space: counts have a maximum drawing width, the full-tray notice uses two lines, and landscape reserves a wider control column.
+
+The controls are sand-blasted mechanical cassette-futurism hardware in the established desert palette. Each key has a warm worn metal face, shallow scratches, static fine grit, a physical bevel and a dark lower recess. Mode and pour controls sit in metal housings. Selected keys use ochre faces and recessed amber indicators. A press lowers the key and changes its shadow; reduced motion retains the shadow feedback without movement. Keyboard focus remains an obvious outlined ring. Targets are 48 pixels high, with a 44-pixel sound control.
+
+The small procedural [button-grit.svg](../src/assets/button-grit.svg) adds texture without animation or a decorative particle system. CSS owns all material layers and states. No extra lore glyphs, fake serial labels or interface controls were added. Grain physics, persistent discovery, six-second grease decay and challenge `stone-offering-v6` retain the 0.8.0 tuning.
+
+## Current visual review
+
+Evidence: [review.json](../artifacts/fringe-controls/review.json). The review used headless Chromium 156 with emulated touch and accelerated fixed simulation time, across 390 × 844, 320 × 568, 844 × 390 and 1280 × 800. It verified the actual loaded font, Canvas font selection, result typography, no initial hint, no document overflow, label bounds, touch targets and a complete 960-grain challenge. No physical phone was used.
+
+| Direct entry                                                                                                       | Pour and brushing                                                                                   |
+| ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| ![Fringe lettering and mechanical controls without a help overlay](../artifacts/fringe-controls/phone-initial.png) | ![The same controls around the discovered dusty stone](../artifacts/fringe-controls/phone-pour.png) |
+
+Additional captures: [narrow phone](../artifacts/fringe-controls/narrow.png), [landscape](../artifacts/fringe-controls/landscape.png), [desktop](../artifacts/fringe-controls/desktop.png), [keyboard focus](../artifacts/fringe-controls/keyboard-focus.png) and [results](../artifacts/fringe-controls/result.png).
+
+The existing 52 numerical/unit checks and 27 browser scenarios remain the release checks. The visual review checks this interface pass; the unchanged 0.8.0 material and real-time load evidence remains in [playtest.md](playtest.md).
+
+# Desert dusk — revision 0.5.0 baseline
+
+> Historical appearance baseline for revision 0.5.0. Its palette and Fringe references still ground the current direction; the interface has since changed.
 
 The owner's direction is brown, umber, dusk orange and sand: dust crossing the desert, a mysterious old stone triangle, and greasy finger marks in the sand resting on it. This pass changes rendering and interface styling, retaining the measured `stone-offering-v3` physical model and saved-score namespace.
 
@@ -25,7 +49,7 @@ CSS custom properties in `src/styles.css` are the color source for both the inte
 
 ## Visual review
 
-Current evidence is [review.json](../artifacts/desert-dusk/review.json). Captures use headless Chromium 156, emulated touch and accelerated fixed simulation time. They cover 390 × 844, 320 × 568, 844 × 390 and 1280 × 800, plus the result dialog. No physical device was used.
+Baseline evidence is [review.json](../artifacts/desert-dusk/review.json). Captures use headless Chromium 156, emulated touch and accelerated fixed simulation time. They cover 390 × 844, 320 × 568, 844 × 390 and 1280 × 800, plus the result dialog. No physical device was used.
 
 ![Active pour, greasy traces, pale dust and retained ground piles](../artifacts/desert-dusk/phone-pour.png)
 

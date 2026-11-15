@@ -1,6 +1,6 @@
 # Wider variable-pour measurements
 
-Current revision: 0.8.0, challenge `stone-offering-v6`. Configuration lives in `src/config/prototype.js`; the pure flow profile is in `src/simulation/source-flow.js`. The aperture is wider and arrival density varies, while individual grain motion, adhesion, grease and discovery retain their previous tuning. Earlier evidence is in [archive/stone-v5/](archive/stone-v5/physics-results.md). Current browser play and rendering evidence is in [playtest.md](playtest.md).
+Physical tuning: revision 0.8.0, challenge `stone-offering-v6`, retained by the 0.9.0 interface pass. Configuration lives in `src/config/prototype.js`; the pure flow profile is in `src/simulation/source-flow.js`. The aperture is wider and arrival density varies, while individual grain motion, adhesion, grease and discovery retain their previous tuning. Earlier evidence is in [archive/stone-v5/](archive/stone-v5/physics-results.md). Current typography and control captures are in [visual-style.md](visual-style.md); the material baseline is in [playtest.md](playtest.md).
 
 ## Delivery
 

@@ -38,5 +38,6 @@ export function readPalette(canvas) {
   palette.greaseRGB = [1, 3, 5].map((offset) =>
     parseInt(palette.grease.slice(offset, offset + 2), 16),
   );
+  palette.fontFamily = style.fontFamily;
   return palette;
 }

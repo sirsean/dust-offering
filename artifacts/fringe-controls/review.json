@@ -1,0 +1,598 @@
+{
+  "date": "2026-11-15T03:27:51.380Z",
+  "revision": "0.9.0 / stone-offering-v6",
+  "browser": "156.0.8078.79",
+  "errors": [],
+  "font": {
+    "faces": [
+      {
+        "family": "Fringe",
+        "status": "loaded"
+      }
+    ],
+    "body": "Fringe, sans-serif",
+    "canvas": "6px Fringe, sans-serif"
+  },
+  "viewports": [
+    {
+      "width": 390,
+      "height": 844,
+      "scrollWidth": 390,
+      "scrollHeight": 844,
+      "heading": {
+        "x": 14,
+        "y": 24.3125,
+        "width": 207.9375,
+        "height": 19.375,
+        "top": 24.3125,
+        "right": 221.9375,
+        "bottom": 43.6875,
+        "left": 14
+      },
+      "buttons": [
+        {
+          "id": "sound",
+          "box": {
+            "x": 242.515625,
+            "y": 12,
+            "width": 133.484375,
+            "height": 44,
+            "top": 12,
+            "right": 376,
+            "bottom": 56,
+            "left": 242.515625
+          },
+          "text": {
+            "x": 255.515625,
+            "y": 28.65625,
+            "width": 107.484375,
+            "height": 9,
+            "top": 28.65625,
+            "right": 363,
+            "bottom": 37.65625,
+            "left": 255.515625
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "free",
+          "box": {
+            "x": 22,
+            "y": 74,
+            "width": 169,
+            "height": 48,
+            "top": 74,
+            "right": 191,
+            "bottom": 122,
+            "left": 22
+          },
+          "text": {
+            "x": 41.890625,
+            "y": 92.390625,
+            "width": 129.21875,
+            "height": 11,
+            "top": 92.390625,
+            "right": 171.109375,
+            "bottom": 103.390625,
+            "left": 41.890625
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "challenge",
+          "box": {
+            "x": 199,
+            "y": 74,
+            "width": 169,
+            "height": 48,
+            "top": 74,
+            "right": 368,
+            "bottom": 122,
+            "left": 199
+          },
+          "text": {
+            "x": 215.21875,
+            "y": 92.390625,
+            "width": 136.5625,
+            "height": 11,
+            "top": 92.390625,
+            "right": 351.78125,
+            "bottom": 103.390625,
+            "left": 215.21875
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "pour",
+          "box": {
+            "x": 22,
+            "y": 773,
+            "width": 169,
+            "height": 48,
+            "top": 773,
+            "right": 191,
+            "bottom": 821,
+            "left": 22
+          },
+          "text": {
+            "x": 60.75,
+            "y": 791.390625,
+            "width": 91.484375,
+            "height": 11,
+            "top": 791.390625,
+            "right": 152.234375,
+            "bottom": 802.390625,
+            "left": 60.75
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "reset",
+          "box": {
+            "x": 199,
+            "y": 773,
+            "width": 169,
+            "height": 48,
+            "top": 773,
+            "right": 368,
+            "bottom": 821,
+            "left": 199
+          },
+          "text": {
+            "x": 246.0625,
+            "y": 791.390625,
+            "width": 74.859375,
+            "height": 11,
+            "top": 791.390625,
+            "right": 320.921875,
+            "bottom": 802.390625,
+            "left": 246.0625
+          },
+          "font": "Fringe, sans-serif"
+        }
+      ]
+    },
+    {
+      "width": 320,
+      "height": 568,
+      "scrollWidth": 320,
+      "scrollHeight": 568,
+      "heading": {
+        "x": 14,
+        "y": 17.203125,
+        "width": 158.78125,
+        "height": 33.59375,
+        "top": 17.203125,
+        "right": 172.78125,
+        "bottom": 50.796875,
+        "left": 14
+      },
+      "buttons": [
+        {
+          "id": "sound",
+          "box": {
+            "x": 180.78125,
+            "y": 12,
+            "width": 125.21875,
+            "height": 44,
+            "top": 12,
+            "right": 306,
+            "bottom": 56,
+            "left": 180.78125
+          },
+          "text": {
+            "x": 193.78125,
+            "y": 29.15625,
+            "width": 99.21875,
+            "height": 9,
+            "top": 29.15625,
+            "right": 293,
+            "bottom": 38.15625,
+            "left": 193.78125
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "free",
+          "box": {
+            "x": 22,
+            "y": 74,
+            "width": 134,
+            "height": 48,
+            "top": 74,
+            "right": 156,
+            "bottom": 122,
+            "left": 22
+          },
+          "text": {
+            "x": 33.71875,
+            "y": 92.5,
+            "width": 110.5625,
+            "height": 10,
+            "top": 92.5,
+            "right": 144.28125,
+            "bottom": 102.5,
+            "left": 33.71875
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "challenge",
+          "box": {
+            "x": 164,
+            "y": 74,
+            "width": 134,
+            "height": 48,
+            "top": 74,
+            "right": 298,
+            "bottom": 122,
+            "left": 164
+          },
+          "text": {
+            "x": 175,
+            "y": 92.5,
+            "width": 116.84375,
+            "height": 10,
+            "top": 92.5,
+            "right": 291.84375,
+            "bottom": 102.5,
+            "left": 175
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "pour",
+          "box": {
+            "x": 22,
+            "y": 497,
+            "width": 134,
+            "height": 48,
+            "top": 497,
+            "right": 156,
+            "bottom": 545,
+            "left": 22
+          },
+          "text": {
+            "x": 49.859375,
+            "y": 515.5,
+            "width": 78.28125,
+            "height": 10,
+            "top": 515.5,
+            "right": 128.140625,
+            "bottom": 525.5,
+            "left": 49.859375
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "reset",
+          "box": {
+            "x": 164,
+            "y": 497,
+            "width": 134,
+            "height": 48,
+            "top": 497,
+            "right": 298,
+            "bottom": 545,
+            "left": 164
+          },
+          "text": {
+            "x": 198.96875,
+            "y": 515.5,
+            "width": 64.046875,
+            "height": 10,
+            "top": 515.5,
+            "right": 263.015625,
+            "bottom": 525.5,
+            "left": 198.96875
+          },
+          "font": "Fringe, sans-serif"
+        }
+      ]
+    },
+    {
+      "width": 844,
+      "height": 390,
+      "scrollWidth": 844,
+      "scrollHeight": 390,
+      "heading": {
+        "x": 528,
+        "y": 12,
+        "width": 195.46875,
+        "height": 18.1875,
+        "top": 12,
+        "right": 723.46875,
+        "bottom": 30.1875,
+        "left": 528
+      },
+      "buttons": [
+        {
+          "id": "sound",
+          "box": {
+            "x": 528,
+            "y": 38.1875,
+            "width": 136.25,
+            "height": 44,
+            "top": 38.1875,
+            "right": 664.25,
+            "bottom": 82.1875,
+            "left": 528
+          },
+          "text": {
+            "x": 541,
+            "y": 54.6875,
+            "width": 110.25,
+            "height": 10,
+            "top": 54.6875,
+            "right": 651.25,
+            "bottom": 64.6875,
+            "left": 541
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "free",
+          "box": {
+            "x": 534,
+            "y": 98.1875,
+            "width": 131,
+            "height": 48,
+            "top": 98.1875,
+            "right": 665,
+            "bottom": 146.1875,
+            "left": 534
+          },
+          "text": {
+            "x": 544.21875,
+            "y": 116.6875,
+            "width": 110.5625,
+            "height": 10,
+            "top": 116.6875,
+            "right": 654.78125,
+            "bottom": 126.6875,
+            "left": 544.21875
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "challenge",
+          "box": {
+            "x": 671,
+            "y": 98.1875,
+            "width": 131,
+            "height": 48,
+            "top": 98.1875,
+            "right": 802,
+            "bottom": 146.1875,
+            "left": 671
+          },
+          "text": {
+            "x": 678.078125,
+            "y": 116.6875,
+            "width": 116.84375,
+            "height": 10,
+            "top": 116.6875,
+            "right": 794.921875,
+            "bottom": 126.6875,
+            "left": 678.078125
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "pour",
+          "box": {
+            "x": 534,
+            "y": 321,
+            "width": 131,
+            "height": 48,
+            "top": 321,
+            "right": 665,
+            "bottom": 369,
+            "left": 534
+          },
+          "text": {
+            "x": 560.359375,
+            "y": 339.5,
+            "width": 78.28125,
+            "height": 10,
+            "top": 339.5,
+            "right": 638.640625,
+            "bottom": 349.5,
+            "left": 560.359375
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "reset",
+          "box": {
+            "x": 671,
+            "y": 321,
+            "width": 131,
+            "height": 48,
+            "top": 321,
+            "right": 802,
+            "bottom": 369,
+            "left": 671
+          },
+          "text": {
+            "x": 704.46875,
+            "y": 339.5,
+            "width": 64.046875,
+            "height": 10,
+            "top": 339.5,
+            "right": 768.515625,
+            "bottom": 349.5,
+            "left": 704.46875
+          },
+          "font": "Fringe, sans-serif"
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "height": 800,
+      "scrollWidth": 1280,
+      "scrollHeight": 800,
+      "heading": {
+        "x": 394,
+        "y": 21.40625,
+        "width": 270.65625,
+        "height": 25.1875,
+        "top": 21.40625,
+        "right": 664.65625,
+        "bottom": 46.59375,
+        "left": 394
+      },
+      "buttons": [
+        {
+          "id": "sound",
+          "box": {
+            "x": 749.75,
+            "y": 12,
+            "width": 136.25,
+            "height": 44,
+            "top": 12,
+            "right": 886,
+            "bottom": 56,
+            "left": 749.75
+          },
+          "text": {
+            "x": 762.75,
+            "y": 28.5,
+            "width": 110.25,
+            "height": 10,
+            "top": 28.5,
+            "right": 873,
+            "bottom": 38.5,
+            "left": 762.75
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "free",
+          "box": {
+            "x": 402,
+            "y": 74,
+            "width": 234,
+            "height": 48,
+            "top": 74,
+            "right": 636,
+            "bottom": 122,
+            "left": 402
+          },
+          "text": {
+            "x": 447.140625,
+            "y": 90.546875,
+            "width": 143.71875,
+            "height": 13,
+            "top": 90.546875,
+            "right": 590.859375,
+            "bottom": 103.546875,
+            "left": 447.140625
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "challenge",
+          "box": {
+            "x": 644,
+            "y": 74,
+            "width": 234,
+            "height": 48,
+            "top": 74,
+            "right": 878,
+            "bottom": 122,
+            "left": 644
+          },
+          "text": {
+            "x": 685.046875,
+            "y": 90.546875,
+            "width": 151.90625,
+            "height": 13,
+            "top": 90.546875,
+            "right": 836.953125,
+            "bottom": 103.546875,
+            "left": 685.046875
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "pour",
+          "box": {
+            "x": 402,
+            "y": 729,
+            "width": 234,
+            "height": 48,
+            "top": 729,
+            "right": 636,
+            "bottom": 777,
+            "left": 402
+          },
+          "text": {
+            "x": 468.109375,
+            "y": 745.546875,
+            "width": 101.765625,
+            "height": 13,
+            "top": 745.546875,
+            "right": 569.875,
+            "bottom": 758.546875,
+            "left": 468.109375
+          },
+          "font": "Fringe, sans-serif"
+        },
+        {
+          "id": "reset",
+          "box": {
+            "x": 644,
+            "y": 729,
+            "width": 234,
+            "height": 48,
+            "top": 729,
+            "right": 878,
+            "bottom": 777,
+            "left": 644
+          },
+          "text": {
+            "x": 719.359375,
+            "y": 745.546875,
+            "width": 83.265625,
+            "height": 13,
+            "top": 745.546875,
+            "right": 802.625,
+            "bottom": 758.546875,
+            "left": 719.359375
+          },
+          "font": "Fringe, sans-serif"
+        }
+      ]
+    }
+  ],
+  "result": {
+    "score": 430,
+    "left": 169,
+    "right": 244,
+    "spill": 156,
+    "onFace": 391
+  },
+  "resultFonts": [
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif",
+    "Fringe, sans-serif"
+  ]
+}

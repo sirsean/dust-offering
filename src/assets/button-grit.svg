@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="64" viewBox="0 0 160 64">
+  <filter id="grit">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" stitchTiles="stitch" seed="17"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer><feFuncA type="linear" slope="0.13"/></feComponentTransfer>
+  </filter>
+  <path fill="#d7b98e" filter="url(#grit)" d="M0 0h160v64H0z"/>
+  <path fill="none" stroke="#e7c69b" stroke-opacity=".13" stroke-width=".6" d="m8 8 17-1m103 48 20-1M48 5l6 1M80 58l12-1"/>
+  <path fill="none" stroke="#170e0a" stroke-opacity=".3" stroke-width=".7" d="m5 53 12 1m128-45 9-1M37 6l5 1"/>
+</svg>

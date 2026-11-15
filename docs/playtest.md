@@ -1,5 +1,7 @@
 # Wider, uneven pour — playtest
 
+> Physical and real-time baseline for revision 0.8.0, retained by the 0.9.0 interface pass. Current Fringe typography, controls and direct-entry captures are in [visual-style.md](visual-style.md).
+
 Revision 0.8.0 widens the offscreen aperture to 34 logical units and gives the stream slow swells, smaller ripples and occasional brief sputters. The opening still sways gently, grains retain their slow motion, and fingers and sand continue discovering the hidden stone.
 
 ## Real-time simulated play

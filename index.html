@@ -13,6 +13,13 @@
     />
     <title>Dust Offering</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/src/assets/fonts/FringeV2.otf"
+      as="font"
+      type="font/otf"
+      crossorigin
+    />
   </head>
   <body>
     <main class="app">
@@ -35,10 +42,6 @@
           tabindex="0"
           aria-label="Dust reveals a hidden stone triangle. Brush with one or more fingers, or a mouse, to uncover the stone, loosen dust and leave fading grease marks that guide it downhill."
         ></canvas>
-        <p id="hint" class="hint">
-          Let the dust find the stone. Brush to uncover it and leave greasy
-          trails that gently guide the sand.
-        </p>
       </div>
       <div class="tools" aria-label="Pour controls">
         <button id="pour" title="Stop or resume pouring (Space)">

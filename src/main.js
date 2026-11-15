@@ -1,12 +1,7 @@
 import './styles.css';
 import { Game } from './game/game.js';
 import { challenge } from './config/challenge.js';
-import {
-  bestScore,
-  readStored,
-  saveBest,
-  writeStored,
-} from './game/storage.js';
+import { bestScore, saveBest } from './game/storage.js';
 import { shareScore } from './game/share.js';
 import { Renderer } from './rendering/renderer.js';
 import { BowlAudio } from './rendering/audio.js';
@@ -28,8 +23,6 @@ let accumulator = 0;
 let lastTime = null;
 let lastUI = 0;
 let noticeTimer;
-const hintKey = 'dust-offering:hint:reveal-stone-v1';
-$('#hint').hidden = readStored(storage, hintKey) === 'seen';
 
 function notice(text) {
   clearTimeout(noticeTimer);
@@ -41,10 +34,6 @@ function notice(text) {
 }
 const pointer = bindPointer($('#field'), {
   edit: (a, b, stroke) => game.edit(a, b, stroke),
-  changed: () => {
-    $('#hint').hidden = true;
-    writeStored(storage, hintKey, 'seen');
-  },
   brush: (id, point) => {
     if (point) renderer.brushes.set(id, point);
     else renderer.brushes.delete(id);
