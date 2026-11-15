@@ -180,12 +180,16 @@ test('collection interpolates the mouth crossing and counts a grain only once', 
 });
 
 test('stopped or obstructed emission spends no supply and resumes without a catch-up burst', () => {
-  const sim = new Simulation({ supply: 960, inletBondSeconds: Infinity });
+  const sim = new Simulation({
+    supply: 960,
+    inletBondSeconds: Infinity,
+    sourceSwayAmplitude: 0,
+  });
   sim.pouring = false;
   advance(sim, 120);
   assert.equal(sim.emitted, 0);
   for (let i = 0; i < 15; i++)
-    sim.anchor(sim.addGrain(71 + i * 1.3, 14), 'stone');
+    sim.anchor(sim.addGrain(71 + i * 1.3, sim.config.sourceY), 'stone');
   sim.pouring = true;
   advance(sim, 120);
   assert.equal(sim.emitted, 0);
@@ -229,6 +233,11 @@ test('identical seeds and brush strokes at identical steps reproduce the full st
       right: sim.right,
       spill: sim.spill,
       remaining: sim.remaining,
+      source: {
+        x: sim.sourceX,
+        time: sim.sourceTime,
+        start: sim.sourceStartStep,
+      },
     };
   }
   assert.deepEqual(replay(), replay());

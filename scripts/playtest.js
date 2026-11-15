@@ -52,6 +52,9 @@ async function state() {
     aboveY36: dust.sim.grains.filter((g) => g.y < 36).length,
     aboveY60: dust.sim.grains.filter((g) => g.y < 60).length,
     remaining: Number.isFinite(dust.sim.remaining) ? dust.sim.remaining : null,
+    sourceX: dust.sim.sourceX,
+    sourceTime: dust.sim.sourceTime,
+    aboveBoard: dust.sim.grains.filter((g) => g.y < 0).length,
   }));
 }
 const stressOnly = process.argv.includes('--stress-only');
@@ -69,7 +72,20 @@ try {
   await page.goto(`${base}/?debug`);
   await page.waitForFunction(() => window.dust);
   if (!stressOnly) {
-    await page.waitForTimeout(25000);
+    report.sourceSweep = [];
+    for (let i = 0; i < 3; i++) {
+      await page.waitForTimeout(15000);
+      report.sourceSweep.push(await state());
+      console.log(
+        JSON.stringify({
+          phase: 'slow drifting pour',
+          state: report.sourceSweep.at(-1),
+        }),
+      );
+    }
+    assert.ok(report.sourceSweep[0].sourceX > 123);
+    assert.ok(Math.abs(report.sourceSweep[1].sourceX - 80) < 2);
+    assert.ok(report.sourceSweep[2].sourceX < 37);
     report.beforeBrush = await state();
     await page.screenshot({ path: 'artifacts/stone-before.png' });
     assert.ok(

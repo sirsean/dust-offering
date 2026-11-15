@@ -2,7 +2,7 @@
 
 A quiet dust-on-stone browser prototype at the Black Pyramid, in warm umber and desert dusk. Let pale sand gather on the weathered stone, then brush it with fingers, a pen, or a mouse. Your stroke loosens sand and leaves a dark greasy mark that gently guides later grains downhill. Repeated passes deepen the mark and strengthen its grip; sand can still slide along it and drift away. Missed sand stays visible in piles below the stone.
 
-**Current revision: 0.5.0, physics `stone-offering-v3`.** The desert palette, weathered surfaces, pale dust, clay bowls and dark grease marks carry the latest visual direction. Multiple fingers can brush the entire triangle independently. Marks fade with a six-second strength half-life, and the wider inlet drains through weaker, temporary upper attachments. Free Pour opens by default; Pause pour, Reset, optional Challenge, local bests, sharing, and muted-by-default sound remain available.
+**Current revision: 0.6.0, physics `stone-offering-v4`.** Dust falls in from above the board through an invisible opening that slowly sways across the scene in a one-minute cycle. The desert palette, weathered stone, pale grains, clay bowls and dark grease marks remain. Multiple fingers can brush the entire triangle independently. Marks fade with a six-second strength half-life. Free Pour opens by default; Pause pour, Reset, optional Challenge, local bests, sharing, and muted-by-default sound remain available.
 
 - Play: <https://dust-offering.sirsean.me>
 - [Current direction](docs/stone-sand-plan.md) · [Architecture](docs/architecture.md) · [Status](docs/status.md)
@@ -28,7 +28,7 @@ npx playwright install chromium
 npm run test:browser
 ```
 
-Browser tests start Vite if necessary. With Vite running, `npm run playtest` simulates real-time gathering, brushing, two-finger traces, layering and decay, persistent ground piles, the challenge, and a retained-material stress scene. It takes roughly two minutes and saves evidence in `artifacts/`. A system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
+Browser tests start Vite if necessary. With Vite running, `npm run playtest` watches a real-time source sweep, then simulates brushing, two-finger traces, layering and decay, persistent ground piles, the challenge, and a retained-material stress scene. It takes about two and a half minutes and saves evidence in `artifacts/`. A system Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium`.
 
 ## Deploy
 
@@ -36,8 +36,8 @@ Use the configured Cloudflare environment token for direct Wrangler deployment:
 
 ```sh
 npm run deploy
-npm run deploy:branch -- desert-dusk
-npm run deploy:branch:delete -- desert-dusk
+npm run deploy:branch -- drifting-pour
+npm run deploy:branch:delete -- drifting-pour
 ```
 
 GitHub Actions runs code and browser checks. Automated deployments remain deferred by the owner; no Actions deployment secret is required for direct deployment. Deleting a branch alone does not remove its manually deployed preview. See the deployment runbook for writable cache/config directories in restricted environments.

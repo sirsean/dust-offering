@@ -1,0 +1,39 @@
+{
+  "revision": "0.6.0",
+  "clock": "accelerated simulation time",
+  "viewport": "390 × 844, Chromium emulated touch",
+  "samples": [
+    {
+      "name": "right",
+      "time": 15.05,
+      "x": 123.99939685888677,
+      "emitted": 361,
+      "accounted": 361,
+      "aboveBoard": 15
+    },
+    {
+      "name": "centre",
+      "time": 30.15,
+      "x": 79.30887803827991,
+      "emitted": 723,
+      "accounted": 723,
+      "aboveBoard": 14
+    },
+    {
+      "name": "left",
+      "time": 45.2,
+      "x": 36.0096499271068,
+      "emitted": 1084,
+      "accounted": 1084,
+      "aboveBoard": 14
+    },
+    {
+      "name": "return",
+      "time": 60.266666666666666,
+      "x": 81.22855210383702,
+      "emitted": 1446,
+      "accounted": 1446,
+      "aboveBoard": 14
+    }
+  ]
+}

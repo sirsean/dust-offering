@@ -1,6 +1,6 @@
 # Architecture — sand on stone
 
-The active design is `stone-offering-v3`: slow sand, fading downhill guides, full-triangle multi-touch and a wider, draining inlet. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
+The active design is `stone-offering-v4`: an offscreen drifting pour, slow sand, fading downhill guides and full-triangle multi-touch. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
 
 | Location                           | Responsibility                                                                                                                         |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -27,6 +27,14 @@ Contacts use a stable spatial hash and three contact passes per collision subste
 
 The source spans 18 units with twelve distributed lanes, still emitting 24 grains/s. New adhesion is suppressed above y=45 and ramps to full strength by y=72, for both stone and sand bonds. Bonds formed above y=72 expire after 2.5 simulation seconds, releasing their descendants with the usual cooldown. This prevents a permanent cap at the tip. Weathering also wakes loose sand on the face, which may have been resting on that support without belonging to its bond tree. Missed ground grains remain asleep. The artificial full-face stress fixture explicitly pins its bonds until brushed; natural drainage has separate long-pour checks.
 
+## Moving opening
+
+The opening is invisible and centred at y=-4, above the canvas. `Simulation.sourceStartStep` is null until the first active pour. Thereafter `sourceTime` derives from fixed-step elapsed time, so pausing or blocking emission does not stop the drift. Challenge preparation leaves the phase at zero; hidden pages and Finish freeze it because stepping stops. A fresh simulation restarts the phase.
+
+`Simulation.sourceX` is `80 + 44 × sin(2π × sourceTime / 60)` with default tuning. The amplitude is bounded by the board width, opening width and grain radius. Emission samples seeded lanes around the current centre. Existing particles retain their velocity and receive no artificial sideways impulse from the moving opening. The challenge inherits these settings directly from the prototype instead of overriding the source height.
+
+Grains born above y=0 remain in the same particle array, collision hash and accounting as all other retained material. The hash clamps its edge cells while still using actual coordinates for contact distances. Rendering naturally clips offscreen particles. There is no source line or source-specific brush instruction; only a full retained tray produces the existing Reset notice.
+
 ## Surface traces
 
 `src/simulation/surface-treatment.js` owns a 160 × 200 grid in fixed logical coordinates. Active cells store strength, two orientation components and the simulation timestamp of their latest update. Exponential decay is evaluated lazily, with a six-second half-life. The renderer may prune values below 0.002; physics treats those values as zero regardless of rendering, preserving deterministic replay.
@@ -39,7 +47,7 @@ For loose grains, the axis is oriented downhill. Gravity is partly projected alo
 
 The renderer draws a cached grid texture beneath the grains, refreshing after edits and at most every 0.1 simulation seconds while fading. Opacity is `0.52 × min(1, strength / 3)^0.75`. Revision 0.5.0 renders this as dark umber grease: stronger marks darken, and decay lightens them back toward the stone. The trace remains visible under reduced motion and after all contacts lift. Reset creates a fresh field; resize retains the existing one. Simulation time advances while the source is paused and before Challenge begins, but freezes when hidden or after Finish.
 
-Pointer Events use a map keyed by pointer ID. Each entry owns its previous point and capture. Ending, cancelling or losing capture removes only that contact. Reset, mode change and hiding cancel all contacts. Coalesced events are processed per finger. A swept footprint is checked against the triangle's three expanded half-planes, retaining segments that leave or cross the stone between sparse events. The field and grain brush clip their effects to stone; the source hardware remains fixed and the bowls lie outside the mask.
+Pointer Events use a map keyed by pointer ID. Each entry owns its previous point and capture. Ending, cancelling or losing capture removes only that contact. Reset, mode change and hiding cancel all contacts. Coalesced events are processed per finger. A swept footprint is checked against the triangle's three expanded half-planes, retaining segments that leave or cross the stone between sparse events. The field and grain brush clip their effects to stone; the bowls and invisible opening lie outside the mask.
 
 ## Ground and accounting
 

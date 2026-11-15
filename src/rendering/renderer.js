@@ -318,13 +318,6 @@ export class Renderer {
         grain.y * this.scale - offset,
       );
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
-    c.fillStyle = this.palette.source;
-    c.fillRect(
-      sim.config.sourceX - sim.config.sourceWidth / 2,
-      11,
-      sim.config.sourceWidth,
-      0.8,
-    );
     for (const [x, count, target] of [
       [42.5, sim.left, challenge.leftTarget],
       [117.5, sim.right, challenge.rightTarget],
@@ -349,17 +342,11 @@ export class Renderer {
       c.fill();
       c.stroke();
     }
-    if (sim.blocked) {
+    if (sim.blocked && sim.blockReason === 'full') {
       c.fillStyle = this.palette.text;
       c.font = '4.3px system-ui';
       c.textAlign = 'center';
-      c.fillText(
-        sim.blockReason === 'full'
-          ? 'A full tray. Reset for a fresh pour.'
-          : 'Brush the sand below the source',
-        80,
-        23,
-      );
+      c.fillText('A full tray. Reset for a fresh pour.', 80, 23);
     }
   }
 }

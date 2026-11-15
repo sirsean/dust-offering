@@ -16,6 +16,7 @@ export class Simulation {
     this.traceSample = {};
     this.grains = [];
     this.steps = 0;
+    this.sourceStartStep = null;
     this.nextId = 0;
     this.emitted = 0;
     this.remaining = this.config.supply ?? Infinity;
@@ -42,6 +43,30 @@ export class Simulation {
   }
   get time() {
     return this.steps / this.config.stepsPerSecond;
+  }
+
+  get sourceTime() {
+    return this.sourceStartStep === null
+      ? 0
+      : (this.steps - this.sourceStartStep) / this.config.stepsPerSecond;
+  }
+
+  get sourceX() {
+    const c = this.config;
+    const margin = c.sourceWidth / 2 + c.grainRadius;
+    const amplitude = Math.max(
+      0,
+      Math.min(
+        c.sourceSwayAmplitude,
+        c.sourceX - margin,
+        c.width - margin - c.sourceX,
+      ),
+    );
+    return (
+      c.sourceX +
+      amplitude *
+        Math.sin((2 * Math.PI * this.sourceTime) / c.sourceSwaySeconds)
+    );
   }
 
   addGrain(x, y, vx = 0, vy = 0) {
@@ -86,6 +111,10 @@ export class Simulation {
       this.emissionFraction = 0;
       return;
     }
+    // Start with the first pour, not time spent preparing a challenge. Once
+    // started, the opening follows simulation time even while emission pauses.
+    if (this.sourceStartStep === null) this.sourceStartStep = this.steps;
+    const centre = this.sourceX;
     this.emissionFraction +=
       this.config.sourceRate / this.config.stepsPerSecond;
     const count = Math.floor(this.emissionFraction + 1e-9);
@@ -101,7 +130,7 @@ export class Simulation {
       for (let attempt = 0; attempt < this.config.sourceLanes; attempt++) {
         const lane = (this.emitted * 5 + attempt) % this.config.sourceLanes;
         x =
-          this.config.sourceX -
+          centre -
           this.config.sourceWidth / 2 +
           ((lane + 0.5) * this.config.sourceWidth) / this.config.sourceLanes +
           (this.random() - 0.5) * 0.18;

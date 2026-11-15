@@ -6,8 +6,5 @@ export const challenge = Object.freeze({
   ...prototype,
   id: prototype.challengeId,
   seed: 48,
-  sourceX: 80,
-  sourceY: 14,
-  collectionY: 181,
   supply: prototype.startingSupply,
 });

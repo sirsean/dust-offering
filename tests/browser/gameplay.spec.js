@@ -6,7 +6,7 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
 }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page, 'challenge=stone-offering-v3');
+  await open(page, 'challenge=stone-offering-v4');
   await expect(page.locator('.tools button')).toHaveCount(2);
   await expect(
     page.getByRole('button', { name: 'Draw', exact: true }),
@@ -89,9 +89,9 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   page,
 }) => {
   await page.addInitScript(() =>
-    localStorage.setItem('dust-offering:best:stone-offering-v2', '999'),
+    localStorage.setItem('dust-offering:best:stone-offering-v3', '999'),
   );
-  await open(page, 'challenge=stone-offering-v3');
+  await open(page, 'challenge=stone-offering-v4');
   await expect(page.locator('#best')).toHaveText('Best —');
   await expect(page.locator('#pour')).toHaveText('Begin');
   await page.clock.runFor(1000);
@@ -116,12 +116,12 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   expect(score).toBeLessThanOrEqual(1000);
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v3'),
+      localStorage.getItem('dust-offering:best:stone-offering-v4'),
     ),
   ).toBe(String(score));
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v2'),
+      localStorage.getItem('dust-offering:best:stone-offering-v3'),
     ),
   ).toBe('999');
   await page.evaluate(() => {
@@ -140,7 +140,7 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   });
   await page.locator('#share').click();
   await expect(page.locator('#manual-share')).toHaveValue(
-    /challenge=stone-offering-v3/,
+    /challenge=stone-offering-v4/,
   );
   await expect(page.locator('#result-uncollected')).toContainText(
     'on the ground',
@@ -257,7 +257,7 @@ test('narrow phones and landscape fit, controls remain accessible, storage denia
       },
     }),
   );
-  await open(page, 'challenge=stone-offering-v3');
+  await open(page, 'challenge=stone-offering-v4');
   for (const viewport of [
     { width: 320, height: 568 },
     { width: 360, height: 640 },

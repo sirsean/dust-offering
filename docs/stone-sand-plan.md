@@ -37,3 +37,11 @@ The latest feedback asks for brushing everywhere on the visible triangle, faster
 The owner's visual direction is brown, umber, dusk orange and sand: mysterious old stone found in the desert, dust blowing across the Scablands, and greasy finger marks left in the sand on the stone. Use warm weathered mineral tones, pale grains and clay vessels. Layered marks darken instead of glowing; fading returns the underlying stone color. Keep dust legible over both the bare face and marks. Ground the scenery in the Fringe location and visual references, without introducing new lore or symbols. Details, palette ownership and current screenshots are in [visual-style.md](visual-style.md).
 
 This is a rendering and interface pass. The six-second decay, directional grip, brush coverage, multi-touch, inlet drainage, accounting and `stone-offering-v3` challenge remain the same.
+
+## Offscreen drifting pour — revision 0.6.0
+
+Release grains above the gameboard, with no visible line or nozzle at the triangle's tip. The invisible opening moves slowly from side to side rather than always feeding the middle.
+
+Spawn at y=-4, keeping new grains wholly outside the 160 × 200 canvas. Retain the 18-unit-wide opening, twelve lanes, 24 grains/s, slow launch and 16-unit/s speed cap. Move its centre with a sinusoidal 60-second cycle, amplitude 44 around x=80: centre → right at x=124 → centre → left at x=36 → centre. Clamp the amplitude to leave room for the full opening within the board width. Motion comes from fixed simulation time, not viewport size or emitted-grain count. Do not add sideways force to already-falling grains.
+
+Start the phase with the first pour, so waiting in Challenge preparation does not move its starting point. Paused emission still lets the opening drift; hidden pages and finished challenges freeze it with the rest of the simulation. Reset and mode changes restart the phase. Count and retain offscreen grains normally, without a catch-up burst on Resume. Give these changed delivery conditions the new identifier `stone-offering-v4`, keeping the 960-grain supply and 360 / 600 targets.

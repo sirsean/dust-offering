@@ -24,7 +24,6 @@ export function readPalette(canvas) {
     'sand',
     'sandOchre',
     'sandLight',
-    'source',
     'mark',
     'text',
   ];

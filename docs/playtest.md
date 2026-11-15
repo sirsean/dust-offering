@@ -1,55 +1,52 @@
-# Downhill traces and full-stone playtest
+# Offscreen drifting-pour playtest
 
-> Retained 0.4.0 material baseline, including that revision's appearance. The 0.5.0 visual pass keeps this physical model; see [visual-style.md](visual-style.md) for the current palette, greasy marks and screenshots.
-
-Revision 0.4.0 addresses the owner's screenshot and feedback: brushing now reaches the whole visible triangle, traces fade noticeably sooner, slopes loosely guide falling sand, the inlet resists a permanent cap, and the pour is 50% wider. Slow motion, one brush action, independent multi-touch and literal bottom piles remain.
+Revision 0.6.0 removes the line at the triangle's tip. Dust is born above the canvas and enters from a slowly moving, invisible opening. The opening takes one minute to sway through right, centre, left and back to centre, with smooth turnarounds. The desert palette and greasy downhill guides remain in place.
 
 ## Real-time simulated play
 
-The scripted player uses actual elapsed browser time, without accelerating the frame clock. Raw evidence: [stone-playtest-report.json](../artifacts/stone-playtest-report.json). This run used Node 24.22.1 and Linux headless Chromium 156 with a 390 × 844 emulated-touch viewport. Physical-phone feel and human enjoyment still need the owner's evaluation.
+The scripted player watches a 45-second uninterrupted pour in actual browser time, then pauses, brushes, and lets material settle. Raw evidence: [stone-playtest-report.json](../artifacts/stone-playtest-report.json). The run used Node 24.22.1 and Linux headless Chromium 156 at 390 × 844 with emulated touch; no physical phone was used.
 
-| Observation                                  | Result                                                                              |
-| -------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Gather for 25 seconds                        | 159 attached grains: 36 on stone, 123 on sand                                       |
-| Pause, then brush slowly                     | Attachments fell to 124; emission stayed fixed at 605 grains                        |
-| Settle for 16 seconds                        | 220 attached grains and 144 resting ground grains; no grains left above y=60        |
-| Accounting after settling                    | 94 left + 146 right + 365 retained = 605                                            |
-| Two independent traces                       | Strength 0.956 each, zero coating between paths; both remained after lifting        |
-| Two extra passes on the left                 | Left strength 2.481; untouched right strength 0.766                                 |
-| Six seconds later                            | Left strength 1.231; right strength 0.380, visibly dimmer                           |
-| Seven-grain slope control after four seconds | Mean position moved from (70,80) to (86.90,139.53); all seven grains remained loose |
-| Browser JavaScript errors                    | None                                                                                |
+| Observation                           | Result                                                |
+| ------------------------------------- | ----------------------------------------------------- |
+| Source near 15 seconds                | x=124.00 on the right; 362 grains emitted             |
+| Source near 30 seconds                | x=79.46, crossing the middle; 722 emitted             |
+| Source near 45 seconds                | x=36.00 on the left; 1,083 emitted                    |
+| Offscreen grains during the pour      | 14–15 at each sample, retained and accounted for      |
+| Attached sand before / after brushing | 370 / 352                                             |
+| Paused emission                       | 1,086 grains before and after brushing/settling       |
+| After 16 seconds of settling          | 206 left + 232 right + 648 retained = 1,086           |
+| Missed sand after settling            | 217 real grains resting on the ground                 |
+| Source during the paused sequence     | Continued drifting to x=90.12 without emitting grains |
+| Browser JavaScript errors             | None                                                  |
 
-![After brushing and settling: the tip has drained and missed sand remains below](../artifacts/stone-after.png)
+The moving ribbon gradually feeds different parts of the stone without shifting particles already in flight. It turns gently and leaves room to brush while the pour continues. Existing sand still gathers and releases, and missed grains remain visible. Automated play verifies these responses; real-finger feel remains for the owner's evaluation.
 
-![Fresh layered traces](../artifacts/stone-layered-traces.png)
+## Visible source sweep
 
-![The same traces visibly dimmer six real seconds later](../artifacts/stone-faded-traces.png)
+These clean returning-player captures use accelerated simulation time with the first-use hint already marked as seen. [pour-sweep.json](../artifacts/pour-sweep.json) records the source positions and mass accounting for the full cycle.
 
-The slope control uses an actual three-pass brush gesture, then seeds seven grains with a downward velocity. Adhesion is disabled in this isolated scene so the observed lateral motion measures directional grip. The grains drift through a broad corridor rather than locking to a line. Normal material capture is exercised separately in Free Pour and the challenge.
+| Right side, about 15 seconds                                          | Left side, about 45 seconds                                               |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| ![Dust falls in from above on the right](../artifacts/pour-right.png) | ![The opening has drifted across to the left](../artifacts/pour-left.png) |
 
-## Inlet drainage and challenge
+The former line is absent from the stone's tip. Browser checks compare that region with the bare cached stone and verify that new grains begin wholly above the canvas before entering view. Other captures show [crossing the middle](../artifacts/pour-centre.png) and [returning after a full cycle](../artifacts/pour-return.png).
 
-The real-time challenge pours all 960 grains in 40.01 seconds without any source-clearing strokes. After the settling period, it finishes with 129 left, 172 right, 144 on the ground and 515 above the bowls, scoring 313. This is a drainage/accounting check, not an optimized score attempt. At 10, 20 and 30 seconds, the tip holds approximately 43–44 moving grains rather than a growing attached cap.
+## Challenge, guidance and load
 
-Three seeded two-minute numerical pours complement the real-time run. Compared with the actual 0.3.0 source, the 60-second count near the tip falls by about 78%, and the upper-area count falls about 71% on average. Some accumulation still develops farther down the stone, where it is part of the shaping mechanic. All current runs emit and account for 2,880 grains without brushing. Details and raw controls are in [physics-results.md](physics-results.md).
+The unattended `stone-offering-v4` challenge emits all 960 grains in 40.01 real seconds. After settling it finishes with 134 left, 228 right, 199 on the ground and 399 above the bowls, scoring 377. This checks completion and conservation, rather than an optimized score. Earlier scores remain isolated under their previous identifiers.
 
-The artificial 6,000-grain retained fixture averages 20.57 ms per frame (about 49 FPS), with 33.4 ms at the 95th percentile on this cloud machine. A brush pointer sequence takes 65.4 ms and releases 46 grains without deleting material. This fixture deliberately pins its upper bonds until brushed to measure retained load; natural weathering is tested in the flowing scenes. Large retained loads still need a physical-device performance check.
+The two-finger phase still leaves independent grease marks, with no connecting coating between them. Two extra passes raise the left trace from strength 0.956 to 2.483; six seconds later it falls to 1.230. In the isolated seven-grain guide control, mean position moves from (70,80) to (86.88,139.54) in four seconds, with all grains still loose.
+
+The deliberately pinned 6,000-grain fixture averages 19.89 ms per frame (about 50 FPS), with 33.4 ms at the 95th percentile. A brush sequence takes 68.3 ms and releases 46 grains without losing material. This is a cloud-machine load check, not a physical-device benchmark.
 
 ## Verification and reproduction
 
-The suite contains 38 numerical/unit checks and 19 browser scenarios across emulated phone and desktop. Three desktop duplicates of touch-only cases are skipped. New coverage includes the tip, all edges and bottom rim; sparse strokes ending outside the triangle; visible six-second decay; guidance from an actual pointer stroke; reverse-direction and crossing slopes; horizontal drainage; upper-bond expiry; waking unsupported loose sand; and two-minute unattended emission. Existing multi-touch, conservation, piles, challenge/storage/sharing, sound, resize and hidden recovery checks remain.
-
-![Browser check: a sparse stroke reaches the base and a horizontal pass coats the bottom rim](../artifacts/stone-edges.png)
+All 42 numerical/unit tests and 21 browser scenarios pass. Three desktop duplicates of touch-only cases are skipped. New coverage verifies actual spawn/entry positions, arrivals from both sides, bounded smooth motion, a stable starting phase during challenge preparation, drift during paused emission, hidden/resize/reset recovery, no visible marker, seeded replay including source state, and full supply. Existing sand, grease, multi-touch, pile and challenge checks remain.
 
 ```sh
-npm ci
 npm run check
 npm run test:physics
-npx playwright install chromium
-npm run test:browser
+PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:browser
 ```
 
-Start Vite with `npm run dev`, then run `npm run playtest` in another terminal for the real-time player. It takes roughly two minutes and updates `artifacts/stone-*`. Use `PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium` for a system browser. Earlier [0.3.0 evidence](archive/stone-v2/playtest.md) remains archived.
-
-For the next human pass, brush right through the bottom rim, watch one untouched trace for six seconds, and compare one pass with several passes on a diagonal. Try both uphill and downhill finger travel on the same slope. Assess whether guidance feels rough enough, fading is apparent, and the wider source stays calm near the tip.
+With Vite running, `npm run playtest` refreshes the real-time evidence and takes about two and a half minutes. The source browser check saves fresh right/left screenshots in the transient report. Fixed-source material evidence is retained in [archive/stone-v3/](archive/stone-v3/playtest.md), and the earlier palette review remains in [visual-style.md](visual-style.md).

@@ -120,7 +120,9 @@ test('the wider inlet spans the pour and drains during two minutes without a bru
     assert.equal(sim.emitted, 2880);
     assert.equal(sim.blocked, false);
     assert.equal(sim.grains.filter((g) => g.bond && g.y < 45).length, 0);
-    assert.ok(sim.grains.filter((g) => g.y < 36).length < 65);
+    // The offscreen fall adds in-flight grains above the tip; they must keep
+    // draining rather than forming a static cap at the old nozzle position.
+    assert.ok(sim.grains.filter((g) => g.y < 36).length < 85);
     assert.ok(sim.grains.filter((g) => g.y < 60).length < 250);
     assert.ok(
       sim.attachedCount > 100,
