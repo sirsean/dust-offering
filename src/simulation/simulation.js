@@ -8,6 +8,7 @@ import {
 import { seededRandom } from './random.js';
 import { SurfaceTreatment } from './surface-treatment.js';
 import { SurfaceDiscovery } from './surface-discovery.js';
+import { sourceFlow } from './source-flow.js';
 
 export class Simulation {
   constructor(options = {}) {
@@ -71,6 +72,10 @@ export class Simulation {
     );
   }
 
+  get sourceRate() {
+    return sourceFlow(this.config, this.sourceTime);
+  }
+
   addGrain(x, y, vx = 0, vy = 0) {
     const grain = {
       id: this.nextId++,
@@ -121,8 +126,7 @@ export class Simulation {
     // started, the opening follows simulation time even while emission pauses.
     if (this.sourceStartStep === null) this.sourceStartStep = this.steps;
     const centre = this.sourceX;
-    this.emissionFraction +=
-      this.config.sourceRate / this.config.stepsPerSecond;
+    this.emissionFraction += this.sourceRate / this.config.stepsPerSecond;
     const count = Math.floor(this.emissionFraction + 1e-9);
     this.emissionFraction -= count;
     for (let i = 0; i < count && this.remaining > 0; i++) {

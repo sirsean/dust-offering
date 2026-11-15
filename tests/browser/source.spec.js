@@ -4,7 +4,7 @@ import { open, hidden, state } from './helpers.js';
 test('dust enters from above without a top marker, sways gently, and preserves its phase through hiding and resizing', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v5');
+  await open(page, 'challenge=stone-offering-v6');
   await page.clock.runFor(100);
   const top = await page.evaluate(() => {
     const r = dust.renderer,
@@ -35,7 +35,7 @@ test('dust enters from above without a top marker, sways gently, and preserves i
     await page.evaluate(() =>
       dust.sim.grains
         .filter((g) => g.y >= 0 && g.y < 2)
-        .every((g) => g.x > 110),
+        .every((g) => g.x > 105),
     ),
   ).toBe(true);
   await page.screenshot({ path: test.info().outputPath('pour-right.png') });
@@ -49,6 +49,7 @@ test('dust enters from above without a top marker, sways gently, and preserves i
   const frozen = await page.evaluate(() => ({
     x: dust.sim.sourceX,
     time: dust.sim.sourceTime,
+    rate: dust.sim.sourceRate,
   }));
   await page.setViewportSize({ width: 844, height: 390 });
   await page.clock.runFor(6000);
@@ -56,6 +57,7 @@ test('dust enters from above without a top marker, sways gently, and preserves i
     await page.evaluate(() => ({
       x: dust.sim.sourceX,
       time: dust.sim.sourceTime,
+      rate: dust.sim.sourceRate,
     })),
   ).toEqual(frozen);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -68,10 +70,56 @@ test('dust enters from above without a top marker, sways gently, and preserves i
     dust.sim.grains.filter((g) => g.y >= 0 && g.y < 2).map((g) => g.x),
   );
   expect(arrivals.length).toBeGreaterThan(0);
-  expect(Math.max(...arrivals)).toBeLessThan(50);
+  expect(Math.max(...arrivals)).toBeLessThan(55);
   const mass = await state(page);
   expect(mass.emitted).toBe(mass.left + mass.right + mass.retained);
   await page.screenshot({ path: test.info().outputPath('pour-left.png') });
   await page.locator('#challenge').click();
   expect(await page.evaluate(() => dust.sim.sourceTime)).toBe(0);
+});
+
+test('a broad stream swells, thins and briefly sputters while every grain stays accounted for', async ({
+  page,
+}) => {
+  await open(page, 'challenge=stone-offering-v6');
+  await page.evaluate(() => {
+    window.pourSamples = [];
+    const sim = dust.sim,
+      emit = sim.emit;
+    sim.emit = function () {
+      const nextId = this.nextId,
+        before = this.emitted;
+      emit.call(this);
+      if (this.sourceStartStep === null) return;
+      window.pourSamples.push({
+        time: this.sourceTime,
+        born: this.emitted - before,
+        offsets: this.grains
+          .filter((grain) => grain.id >= nextId)
+          .map((grain) => grain.x - this.sourceX),
+      });
+    };
+  });
+  await page.locator('#pour').click();
+  await page.clock.runFor(36000);
+  const samples = await page.evaluate(() => window.pourSamples);
+  const bins = Array(36).fill(0);
+  let gap = 0,
+    longestGap = 0;
+  for (const sample of samples) {
+    if (sample.time >= 36) continue;
+    bins[Math.floor(sample.time)] += sample.born;
+    expect(sample.born).toBeLessThanOrEqual(1);
+    gap = sample.born ? 0 : gap + 1;
+    longestGap = Math.max(longestGap, gap);
+  }
+  const offsets = samples.flatMap((sample) => sample.offsets);
+  expect(Math.max(...offsets) - Math.min(...offsets)).toBeGreaterThan(30);
+  expect(Math.min(...bins)).toBeLessThan(10);
+  expect(Math.max(...bins)).toBeGreaterThan(32);
+  expect(longestGap).toBeGreaterThan(12);
+  expect(longestGap).toBeLessThan(45);
+  const mass = await state(page);
+  expect(mass.emitted).toBe(mass.left + mass.right + mass.retained);
+  await page.screenshot({ path: test.info().outputPath('variable-pour.png') });
 });

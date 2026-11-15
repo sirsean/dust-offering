@@ -21,7 +21,7 @@ async function pixels(page, x, y) {
 test('the entire stone starts invisible, local brushing deepens its reveal, and discovery survives fading and resize until Reset', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v5');
+  await open(page, 'challenge=stone-offering-v6');
   await page.clock.runFor(100);
   for (const [x, y] of [
     [80, 7],
@@ -84,7 +84,7 @@ test('the entire stone starts invisible, local brushing deepens its reveal, and 
 test('sand alone gradually reveals its contact patch, while untouched parts of the triangle remain invisible', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v5');
+  await open(page, 'challenge=stone-offering-v6');
   await page.clock.runFor(100);
   await page.evaluate(() => {
     const grain = dust.sim.addGrain(90.5, 110.5);

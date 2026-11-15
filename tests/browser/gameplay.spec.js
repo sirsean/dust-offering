@@ -6,7 +6,7 @@ test('one gentle brush action shapes actual deposits, without Draw/Rub modes or 
 }) => {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await open(page, 'challenge=stone-offering-v5');
+  await open(page, 'challenge=stone-offering-v6');
   await expect(page.locator('.tools button')).toHaveCount(2);
   await expect(
     page.getByRole('button', { name: 'Draw', exact: true }),
@@ -89,9 +89,9 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   page,
 }) => {
   await page.addInitScript(() =>
-    localStorage.setItem('dust-offering:best:stone-offering-v4', '999'),
+    localStorage.setItem('dust-offering:best:stone-offering-v5', '999'),
   );
-  await open(page, 'challenge=stone-offering-v5');
+  await open(page, 'challenge=stone-offering-v6');
   await expect(page.locator('#best')).toHaveText('Best —');
   await expect(page.locator('#pour')).toHaveText('Begin');
   await page.clock.runFor(1000);
@@ -101,7 +101,7 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
     await page.clock.runFor(10000);
     await stroke(page, [80, 28], [80, 65]);
   }
-  await page.clock.runFor(32000);
+  await page.clock.runFor(40000);
   await expect(page.locator('#pour')).toHaveText('Finish');
   await expect(page.locator('#pour')).toBeEnabled();
   const final = await state(page);
@@ -116,12 +116,12 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   expect(score).toBeLessThanOrEqual(1000);
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v5'),
+      localStorage.getItem('dust-offering:best:stone-offering-v6'),
     ),
   ).toBe(String(score));
   expect(
     await page.evaluate(() =>
-      localStorage.getItem('dust-offering:best:stone-offering-v4'),
+      localStorage.getItem('dust-offering:best:stone-offering-v5'),
     ),
   ).toBe('999');
   await page.evaluate(() => {
@@ -140,7 +140,7 @@ test('new optional challenge retains scoring, isolated bests, sharing fallback a
   });
   await page.locator('#share').click();
   await expect(page.locator('#manual-share')).toHaveValue(
-    /challenge=stone-offering-v5/,
+    /challenge=stone-offering-v6/,
   );
   await expect(page.locator('#result-uncollected')).toContainText(
     'on the ground',
@@ -257,7 +257,7 @@ test('narrow phones and landscape fit, controls remain accessible, storage denia
       },
     }),
   );
-  await open(page, 'challenge=stone-offering-v5');
+  await open(page, 'challenge=stone-offering-v6');
   for (const viewport of [
     { width: 320, height: 568 },
     { width: 360, height: 640 },

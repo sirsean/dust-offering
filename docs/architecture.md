@@ -1,6 +1,6 @@
 # Architecture — sand on stone
 
-The active design is `stone-offering-v5`: an initially hidden stone progressively discovered by fingers and sand, an offscreen drifting pour, slow sand, fading downhill guides and full-triangle multi-touch. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
+The active design is `stone-offering-v6`: a wide, variable offscreen pour with occasional sputters, an initially hidden stone discovered by fingers and sand, slow grains, fading downhill guides and full-triangle multi-touch. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
 
 | Location                           | Responsibility                                                                                                                         |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -25,7 +25,7 @@ Sand bonds retain parent/child relationships. Brushing releases an attachment an
 
 Contacts use a stable spatial hash and three contact passes per collision substep. Bound grains have zero inverse mass; loose grains can settle/sleep. Sleeping sand can still form a contact bond. Moving contacts wake neighboring loose material, and a brush wakes loose grains on the stone so removal of support cannot leave frozen dust suspended. Unrelated ground piles stay asleep until falling sand touches them.
 
-The source spans 18 units with twelve distributed lanes, still emitting 24 grains/s. New adhesion is suppressed above y=45 and ramps to full strength by y=72, for both stone and sand bonds. Bonds formed above y=72 expire after 2.5 simulation seconds, releasing their descendants with the usual cooldown. This prevents a permanent cap at the tip. Weathering also wakes loose sand on the face, which may have been resting on that support without belonging to its bond tree. Missed ground grains remain asleep. The artificial full-face stress fixture explicitly pins its bonds until brushed; natural drainage has separate long-pour checks.
+The source spans 34 units with 24 distributed lanes. New adhesion is suppressed above y=45 and ramps to full strength by y=72, for both stone and sand bonds. Bonds formed above y=72 expire after 2.5 simulation seconds, releasing their descendants with the usual cooldown. This prevents a permanent cap at the tip. Weathering also wakes loose sand on the face, which may have been resting on that support without belonging to its bond tree. Missed ground grains remain asleep. The artificial full-face stress fixture explicitly pins its bonds until brushed; natural drainage has separate long-pour checks.
 
 ## Moving opening
 
@@ -34,6 +34,14 @@ The opening is invisible and centred at y=-4, above the canvas. `Simulation.sour
 `Simulation.sourceX` is `80 + 44 × sin(2π × sourceTime / 60)` with default tuning. The amplitude is bounded by the board width, opening width and grain radius. Emission samples seeded lanes around the current centre. Existing particles retain their velocity and receive no artificial sideways impulse from the moving opening. The challenge inherits these settings directly from the prototype instead of overriding the source height.
 
 Grains born above y=0 remain in the same particle array, collision hash and accounting as all other retained material. The hash clamps its edge cells while still using actual coordinates for contact distances. Rendering naturally clips offscreen particles. There is no source line or source-specific brush instruction; only a full retained tray produces the existing Reset notice.
+
+## Variable arrival flow
+
+`src/simulation/source-flow.js` is a pure function of configuration, seed and source time. It uses integer hashing and smooth interpolation between seeded values, independently of particle randomness. `Simulation.sourceRate` exposes the current instantaneous rate. The nominal 24 grains/s is multiplied by a slow 4.5-second swell (0.4–1.6) and smaller 0.75-second ripples (0.88–1.12). Before sputter gating the rate lies within 8.448–43.008 grains/s. Intervals describe noise sampling, not a repeating wave; the profile does not repeat every sway cycle.
+
+Each 12-second window has a seeded offset for a 1.4-second sputter cluster. Three or four pulses have uneven quiet portions and softly edged returns, allowing actual brief zero-rate gaps. This changes density only; source launch velocity, gravity and the speed cap stay gentle. The emission fraction integrates the rate at each fixed step. No flow accrues while paused, full or obstructed; a natural zero-rate gap contributes nothing. At the default peak, at most one grain can be born per step.
+
+Reading the flow in debug tools or rendering cannot advance its sequence. It follows the same source clock through preparation, pauses, hidden recovery and reset. Setting `sourceFlowVariation: 0` bypasses both fluctuations and sputters for controlled experiments. Supply remains 960, but pour duration now depends on the profile and pauses; there is no timer-derived supply. Challenge v6 isolates the new delivery conditions from prior bests.
 
 ## Persistent discovery
 
@@ -67,7 +75,7 @@ The 6,000-grain cap includes stone, loose and ground grains. A full tray pauses 
 
 ## Browser behavior
 
-Physics uses 160 × 200 logical units, 60 fixed steps/s and two substeps. Current maximum speed is 16 units/s, gravity 12 units/s² and emission 24 grains/s. DPR is capped at 2. CSS container sizing preserves a uniform 4:5 canvas through rotation; ResizeObserver changes only its pixel backing store. Hidden documents suspend stepping and reset the clock on return.
+Physics uses 160 × 200 logical units, 60 fixed steps/s and two substeps. Current maximum speed is 16 units/s and gravity is 12 units/s². Variable emission uses a nominal 24 grains/s, bounded below 44 with brief zero-rate sputter gaps. DPR is capped at 2. CSS container sizing preserves a uniform 4:5 canvas through rotation; ResizeObserver changes only its pixel backing store. Hidden documents suspend stepping and reset the clock on return.
 
 An 8 ms frame work budget prevents catch-up spirals. Under extreme load simulation time can slow, without skipping particle accounting. Ordinary play must remain responsive and gentle. `?debug` explicitly exposes developer state for repeatable checks; normal play does not expose that mutable handle.
 

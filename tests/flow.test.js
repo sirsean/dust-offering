@@ -116,8 +116,8 @@ test('the wider inlet spans the pour and drains during two minutes without a bru
           max = Math.max(max, grain.x);
         }
     }
-    assert.ok(max - min > 16);
-    assert.equal(sim.emitted, 2880);
+    assert.ok(max - min > 30);
+    assert.ok(sim.emitted > 2200 && sim.emitted < 3200);
     assert.equal(sim.blocked, false);
     assert.equal(sim.grains.filter((g) => g.bond && g.y < 45).length, 0);
     // The offscreen fall adds in-flight grains above the tip; they must keep

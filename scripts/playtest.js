@@ -54,6 +54,7 @@ async function state() {
     remaining: Number.isFinite(dust.sim.remaining) ? dust.sim.remaining : null,
     sourceX: dust.sim.sourceX,
     sourceTime: dust.sim.sourceTime,
+    sourceRate: dust.sim.sourceRate,
     aboveBoard: dust.sim.grains.filter((g) => g.y < 0).length,
     discovery: {
       touchedCells: dust.sim.discovery.active.size,
@@ -82,6 +83,24 @@ try {
   await page.goto(`${base}/?debug`);
   await page.waitForFunction(() => window.dust);
   if (!stressOnly) {
+    await page.evaluate(() => {
+      window.pourSamples = [];
+      const sim = dust.sim,
+        emit = sim.emit;
+      sim.emit = function () {
+        const before = this.emitted,
+          nextId = this.nextId;
+        emit.call(this);
+        window.pourSamples.push({
+          time: this.sourceTime,
+          rate: this.sourceRate,
+          born: this.emitted - before,
+          offsets: this.grains
+            .filter((grain) => grain.id >= nextId)
+            .map((grain) => grain.x - this.sourceX),
+        });
+      };
+    });
     await page.screenshot({ path: 'artifacts/stone-initial.png' });
     report.sourceSweep = [];
     for (let i = 0; i < 3; i++) {
@@ -100,6 +119,36 @@ try {
     assert.ok(report.sourceSweep[0].sourceX > 123);
     assert.ok(Math.abs(report.sourceSweep[1].sourceX - 80) < 2);
     assert.ok(report.sourceSweep[2].sourceX < 37);
+    report.flow = await page.evaluate(() => {
+      const samples = window.pourSamples;
+      const bins = [];
+      let gap = 0,
+        longestGap = 0;
+      for (const sample of samples) {
+        const second = Math.floor(sample.time);
+        bins[second] = (bins[second] ?? 0) + sample.born;
+        gap = sample.born ? 0 : gap + 1;
+        longestGap = Math.max(longestGap, gap);
+      }
+      const offsets = samples.flatMap((sample) => sample.offsets);
+      return {
+        seed: dust.sim.config.seed,
+        grainsPerSecond: bins.slice(0, -1),
+        minimumRate: Math.min(...samples.map((sample) => sample.rate)),
+        maximumRate: Math.max(...samples.map((sample) => sample.rate)),
+        longestGapSeconds: longestGap / dust.sim.config.stepsPerSecond,
+        openingCoverage: Math.max(...offsets) - Math.min(...offsets),
+        maximumBornInOneStep: Math.max(...samples.map((sample) => sample.born)),
+      };
+    });
+    assert.ok(report.flow.openingCoverage > 30);
+    assert.ok(Math.min(...report.flow.grainsPerSecond) < 10);
+    assert.ok(Math.max(...report.flow.grainsPerSecond) > 32);
+    assert.equal(report.flow.minimumRate, 0);
+    assert.ok(report.flow.maximumRate < 44);
+    assert.ok(report.flow.longestGapSeconds > 0.2);
+    assert.equal(report.flow.maximumBornInOneStep, 1);
+    console.log(JSON.stringify({ phase: 'variable flow', flow: report.flow }));
     assert.ok(
       report.sourceSweep[2].discovery.visibleCellEquivalent >
         report.sourceSweep[0].discovery.visibleCellEquivalent,

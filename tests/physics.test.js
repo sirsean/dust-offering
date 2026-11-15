@@ -17,13 +17,13 @@ function seedGrain(sim, x, y, vx = 0, vy = 0) {
   return g;
 }
 
-test('the gentler unobstructed source emits 960 grains in 2400 steps without losing mass', () => {
+test('the variable source delivers all 960 grains at a gentle speed without losing mass', () => {
   const sim = new Simulation({
     supply: 960,
     stoneAdhesionRate: 0,
     sandAdhesionRate: 0,
   });
-  for (let i = 0; i < 2400; i++) {
+  for (let i = 0; i < 3900 && sim.remaining; i++) {
     sim.step();
     conserved(sim);
     assert.equal(sim.remaining + sim.emitted, 960);
@@ -107,7 +107,9 @@ test('one stroke pushes real material aside; brushing empty stone creates a surf
   assert.equal(brushed.grains.length, 0);
   assert.ok(brushed.surface.strengthAt(80, 105) > 0);
   advance(brushed, 180);
-  assert.equal(brushed.emitted, 72);
+  const control = new Simulation({ stoneAdhesionRate: 0, sandAdhesionRate: 0 });
+  advance(control, 180);
+  assert.equal(brushed.emitted, control.emitted);
   conserved(brushed);
   const sim = new Simulation({ sourceRate: 0 });
   const g = seedGrain(sim, 80, 100);
@@ -184,6 +186,8 @@ test('stopped or obstructed emission spends no supply and resumes without a catc
     supply: 960,
     inletBondSeconds: Infinity,
     sourceSwayAmplitude: 0,
+    sourceWidth: 18,
+    sourceFlowVariation: 0,
   });
   sim.pouring = false;
   advance(sim, 120);

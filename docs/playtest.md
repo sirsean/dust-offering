@@ -1,55 +1,43 @@
-# Discovering the stone — playtest
+# Wider, uneven pour — playtest
 
-Revision 0.7.0 starts with the whole stone invisible. Fingers and grains progressively reveal the areas they touch, with repeated contact exposing more. Discovery persists independently of fading grease. The offscreen drifting opening, slow sand, desert palette and downhill guides remain in place.
+Revision 0.8.0 widens the offscreen aperture to 34 logical units and gives the stream slow swells, smaller ripples and occasional brief sputters. The opening still sways gently, grains retain their slow motion, and fingers and sand continue discovering the hidden stone.
 
 ## Real-time simulated play
 
-The scripted player watches a 45-second uninterrupted pour in actual browser time, then pauses, brushes, and lets material settle. Raw evidence: [stone-playtest-report.json](../artifacts/stone-playtest-report.json). The run used Node 24.22.1 and Linux headless Chromium 156 at 390 × 844 with emulated touch; no physical phone was used.
+The scripted player observes 45 seconds of uninterrupted flow, then pauses, brushes, checks two-finger discovery and grease decay, completes a challenge and exercises a 6,000-grain fixture. Raw evidence is in [stone-playtest-report.json](../artifacts/stone-playtest-report.json). The run uses Node 24.22.1 and Linux headless Chromium 156 at 390 × 844 with emulated touch; no physical phone is used.
 
-| Observation                           | Result                                                       |
-| ------------------------------------- | ------------------------------------------------------------ |
-| Source near 15 seconds                | x=123.99; 364 grains emitted; 1,377 visible-cell equivalents |
-| Source near 30 seconds                | x=78.77; 726 emitted; 3,062 visible-cell equivalents         |
-| Source near 45 seconds                | x=36.03; 1,088 emitted; 5,625 visible-cell equivalents       |
-| Offscreen grains during the pour      | 14 at each sample, retained and accounted for                |
-| Attached sand before / after brushing | 372 / 360                                                    |
-| Paused emission                       | 1,093 grains before and after brushing/settling              |
-| After 16 seconds of settling          | 219 left + 234 right + 640 retained = 1,093                  |
-| Missed sand after settling            | 210 real grains resting on the ground                        |
-| Source during the paused sequence     | Continued drifting to x=92.20 without emitting grains        |
-| Browser JavaScript errors             | None                                                         |
+The player records each fixed step's births and rate during the opening sequence. It verifies that actual birth positions span over 30 units, one-second emission counts include both quiet and busy periods, and there are real brief gaps during sputters. Default flow emits at most one grain per step. The rate stays below 44 grains/s; no paused or blocked emission is saved up for a later burst.
 
-The moving ribbon gradually uncovers a faint, uneven path, then exposes stronger patches where sand gathers. At 15 seconds only 74 cells are fully revealed; at 45 seconds 1,748 are, with a much wider partially visible area. A visible-cell equivalent sums each cell's fractional visibility; it is not a count of wholly exposed cells. Brushing gives a stronger immediate reveal while releasing and pushing existing sand. Missed grains remain visible. Automated play verifies these responses; real-finger feel remains for the owner's evaluation.
+| Measured observation                        | Result                                                |
+| ------------------------------------------- | ----------------------------------------------------- |
+| Actual birth coverage across the aperture   | 32.75 units across its 34-unit width                  |
+| Quietest / busiest complete seconds         | 6 / 37 grains                                         |
+| Peak instantaneous rate / longest birth gap | 39.49 grains/s / 0.35 seconds                         |
+| Attached grains before / after brushing     | 317 / 303                                             |
+| Paused pour after settling                  | 167 left + 247 right + 539 retained = 953 emitted     |
+| Unattended challenge pour                   | 960 grains in 45.98 real seconds                      |
+| Challenge after settling                    | 169 left + 244 right + 156 ground + 391 on face = 960 |
+| 6,000 retained grains                       | 21.43 ms mean frame, 33.4 ms at the 95th percentile   |
+| Load-fixture brush                          | 68.2 ms, releasing 46 grains with none lost           |
+| Browser JavaScript errors                   | None                                                  |
 
-## Visual discovery
+The wider stream gradually uncovers a broader part of the stone. Uneven arrival density leaves alternating sparse sections and small clusters in flight. Existing grains continue falling gently through the changes. Brushing still releases deposits, grease fades while discovery persists, and missed grains remain visible on the ground. These checks establish observable responses; the owner's real-finger evaluation determines the feel.
 
-The browser checks compare pixels at the untouched tip, sides, base and interior with the cached landscape. They match exactly: there is no initial outline, shadow or stone texture. Brushing reveals only its local strip. Repeated passes deepen it to full visibility, with soft edges. Ninety seconds later the grease is gone but discovery is unchanged. Resize, hidden recovery and reduced motion preserve it; Reset restores the original empty landscape. These captures use accelerated fixed simulation time in headless Chromium:
+| Early sand discovery                                                  | Later sand discovery                                                           |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| ![Wider flow after about 15 seconds](../artifacts/stone-sand-15s.png) | ![More stone revealed after about 45 seconds](../artifacts/stone-sand-45s.png) |
 
-| Initially hidden                                                        | Repeated brushing                                                          |
-| ----------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| ![No triangle is visible before contact](../artifacts/stone-hidden.png) | ![A locally uncovered strip of stone](../artifacts/stone-brush-reveal.png) |
+Additional real-time captures: [30 seconds](../artifacts/stone-sand-30s.png), [after brushing and settling](../artifacts/stone-after.png), [two fingers](../artifacts/stone-traces.png), [layering](../artifacts/stone-layered-traces.png), [six-second fading](../artifacts/stone-faded-traces.png), [challenge result](../artifacts/stone-result.png) and [retained-material load](../artifacts/stone-stress.png).
 
-The isolated sand-contact check holds one real grain on the stone. Its local visibility starts below 0.1 and reaches one after sustained contact; the rest stays invisible and no grease is created. See [grain-only reveal](../artifacts/stone-grain-reveal.png) and [edge coverage](../artifacts/stone-edges.png).
+## Browser and numerical checks
 
-The following captures come from the real-time pour, without brushing. The initial discovery hint is still visible. Sand reveals the stone along actual paths and deposits, while untouched areas blend into the landscape:
+All 52 numerical/unit checks and 27 browser scenarios pass. Three desktop duplicates of touch-only cases are skipped. New coverage checks rate bounds, smooth swells, genuine sputter gaps, a profile that does not repeat with the one-minute sway, seed/sample-order independence, wider physical births, no consumption of particle randomness, no backlog, finite supply, conservation and pause/hidden/reset lifecycle. Existing discovery, grease, multi-touch, material and challenge checks remain.
 
-| About 15 seconds                                                          | About 45 seconds                                                                |
-| ------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| ![Sand starts uncovering the right side](../artifacts/stone-sand-15s.png) | ![Paths and deposits reveal more of the stone](../artifacts/stone-sand-45s.png) |
+The browser observes the actual game's births for 36 seconds and checks broad coverage, busy and quiet seconds, short interruptions and conservation. Its [variable-pour capture](../artifacts/stone-variable-pour.png) uses accelerated fixed simulation time. Discovery checks preserve [initial invisibility](../artifacts/stone-hidden.png), [local repeated brushing](../artifacts/stone-brush-reveal.png), [grain-only reveal](../artifacts/stone-grain-reveal.png) and [all triangle edges](../artifacts/stone-edges.png).
 
-Additional real-time evidence: [30 seconds](../artifacts/stone-sand-30s.png), [after brushing and settling](../artifacts/stone-after.png), [two fingers](../artifacts/stone-traces.png), [layered reveal](../artifacts/stone-layered-traces.png) and [six seconds later](../artifacts/stone-faded-traces.png).
+Three unattended two-minute numerical pours have zero blocked steps and conserve every grain. Peak rates stay around 39–40 grains/s, and no upper adhesive cap develops. Raw numbers and reproduction are in [physics-results.md](physics-results.md). The optional challenge retains 960 grains and targets 360 / 600; the delivery conditions now use `stone-offering-v6`, with variable pour duration and no time penalty.
 
-## Challenge, guidance and load
-
-The unattended `stone-offering-v5` challenge emits all 960 grains in 40.01 real seconds. After settling it finishes with 134 left, 228 right, 199 on the ground and 399 above the bowls, scoring 377. This checks completion and conservation, rather than an optimized score. Earlier scores remain isolated under their previous identifiers.
-
-The two-finger phase leaves independent revealed strips and grease marks, with no connecting coating between them. Two extra passes raise the left trace from strength 0.956 to 2.485; six seconds later it falls to 1.233 while discovery stays exactly unchanged. In the isolated seven-grain guide control, mean position moves from (70,80) to (86.75,139.03) in four seconds, with all grains still loose.
-
-The deliberately pinned 6,000-grain fixture averages 20.72 ms per frame (about 48 FPS), with 33.4 ms at the 95th percentile. A brush sequence takes 67.1 ms and releases 46 grains without losing material. This is a cloud-machine load check, not a physical-device benchmark.
-
-## Verification and reproduction
-
-All 48 numerical/unit tests and 25 browser scenarios pass. Three desktop duplicates of touch-only cases are skipped. New coverage verifies initial invisibility, local additive finger and sand exposure, continuous paths and all edges, two independent fingers, persistence after grease fades, preparation/Begin/resize/hidden/reset lifecycle, and deterministic discovery. A paired numerical check proves the reveal does not change particle physics, source timing or accounting. Existing sand, source, grease, pile and challenge checks remain.
+## Reproduction
 
 ```sh
 npm run check
@@ -57,4 +45,4 @@ npm run test:physics
 PLAYWRIGHT_CHROMIUM_EXECUTABLE=/usr/bin/chromium npm run test:browser
 ```
 
-With Vite running, `npm run playtest` refreshes the real-time evidence and takes about two and a half minutes. Browser discovery checks save their captures in the transient report. Prior fully visible stone evidence is retained in [archive/stone-v4/](archive/stone-v4/playtest.md); the palette baseline remains in [visual-style.md](visual-style.md).
+With Vite running, `npm run playtest` refreshes real-time evidence in roughly three minutes. The load check is a cloud-machine measurement, separate from hardware evaluation. Previous narrow, constant-rate discovery evidence is retained in [archive/stone-v5/](archive/stone-v5/playtest.md); the palette baseline remains in [visual-style.md](visual-style.md).

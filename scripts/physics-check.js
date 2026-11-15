@@ -83,8 +83,20 @@ export function measureGuidance(passes, reverse = false, mirror = false) {
 export function measureInlet(seed) {
   const sim = new Simulation({ seed });
   const measurements = [];
+  let minimumRate = Infinity,
+    maximumRate = 0,
+    blockedSteps = 0,
+    maxAboveY36 = 0;
   for (let i = 0; i < 7200; i++) {
+    minimumRate = Math.min(minimumRate, sim.sourceRate);
+    maximumRate = Math.max(maximumRate, sim.sourceRate);
     sim.step();
+    if (sim.blocked) blockedSteps++;
+    if (i % 60 === 59)
+      maxAboveY36 = Math.max(
+        maxAboveY36,
+        sim.grains.filter((g) => g.y < 36).length,
+      );
     if (i === 3599 || i === 7199)
       measurements.push({
         kind: 'inlet',
@@ -92,6 +104,11 @@ export function measureInlet(seed) {
         seconds: sim.time,
         sourceX: sim.sourceX,
         sourceTime: sim.sourceTime,
+        sourceRate: sim.sourceRate,
+        minimumRate,
+        maximumRate,
+        blockedSteps,
+        maxAboveY36,
         aboveBoard: sim.grains.filter((g) => g.y < 0).length,
         emitted: sim.emitted,
         aboveY36: sim.grains.filter((g) => g.y < 36).length,
