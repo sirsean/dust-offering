@@ -1,6 +1,6 @@
 # Desert dusk — revision 0.5.0
 
-> Appearance baseline for revision 0.5.0. Revision 0.6.0 retains this palette and removes the visible source line; current drifting-pour screenshots are in [playtest.md](playtest.md).
+> Appearance baseline for revision 0.5.0. Revision 0.7.0 retains this palette, hides the stone until discovered and has no visible source line; current discovery screenshots are in [playtest.md](playtest.md).
 
 The owner's direction is brown, umber, dusk orange and sand: dust crossing the desert, a mysterious old stone triangle, and greasy finger marks in the sand resting on it. This pass changes rendering and interface styling, retaining the measured `stone-offering-v3` physical model and saved-score namespace.
 

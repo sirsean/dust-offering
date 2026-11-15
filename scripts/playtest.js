@@ -55,6 +55,16 @@ async function state() {
     sourceX: dust.sim.sourceX,
     sourceTime: dust.sim.sourceTime,
     aboveBoard: dust.sim.grains.filter((g) => g.y < 0).length,
+    discovery: {
+      touchedCells: dust.sim.discovery.active.size,
+      fullyRevealedCells: [...dust.sim.discovery.active].filter(
+        (index) => dust.sim.discovery.levels[index] >= 1,
+      ).length,
+      visibleCellEquivalent: [...dust.sim.discovery.active].reduce(
+        (sum, index) => sum + dust.sim.discovery.levels[index],
+        0,
+      ),
+    },
   }));
 }
 const stressOnly = process.argv.includes('--stress-only');
@@ -72,10 +82,14 @@ try {
   await page.goto(`${base}/?debug`);
   await page.waitForFunction(() => window.dust);
   if (!stressOnly) {
+    await page.screenshot({ path: 'artifacts/stone-initial.png' });
     report.sourceSweep = [];
     for (let i = 0; i < 3; i++) {
       await page.waitForTimeout(15000);
       report.sourceSweep.push(await state());
+      await page.screenshot({
+        path: `artifacts/stone-sand-${(i + 1) * 15}s.png`,
+      });
       console.log(
         JSON.stringify({
           phase: 'slow drifting pour',
@@ -86,6 +100,10 @@ try {
     assert.ok(report.sourceSweep[0].sourceX > 123);
     assert.ok(Math.abs(report.sourceSweep[1].sourceX - 80) < 2);
     assert.ok(report.sourceSweep[2].sourceX < 37);
+    assert.ok(
+      report.sourceSweep[2].discovery.visibleCellEquivalent >
+        report.sourceSweep[0].discovery.visibleCellEquivalent,
+    );
     report.beforeBrush = await state();
     await page.screenshot({ path: 'artifacts/stone-before.png' });
     assert.ok(
@@ -147,6 +165,7 @@ try {
         contacts: dust.renderer.brushes.size,
       }));
     report.twoFingerTraces = await traces();
+    report.twoFingerDiscovery = (await state()).discovery;
     assert.ok(
       report.twoFingerTraces.left > 0.8 && report.twoFingerTraces.right > 0.8,
     );
@@ -156,10 +175,16 @@ try {
     await stroke([62, 70], [55, 140]);
     await stroke([62, 70], [55, 140]);
     report.layeredTraces = await traces();
+    report.layeredDiscovery = (await state()).discovery;
+    assert.ok(
+      report.layeredDiscovery.visibleCellEquivalent >
+        report.twoFingerDiscovery.visibleCellEquivalent,
+    );
     assert.ok(report.layeredTraces.left > report.twoFingerTraces.left * 2);
     await page.screenshot({ path: 'artifacts/stone-layered-traces.png' });
     await page.waitForTimeout(6000);
     report.decayedTraces = await traces();
+    assert.deepEqual((await state()).discovery, report.layeredDiscovery);
     assert.ok(report.decayedTraces.left < report.layeredTraces.left * 0.55);
     await page.screenshot({ path: 'artifacts/stone-faded-traces.png' });
     console.log(

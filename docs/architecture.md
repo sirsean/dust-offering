@@ -1,6 +1,6 @@
 # Architecture — sand on stone
 
-The active design is `stone-offering-v4`: an offscreen drifting pour, slow sand, fading downhill guides and full-triangle multi-touch. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
+The active design is `stone-offering-v5`: an initially hidden stone progressively discovered by fingers and sand, an offscreen drifting pour, slow sand, fading downhill guides and full-triangle multi-touch. Earlier source and measurements are historical. Use Vite, vanilla JavaScript modules and Canvas 2D, with no runtime framework or physics engine.
 
 | Location                           | Responsibility                                                                                                                         |
 | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
@@ -34,6 +34,14 @@ The opening is invisible and centred at y=-4, above the canvas. `Simulation.sour
 `Simulation.sourceX` is `80 + 44 × sin(2π × sourceTime / 60)` with default tuning. The amplitude is bounded by the board width, opening width and grain radius. Emission samples seeded lanes around the current centre. Existing particles retain their velocity and receive no artificial sideways impulse from the moving opening. The challenge inherits these settings directly from the prototype instead of overriding the source height.
 
 Grains born above y=0 remain in the same particle array, collision hash and accounting as all other retained material. The hash clamps its edge cells while still using actual coordinates for contact distances. Rendering naturally clips offscreen particles. There is no source line or source-specific brush instruction; only a full retained tray produces the existing Reset notice.
+
+## Persistent discovery
+
+`src/simulation/surface-discovery.js` owns a separate 160 × 200 logical visibility grid. It starts at zero, adds local exposure up to one, and never decays. It does not affect contacts, adhesion, random numbers or particle accounting. Fingers use a soft 6-unit radius and distance-normalized gain of 0.65 per pass, including initial taps. Each active pointer follows the same independent swept path used for grease and dislodging sand.
+
+Every six fixed steps (0.1 seconds), retained grains deposit time-normalized exposure along their swept paths. Only actual grain-radius contact with the triangle qualifies; the soft reveal halo extends two units around that contact. Rate is 0.24 per second at the kernel centre. Bound and sleeping grains continue uncovering the stone beneath them. Fully exposed stationary patches can be skipped until their grain moves; ground and offscreen grains reveal nothing. Per-grain sample position/step stays current even when the patch is complete.
+
+The renderer caches the landscape separately from transparent stone artwork, including its rim. It composes stone and fading grease, then masks both with the discovery bitmap. The composite refreshes when discovery grows, grease changes, or the 0.1-second fading interval elapses. Grains and bowls draw above/around it. No unrevealed outline or shadow is painted. Resizing rebuilds artwork without changing the logical grid. Reset and mode changes replace the field; Begin, hidden recovery and grease decay preserve it. A new first-use hint introduces discovery. Challenge v5 separates the changed visibility conditions from earlier scores.
 
 ## Surface traces
 

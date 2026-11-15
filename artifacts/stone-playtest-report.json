@@ -1,120 +1,150 @@
 {
-  "date": "2026-11-15T00:47:36.467Z",
-  "revision": "0.6.0 / stone-offering-v4",
+  "date": "2026-11-15T02:24:46.798Z",
+  "revision": "0.7.0 / stone-offering-v5",
   "browser": "156.0.8078.79",
   "node": "v24.22.1",
   "viewport": "390 × 844, Linux headless Chromium, emulated touch",
   "errors": [],
   "sourceSweep": [
     {
-      "emitted": 362,
+      "emitted": 364,
       "left": 2,
       "right": 17,
-      "retained": 343,
-      "face": 311,
-      "attached": 47,
+      "retained": 345,
+      "face": 313,
+      "attached": 48,
       "stone": 24,
-      "sand": 23,
+      "sand": 24,
       "ground": 32,
       "restingGround": 1,
       "aboveY36": 70,
       "aboveY60": 106,
       "remaining": null,
-      "sourceX": 123.99671626505989,
-      "sourceTime": 15.116666666666667,
-      "aboveBoard": 14
+      "sourceX": 123.99189133335234,
+      "sourceTime": 15.183333333333334,
+      "aboveBoard": 14,
+      "discovery": {
+        "touchedCells": 7080,
+        "fullyRevealedCells": 74,
+        "visibleCellEquivalent": 1376.7180160568453
+      }
     },
     {
-      "emitted": 722,
+      "emitted": 726,
       "left": 2,
-      "right": 173,
-      "retained": 547,
-      "face": 480,
-      "attached": 226,
+      "right": 176,
+      "retained": 548,
+      "face": 481,
+      "attached": 229,
       "stone": 52,
-      "sand": 174,
+      "sand": 177,
       "ground": 67,
-      "restingGround": 57,
+      "restingGround": 61,
       "aboveY36": 70,
       "aboveY60": 106,
       "remaining": null,
-      "sourceX": 79.46245196324912,
-      "sourceTime": 30.116666666666667,
-      "aboveBoard": 14
+      "sourceX": 78.77144789616297,
+      "sourceTime": 30.266666666666666,
+      "aboveBoard": 14,
+      "discovery": {
+        "touchedCells": 9021,
+        "fullyRevealedCells": 957,
+        "visibleCellEquivalent": 3062.216789156707
+      }
     },
     {
-      "emitted": 1083,
+      "emitted": 1088,
       "left": 21,
-      "right": 223,
-      "retained": 839,
+      "right": 224,
+      "retained": 843,
       "face": 656,
-      "attached": 370,
+      "attached": 372,
       "stone": 77,
-      "sand": 293,
-      "ground": 183,
-      "restingGround": 129,
-      "aboveY36": 71,
-      "aboveY60": 107,
+      "sand": 295,
+      "ground": 187,
+      "restingGround": 124,
+      "aboveY36": 70,
+      "aboveY60": 106,
       "remaining": null,
-      "sourceX": 36.004288943590616,
-      "sourceTime": 45.13333333333333,
-      "aboveBoard": 15
+      "sourceX": 36.029550673739124,
+      "sourceTime": 45.35,
+      "aboveBoard": 14,
+      "discovery": {
+        "touchedCells": 11781,
+        "fullyRevealedCells": 1748,
+        "visibleCellEquivalent": 5624.756882369338
+      }
     }
   ],
   "beforeBrush": {
-    "emitted": 1083,
-    "left": 21,
-    "right": 223,
-    "retained": 839,
-    "face": 656,
-    "attached": 370,
+    "emitted": 1090,
+    "left": 22,
+    "right": 224,
+    "retained": 844,
+    "face": 657,
+    "attached": 372,
     "stone": 77,
-    "sand": 293,
-    "ground": 183,
-    "restingGround": 129,
-    "aboveY36": 71,
-    "aboveY60": 107,
+    "sand": 295,
+    "ground": 187,
+    "restingGround": 124,
+    "aboveY36": 70,
+    "aboveY60": 106,
     "remaining": null,
-    "sourceX": 36.004288943590616,
-    "sourceTime": 45.13333333333333,
-    "aboveBoard": 15
+    "sourceX": 36.04529492920855,
+    "sourceTime": 45.43333333333333,
+    "aboveBoard": 14,
+    "discovery": {
+      "touchedCells": 11802,
+      "fullyRevealedCells": 1753,
+      "visibleCellEquivalent": 5639.350955313452
+    }
   },
-  "pausedEmitted": 1086,
+  "pausedEmitted": 1093,
   "afterBrush": {
-    "emitted": 1086,
-    "left": 32,
-    "right": 225,
-    "retained": 829,
-    "face": 636,
-    "attached": 352,
-    "stone": 75,
-    "sand": 277,
-    "ground": 193,
-    "restingGround": 87,
-    "aboveY36": 48,
-    "aboveY60": 84,
+    "emitted": 1093,
+    "left": 39,
+    "right": 226,
+    "retained": 828,
+    "face": 634,
+    "attached": 360,
+    "stone": 81,
+    "sand": 279,
+    "ground": 194,
+    "restingGround": 72,
+    "aboveY36": 44,
+    "aboveY60": 80,
     "remaining": null,
-    "sourceX": 36.346953142162974,
-    "sourceTime": 46.2,
-    "aboveBoard": 0
+    "sourceX": 36.668458867462846,
+    "sourceTime": 46.666666666666664,
+    "aboveBoard": 0,
+    "discovery": {
+      "touchedCells": 12060,
+      "fullyRevealedCells": 2121,
+      "visibleCellEquivalent": 6033.1243541926215
+    }
   },
   "rested": {
-    "emitted": 1086,
-    "left": 206,
-    "right": 232,
-    "retained": 648,
-    "face": 431,
-    "attached": 427,
-    "stone": 90,
-    "sand": 337,
-    "ground": 217,
-    "restingGround": 217,
+    "emitted": 1093,
+    "left": 219,
+    "right": 234,
+    "retained": 640,
+    "face": 430,
+    "attached": 425,
+    "stone": 92,
+    "sand": 333,
+    "ground": 210,
+    "restingGround": 210,
     "aboveY36": 0,
     "aboveY60": 0,
     "remaining": null,
-    "sourceX": 90.12218843627657,
-    "sourceTime": 62.21666666666667,
-    "aboveBoard": 0
+    "sourceX": 92.20184474530458,
+    "sourceTime": 62.68333333333333,
+    "aboveBoard": 0,
+    "discovery": {
+      "touchedCells": 13525,
+      "fullyRevealedCells": 2651,
+      "visibleCellEquivalent": 7180.61169243483
+    }
   },
   "traceContacts": 2,
   "twoFingerTraces": {
@@ -123,15 +153,25 @@
     "middle": 0,
     "contacts": 0
   },
+  "twoFingerDiscovery": {
+    "touchedCells": 1886,
+    "fullyRevealedCells": 6,
+    "visibleCellEquivalent": 587.5793560268867
+  },
   "layeredTraces": {
-    "left": 2.4829187252817837,
-    "right": 0.7676717825733057,
+    "left": 2.484850388111059,
+    "right": 0.7691512884755664,
     "middle": 0,
     "contacts": 0
   },
+  "layeredDiscovery": {
+    "touchedCells": 1887,
+    "fullyRevealedCells": 428,
+    "visibleCellEquivalent": 895.8020709773518
+  },
   "decayedTraces": {
-    "left": 1.2295651235615015,
-    "right": 0.38015841621529617,
+    "left": 1.2328932412024627,
+    "right": 0.3816251592292278,
     "middle": 0,
     "contacts": 0
   },
@@ -142,12 +182,12 @@
     "attached": 0
   },
   "guidanceAfter": {
-    "x": 86.87888674274375,
-    "y": 139.53723294196936,
+    "x": 86.74832043330652,
+    "y": 139.03127620937832,
     "retained": 7,
     "attached": 0
   },
-  "pourWallSeconds": 40.011047991,
+  "pourWallSeconds": 40.01198247,
   "challenge": {
     "emitted": 960,
     "left": 134,
@@ -164,7 +204,12 @@
     "remaining": 0,
     "sourceX": 70.77678323223182,
     "sourceTime": 57.983333333333334,
-    "aboveBoard": 0
+    "aboveBoard": 0,
+    "discovery": {
+      "touchedCells": 12763,
+      "fullyRevealedCells": 2023,
+      "visibleCellEquivalent": 6204.9266768552525
+    }
   },
   "result": {
     "score": 377,
@@ -175,10 +220,10 @@
   },
   "fullFaceFrames": {
     "retained": 6000,
-    "meanMilliseconds": 19.887333333333373,
+    "meanMilliseconds": 20.716666666666544,
     "p95Milliseconds": 33.39999999999418
   },
-  "brushPointerMilliseconds": 68.25966700000572,
+  "brushPointerMilliseconds": 67.07694000002812,
   "stressAfterBrush": {
     "emitted": 6000,
     "left": 0,
@@ -195,7 +240,12 @@
     "remaining": null,
     "sourceX": 80,
     "sourceTime": 0,
-    "aboveBoard": 0
+    "aboveBoard": 0,
+    "discovery": {
+      "touchedCells": 9167,
+      "fullyRevealedCells": 8912,
+      "visibleCellEquivalent": 9027.60790392384
+    }
   },
-  "stressDate": "2026-11-15T00:49:57.135Z"
+  "stressDate": "2026-11-15T02:27:08.004Z"
 }

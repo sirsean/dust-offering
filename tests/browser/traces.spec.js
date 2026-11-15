@@ -4,7 +4,7 @@ import { open, stroke } from './helpers.js';
 test('a visible trace remains after lifting, stacks with passes, fades, and clears on Reset', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v4');
+  await open(page, 'challenge=stone-offering-v5');
   const sample = () =>
     page.evaluate(() => ({
       strength: dust.sim.surface.strengthAt(80.5, 100.5),
@@ -20,6 +20,11 @@ test('a visible trace remains after lifting, stacks with passes, fades, and clea
         .reduce((a, b) => a + b, 0),
       pointers: dust.renderer.brushes.size,
     }));
+  await page.clock.runFor(100);
+  const hiddenColor = (await sample()).color;
+  // Establish uncovered, grease-free stone before testing grease contrast.
+  for (let i = 0; i < 3; i++) await stroke(page, [80.5, 60.5], [80.5, 150.5]);
+  await page.clock.runFor(90000);
   await page.clock.runFor(100);
   const bare = await sample();
   await stroke(page, [80.5, 60.5], [80.5, 150.5]);
@@ -48,13 +53,14 @@ test('a visible trace remains after lifting, stacks with passes, fades, and clea
   await page.locator('#reset').click();
   await page.clock.runFor(100);
   expect((await sample()).strength).toBe(0);
-  expect((await sample()).color).toBe(bare.color);
+  expect((await sample()).color).toBe(hiddenColor);
+  expect(await page.evaluate(() => dust.sim.discovery.active.size)).toBe(0);
 });
 
 test('brushing reaches the tip, bottom rim and side edges even when the finger ends beyond them', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v4');
+  await open(page, 'challenge=stone-offering-v5');
   await page.clock.runFor(100);
   const pixel = () =>
     page.evaluate(() =>
@@ -88,7 +94,10 @@ test('brushing reaches the tip, bottom rim and side edges even when the finger e
   expect(field.right).toBeGreaterThan(0);
   expect(field.outside).toBe(0);
   expect(field.bowl).toBe(0);
-  expect(await pixel()).toBeLessThan(bare - 25);
+  expect(Math.abs((await pixel()) - bare)).toBeGreaterThan(10);
+  expect(
+    await page.evaluate(() => dust.sim.discovery.levelAt(80, 175.9)),
+  ).toBeGreaterThan(0.5);
   await page.screenshot({
     path: test.info().outputPath('full-stone-edges.png'),
   });
@@ -97,7 +106,7 @@ test('brushing reaches the tip, bottom rim and side edges even when the finger e
 test('an actual finger stroke guides falling material downhill while allowing it to drift', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v4');
+  await open(page, 'challenge=stone-offering-v5');
   const seed = () =>
     page.evaluate(() => {
       dust.sim.config.stoneAdhesionRate = 0;
@@ -132,7 +141,7 @@ test('two fingers leave independent traces, one can lift while the other continu
   context,
 }, info) => {
   test.skip(info.project.name !== 'phone', 'Touch-enabled viewport only');
-  await open(page, 'challenge=stone-offering-v4');
+  await open(page, 'challenge=stone-offering-v5');
   const rect = await page.locator('#field').boundingBox();
   const p = (x, y, id) => ({
     x: rect.x + (x / 160) * rect.width,
@@ -154,10 +163,16 @@ test('two fingers leave independent traces, one can lift while the other continu
     left: dust.sim.surface.strengthAt(59, 100),
     right: dust.sim.surface.strengthAt(101, 100),
     middle: dust.sim.surface.strengthAt(80, 100),
+    leftReveal: dust.sim.discovery.levelAt(59, 100),
+    rightReveal: dust.sim.discovery.levelAt(101, 100),
+    middleReveal: dust.sim.discovery.levelAt(80, 100),
   }));
   expect(branches.left).toBeGreaterThan(0.8);
   expect(branches.right).toBeGreaterThan(0.8);
   expect(branches.middle).toBe(0);
+  expect(branches.leftReveal).toBeGreaterThan(0.5);
+  expect(branches.rightReveal).toBeGreaterThan(0.5);
+  expect(branches.middleReveal).toBe(0);
   await page.screenshot({
     path: test.info().outputPath('two-finger-traces.png'),
   });
@@ -207,7 +222,7 @@ test('overlapping fingers add stickiness, and cancelling one does not cancel the
   context,
 }, info) => {
   test.skip(info.project.name !== 'phone', 'Touch-enabled viewport only');
-  await open(page, 'challenge=stone-offering-v4');
+  await open(page, 'challenge=stone-offering-v5');
   const rect = await page.locator('#field').boundingBox();
   const p = (x, y, id) => ({
     x: rect.x + (x / 160) * rect.width,

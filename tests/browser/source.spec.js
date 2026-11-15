@@ -4,7 +4,7 @@ import { open, hidden, state } from './helpers.js';
 test('dust enters from above without a top marker, sways gently, and preserves its phase through hiding and resizing', async ({
   page,
 }) => {
-  await open(page, 'challenge=stone-offering-v4');
+  await open(page, 'challenge=stone-offering-v5');
   await page.clock.runFor(100);
   const top = await page.evaluate(() => {
     const r = dust.renderer,

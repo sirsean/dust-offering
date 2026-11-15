@@ -229,6 +229,7 @@ test('identical seeds and brush strokes at identical steps reproduce the full st
     return {
       grains: sim.snapshot(),
       surface: sim.surface.snapshot(),
+      discovery: sim.discovery.snapshot(),
       left: sim.left,
       right: sim.right,
       spill: sim.spill,

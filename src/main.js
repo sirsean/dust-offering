@@ -28,7 +28,7 @@ let accumulator = 0;
 let lastTime = null;
 let lastUI = 0;
 let noticeTimer;
-const hintKey = 'dust-offering:hint:downhill-traces-v1';
+const hintKey = 'dust-offering:hint:reveal-stone-v1';
 $('#hint').hidden = readStored(storage, hintKey) === 'seen';
 
 function notice(text) {

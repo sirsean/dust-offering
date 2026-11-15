@@ -27,7 +27,8 @@ export class Renderer {
     this.background = document.createElement('canvas');
     this.background.width = this.canvas.width;
     this.background.height = this.canvas.height;
-    const c = this.background.getContext('2d');
+    let c = this.background.getContext('2d');
+    const landscape = c;
     c.scale(this.scale, this.scale);
     c.fillStyle = p.scene;
     c.fillRect(0, 0, 160, 200);
@@ -84,6 +85,13 @@ export class Renderer {
       c.lineTo(x + 4 + wind() * 9, y - 0.6 - wind());
     }
     c.stroke();
+    // Stone artwork stays separate from the landscape: no rim, shadow or
+    // texture is drawn until gameplay has uncovered that part of the face.
+    this.stoneTexture = document.createElement('canvas');
+    this.stoneTexture.width = this.canvas.width;
+    this.stoneTexture.height = this.canvas.height;
+    c = this.stoneTexture.getContext('2d');
+    c.scale(this.scale, this.scale);
     const rim = c.createLinearGradient(0, 0, 160, 170);
     rim.addColorStop(0, p.stoneRim);
     rim.addColorStop(1, p.stoneShade);
@@ -151,6 +159,7 @@ export class Renderer {
       c.stroke();
     }
     c.restore();
+    c = landscape;
     c.fillStyle = p.ground;
     c.fillRect(0, 198, 160, 2);
     c.strokeStyle = p.groundEdge;
@@ -159,6 +168,66 @@ export class Renderer {
     c.moveTo(0, 198);
     c.lineTo(160, 198);
     c.stroke();
+    this.stoneComposite = document.createElement('canvas');
+    this.stoneComposite.width = this.canvas.width;
+    this.stoneComposite.height = this.canvas.height;
+    this.stoneContext = this.stoneComposite.getContext('2d');
+    this.discoveryField = null;
+    this.treatmentVersion = -1;
+  }
+
+  drawStone(sim) {
+    const field = sim.discovery;
+    if (!field.active.size) return;
+    if (this.discoveryField !== field) {
+      this.discoveryField = field;
+      this.discoveryCanvas = document.createElement('canvas');
+      this.discoveryCanvas.width = field.columns;
+      this.discoveryCanvas.height = field.rows;
+      this.discoveryContext = this.discoveryCanvas.getContext('2d');
+      this.discoveryPixels = this.discoveryContext.createImageData(
+        field.columns,
+        field.rows,
+      );
+      this.discoveryVersion = -1;
+    }
+    const discoveryChanged = this.discoveryVersion !== field.version;
+    if (discoveryChanged) {
+      const data = this.discoveryPixels.data;
+      for (const index of field.active)
+        data[index * 4 + 3] = Math.round(255 * field.levels[index]);
+      this.discoveryContext.putImageData(this.discoveryPixels, 0, 0);
+      this.discoveryVersion = field.version;
+    }
+    // Rebuild only when discovery grows, a brush edits grease, or grease fades.
+    // Sand still renders every frame without recompositing the whole stone.
+    if (
+      discoveryChanged ||
+      this.compositeSurface !== sim.surface ||
+      this.compositeTreatmentVersion !== sim.surface.version ||
+      (sim.surface.active.size && sim.surface.time - this.compositeTime >= 0.1)
+    ) {
+      const c = this.stoneContext;
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      c.drawImage(this.stoneTexture, 0, 0);
+      c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
+      this.drawTreatment(sim.surface, c);
+      c.setTransform(1, 0, 0, 1, 0, 0);
+      c.globalCompositeOperation = 'destination-in';
+      c.drawImage(
+        this.discoveryCanvas,
+        0,
+        0,
+        this.canvas.width,
+        this.canvas.height,
+      );
+      c.globalCompositeOperation = 'source-over';
+      this.compositeSurface = sim.surface;
+      this.compositeTreatmentVersion = sim.surface.version;
+      this.compositeTime = sim.surface.time;
+    }
+    this.ctx.drawImage(this.stoneComposite, 0, 0, 160, 200);
   }
 
   drawBowls(sim, mode) {
@@ -213,7 +282,7 @@ export class Renderer {
     }
   }
 
-  drawTreatment(surface) {
+  drawTreatment(surface, c = this.ctx) {
     if (this.treatmentSurface !== surface) {
       this.treatmentSurface = surface;
       this.treatmentCanvas = document.createElement('canvas');
@@ -249,7 +318,6 @@ export class Renderer {
     }
     // Functional feedback stays visible under reduced motion as well: this
     // coating is the same decaying strength field used by the adhesion solver.
-    const c = this.ctx;
     c.save();
     c.beginPath();
     c.moveTo(stoneShape.x, stoneShape.top);
@@ -265,7 +333,7 @@ export class Renderer {
     const c = this.ctx;
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
     c.drawImage(this.background, 0, 0, 160, 200);
-    this.drawTreatment(sim.surface);
+    this.drawStone(sim);
     this.drawBowls(sim, mode);
     if (!this.reducedMotion.matches) {
       c.strokeStyle = this.palette.sand + '24';

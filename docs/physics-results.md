@@ -1,6 +1,6 @@
-# Offscreen drifting-pour measurements
+# Sand physics and discovery
 
-Current model: revision 0.6.0, `stone-offering-v4`. Configuration lives in `src/config/prototype.js`. The fixed-source measurements remain in [archive/stone-v3/](archive/stone-v3/physics-results.md). The source change preserves the existing sand adhesion, directional grease marks and slow speed tuning.
+Current revision: 0.7.0, challenge `stone-offering-v5`. Configuration lives in `src/config/prototype.js`. Discovery changes visibility only: a paired deterministic test confirms identical particle positions, velocities, bonds, source timing and accounting with discovery enabled or disabled, including a brush. The measurements below are the unchanged revision 0.6.0 / `stone-offering-v4` physical baseline, retained in [archive/stone-v4/](archive/stone-v4/physics-results.md). Current rendering and real-time performance evidence is in [playtest.md](playtest.md). Earlier fixed-source measurements remain in [archive/stone-v3/](archive/stone-v3/physics-results.md).
 
 ## Delivery
 
@@ -22,7 +22,7 @@ New grains are already in the particle array and supply accounting while outside
 
 ## Reproducible checks
 
-`npm run test:physics` produces [stone-physics.jsonl](../artifacts/stone-physics.jsonl). Three seeded unattended two-minute pours emit every scheduled grain:
+`npm run test:physics` reproduces the physical scenes. Baseline raw output is [stone-physics.jsonl](../artifacts/archive/stone-v4/stone-physics.jsonl). Three seeded unattended two-minute pours emit every scheduled grain:
 
 | Seed | Emitted / accounted after 60s | Emitted / accounted after 120s | Above board at both samples | Bonds above y=60 after 120s |
 | ---- | ----------------------------- | ------------------------------ | --------------------------- | --------------------------- |
@@ -36,4 +36,4 @@ The 25-second gather / brush / ten-second pour / twenty-second settle scene reta
 
 The isolated downhill-guide control remains unchanged: after four seconds, one pass guides a grain from initial x=70 to x=86.13; three passes guide it to x=95.58, while the bare control stays at x=70. Reversing finger travel gives the same downhill guide, and grains can drift across it.
 
-The suite has 42 numerical/unit checks, including smooth turnaround, opening bounds, actual spawn positions following both sides, wholly offscreen birth followed by visible entry, phase handling, full challenge supply and deterministic replay including source state. The 21 passing browser scenarios check visible arrivals, absence of the former marker, pause/hidden/resize/reset behavior, material, multi-touch and challenge controls. Three desktop duplicates of touch-only cases are skipped.
+The current suite has 48 numerical/unit checks. Six discovery checks cover cumulative local exposure, distance-normalized brushing, time-normalized sand contact, continuous paths and all edges, persistence/reset, and independence from physics. Deterministic replay includes discovery as well as particle/source state. The 25 browser scenarios include initial invisibility and actual rendered local reveal alongside source, grease, multi-touch, material, pause/hidden/resize/reset and challenge checks. Three desktop duplicates of touch-only cases are skipped.

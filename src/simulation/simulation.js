@@ -7,12 +7,14 @@ import {
 } from './geometry.js';
 import { seededRandom } from './random.js';
 import { SurfaceTreatment } from './surface-treatment.js';
+import { SurfaceDiscovery } from './surface-discovery.js';
 
 export class Simulation {
   constructor(options = {}) {
     this.config = { ...prototype, ...options };
     this.random = seededRandom(this.config.seed);
     this.surface = new SurfaceTreatment(this.config);
+    this.discovery = new SurfaceDiscovery(this.config);
     this.traceSample = {};
     this.grains = [];
     this.steps = 0;
@@ -76,6 +78,10 @@ export class Simulation {
       y,
       px: x,
       py: y,
+      revealX: x,
+      revealY: y,
+      revealStep: this.steps,
+      revealComplete: false,
       vx,
       vy,
       bond: null,
@@ -504,10 +510,13 @@ export class Simulation {
       }
     this.steps++;
     this.surface.advanceTo(this.time);
+    if (this.steps % c.revealIntervalSteps === 0)
+      this.discovery.updateGrains(this.grains, this.steps);
   }
 
   brush(a, b, stroke) {
     this.surface.paint(a, b, stroke);
+    this.discovery.brush(a, b, stroke);
     const radius = this.config.brushWidth / 2;
     const length = Math.hypot(b.x - a.x, b.y - a.y);
     const tx = length > 1e-6 ? (b.x - a.x) / length : 0;
