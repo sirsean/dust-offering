@@ -1,6 +1,6 @@
 # Downhill guidance and inlet drainage
 
-Current model: revision 0.4.0, `stone-offering-v3`. Configuration lives in `src/config/prototype.js`. Earlier evidence remains in [archive/stone-v2/](archive/stone-v2/physics-results.md) and the older archive directories.
+Current physical model: `stone-offering-v3`, measured in revision 0.4.0 and retained without changes in the 0.5.0 visual pass. Configuration lives in `src/config/prototype.js`. Current appearance is documented in [visual-style.md](visual-style.md). Earlier evidence remains in [archive/stone-v2/](archive/stone-v2/physics-results.md) and the older archive directories.
 
 ## Trace response
 

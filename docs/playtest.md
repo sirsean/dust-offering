@@ -1,5 +1,7 @@
 # Downhill traces and full-stone playtest
 
+> Retained 0.4.0 material baseline, including that revision's appearance. The 0.5.0 visual pass keeps this physical model; see [visual-style.md](visual-style.md) for the current palette, greasy marks and screenshots.
+
 Revision 0.4.0 addresses the owner's screenshot and feedback: brushing now reaches the whole visible triangle, traces fade noticeably sooner, slopes loosely guide falling sand, the inlet resists a permanent cap, and the pour is 50% wider. Slow motion, one brush action, independent multi-touch and literal bottom piles remain.
 
 ## Real-time simulated play

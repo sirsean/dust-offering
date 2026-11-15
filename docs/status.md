@@ -1,8 +1,8 @@
-# Project status — downhill traces and a draining inlet
+# Project status — desert dusk and greasy finger marks
 
-Revision 0.4.0 implements full-triangle brushing, visibly faster fading, rough downhill guidance and a wider pour with less buildup near the tip. Multi-touch, slow motion, physical deposits and persistent bottom piles remain in place.
+Revision 0.5.0 gives the game the owner's brown, umber, dusk-orange and sand palette. The full stone face is weathered desert rock, the grains are pale dust, the vessels read as clay, and finger traces are dark grease marks that deepen with layering and fade back into the stone. The physical model remains `stone-offering-v3`, including full-triangle multi-touch, loose downhill guidance and the wider draining inlet.
 
-Current design: [stone-sand-plan.md](stone-sand-plan.md). Architecture and tuning: [architecture.md](architecture.md), [physics-results.md](physics-results.md). Real-time simulated play and screenshots: [playtest.md](playtest.md), `artifacts/stone-*`.
+Current design: [stone-sand-plan.md](stone-sand-plan.md). Visual references, palette and current screenshots: [visual-style.md](visual-style.md), `artifacts/desert-dusk/`. Architecture and tuning: [architecture.md](architecture.md), [physics-results.md](physics-results.md). The 0.4.0 material baseline is retained in [playtest.md](playtest.md) and `artifacts/stone-*`.
 
 ## Behavior and checks
 
@@ -17,8 +17,8 @@ Current design: [stone-sand-plan.md](stone-sand-plan.md). Architecture and tunin
 
 ## Repository and deployment
 
-Public repo: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `downhill-traces`, then integrated into `main`. Preview: <https://downhill-traces.dust-offering.sirsean.me>.
+Public repo: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `desert-dusk`, then integrated into `main`. Preview: <https://desert-dusk.dust-offering.sirsean.me>.
 
-Revision 0.3.0 source is commit `7475680`; its evidence is under `docs/archive/stone-v2/` and `artifacts/archive/stone-v2/`. Revision 0.2.0 source is commit `4f31c72`, with evidence under the respective `archive/stone-v1/` directories. Original ridge source is commit `bef6b51`, with evidence under `archive/v2/`.
+Revision 0.4.0 source is commit `93f756b`; its physics and real-time material measurements remain the baseline for this visual pass. Revision 0.3.0 source is commit `7475680`, with evidence under `archive/stone-v2/`. Revision 0.2.0 source is commit `4f31c72`, with evidence under `archive/stone-v1/`. Original ridge source is commit `bef6b51`, with evidence under `archive/v2/`.
 
-Use direct Wrangler deployment. Automated GitHub deployments remain deferred; no deployment secret should be configured until requested. CI runs code/browser checks. `npm run deploy` publishes production, and `npm run deploy:branch -- downhill-traces` publishes the isolated preview. See [deployment.md](deployment.md) for environment-specific writable paths.
+Use direct Wrangler deployment. Automated GitHub deployments remain deferred; no deployment secret should be configured until requested. CI runs code/browser checks. `npm run deploy` publishes production, and `npm run deploy:branch -- desert-dusk` publishes the isolated preview. See [deployment.md](deployment.md) for environment-specific writable paths.

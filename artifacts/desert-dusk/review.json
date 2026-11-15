@@ -1,0 +1,52 @@
+{
+  "revision": "0.5.0",
+  "challenge": "stone-offering-v3",
+  "date": "2026-11-15T00:21:46.257Z",
+  "browser": "156.0.8078.79",
+  "device": "headless Chromium; emulated touch, no physical device",
+  "errors": [],
+  "grease": {
+    "bare": {
+      "strength": 0,
+      "brightness": 242
+    },
+    "once": {
+      "strength": 0.9258289773396842,
+      "brightness": 205
+    },
+    "layered": {
+      "strength": 2.523531419555358,
+      "brightness": 163
+    },
+    "afterSixSeconds": {
+      "strength": 1.2520853754486894,
+      "brightness": 196
+    }
+  },
+  "palette": {
+    "text": "#f0dfc4",
+    "scene": "#241713",
+    "active": "#ce9566",
+    "active-ink": "#24160f",
+    "muted": "#c8ad90",
+    "panel": "#30211a",
+    "border": "#a17d5b",
+    "button-light": "#423026",
+    "sand-ochre": "#e8c68e",
+    "stone-lit": "#8c674b"
+  },
+  "contrast": {
+    "text": 13.303689840029921,
+    "selectedControl": 6.781457627413722,
+    "mutedText": 7.242304275068285,
+    "controlBorder": 3.328496120271231,
+    "darkestSandOnLitStone": 3.1032110197026084
+  },
+  "pour": {
+    "emitted": 600,
+    "left": 50,
+    "right": 62,
+    "retained": 488,
+    "spill": 100
+  }
+}

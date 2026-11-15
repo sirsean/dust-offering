@@ -31,3 +31,9 @@ The latest feedback asks for brushing everywhere on the visible triangle, faster
 - Widen the source from 12 to 18 logical units and use twelve distributed lanes. Keep emission at 24 grains/s and speed capped at 16 units/s.
 - Suppress new bonds above y=45 and taper attachment to full strength by y=72. Bonds formed in that inlet region last 2.5 seconds before gently releasing their descendants. Wake unsupported loose sand as well; keep every grain and preserve ground piles.
 - Use challenge identifier `stone-offering-v3`, retaining 960 grains and targets 360 / 600. Measure full supply, two-minute unattended drainage, loose directional guidance, visible fading and all three triangle edges before deploying.
+
+## Desert stone and grease marks — revision 0.5.0
+
+The owner's visual direction is brown, umber, dusk orange and sand: mysterious old stone found in the desert, dust blowing across the Scablands, and greasy finger marks left in the sand on the stone. Use warm weathered mineral tones, pale grains and clay vessels. Layered marks darken instead of glowing; fading returns the underlying stone color. Keep dust legible over both the bare face and marks. Ground the scenery in the Fringe location and visual references, without introducing new lore or symbols. Details, palette ownership and current screenshots are in [visual-style.md](visual-style.md).
+
+This is a rendering and interface pass. The six-second decay, directional grip, brush coverage, multi-touch, inlet drainage, accounting and `stone-offering-v3` challenge remain the same.

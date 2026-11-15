@@ -27,24 +27,24 @@ test('a visible trace remains after lifting, stacks with passes, fades, and clea
   const once = await sample();
   expect(once.pointers).toBe(0);
   expect(once.strength).toBeGreaterThan(0.85);
-  expect(once.color).toBeGreaterThan(bare.color + 25);
+  expect(once.color).toBeLessThan(bare.color - 25);
   await stroke(page, [80.5, 60.5], [80.5, 150.5]);
   await stroke(page, [80.5, 60.5], [80.5, 150.5]);
   await page.clock.runFor(150);
   const layered = await sample();
   expect(layered.strength).toBeGreaterThan(once.strength * 2.5);
-  expect(layered.color).toBeGreaterThan(once.color + 15);
+  expect(layered.color).toBeLessThan(once.color - 15);
   await page.screenshot({ path: test.info().outputPath('layered-trace.png') });
   await page.clock.runFor(6000);
   const faded = await sample();
   expect(faded.strength).toBeLessThan(layered.strength * 0.55);
   expect(faded.strength).toBeGreaterThan(layered.strength * 0.45);
-  expect(faded.color).toBeLessThan(layered.color - 15);
+  expect(faded.color).toBeGreaterThan(layered.color + 15);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.clock.runFor(100);
-  expect((await sample()).color).toBeGreaterThan(bare.color + 20);
+  expect((await sample()).color).toBeLessThan(bare.color - 20);
   await page.clock.runFor(24000);
-  expect((await sample()).color).toBeLessThan(bare.color + 20);
+  expect((await sample()).color).toBeGreaterThan(bare.color - 20);
   await page.locator('#reset').click();
   await page.clock.runFor(100);
   expect((await sample()).strength).toBe(0);
@@ -88,7 +88,7 @@ test('brushing reaches the tip, bottom rim and side edges even when the finger e
   expect(field.right).toBeGreaterThan(0);
   expect(field.outside).toBe(0);
   expect(field.bowl).toBe(0);
-  expect(await pixel()).toBeGreaterThan(bare + 25);
+  expect(await pixel()).toBeLessThan(bare - 25);
   await page.screenshot({
     path: test.info().outputPath('full-stone-edges.png'),
   });

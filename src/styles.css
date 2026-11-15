@@ -1,8 +1,41 @@
 :root {
+  /* Desert dusk: UI and procedural canvas artwork share these material tones. */
+  --scene: #241713;
+  --haze: #593923;
+  --land-far: #39251c;
+  --land-near: #493021;
+  --stone-rim: #a27a55;
+  --stone-lit: #8c674b;
+  --stone-mid: #73513b;
+  --stone-shade: #5c3c2a;
+  --stone-dust: #c29a6b;
+  --stone-pit: #342015;
+  --grease: #26160f;
+  --ground: #3a261b;
+  --ground-edge: #8c6342;
+  --bowl-foot: #39251c;
+  --bowl-lit: #83573b;
+  --bowl-shade: #4d2f22;
+  --bowl-rim: #c39a68;
+  --bowl-dust: #cfa873;
+  --sand: #f0d3a1;
+  --sand-ochre: #e8c68e;
+  --sand-light: #f8e1b9;
+  --source: #c69a66;
+  --mark: #e0bb8b;
+  --text: #f0dfc4;
+  --muted: #c8ad90;
+  --active: #ce9566;
+  --active-ink: #24160f;
+  --focus: #f3c58a;
+  --border: #a17d5b;
+  --button: #34241c;
+  --button-light: #423026;
+  --panel: #30211a;
   color-scheme: dark;
   font-family: system-ui, sans-serif;
-  color: #e9e1cc;
-  background: #111210;
+  color: var(--text);
+  background: var(--scene);
   font-synthesis: none;
 }
 * {
@@ -11,27 +44,30 @@
 body {
   margin: 0;
   min-width: 280px;
-  background: #111210;
+  background:
+    radial-gradient(ellipse at 50% 65%, #99592d17, transparent 65%),
+    var(--scene);
 }
 button {
   font: inherit;
   color: inherit;
   cursor: pointer;
-  border: 1px solid #565343;
-  background: #22251f;
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: linear-gradient(var(--button-light), var(--button));
+  border-radius: 5px;
   min-height: 44px;
   padding: 0.6rem 0.8rem;
 }
 button:focus-visible,
 canvas:focus-visible {
-  outline: 2px solid #e7c788;
+  outline: 2px solid var(--focus);
   outline-offset: 3px;
 }
 button[aria-pressed='true'] {
-  color: #171910;
-  background: #d7bf83;
-  border-color: #e8d2a0;
+  color: var(--active-ink);
+  background: var(--active);
+  border-color: var(--mark);
+  box-shadow: inset 0 1px #f8e1b92e;
 }
 button:disabled {
   opacity: 0.4;
@@ -62,6 +98,7 @@ h1 {
     serif;
   margin: 0;
   letter-spacing: 0.035em;
+  color: var(--sand-light);
 }
 .modes {
   grid-area: modes;
@@ -95,10 +132,10 @@ canvas {
   right: 10%;
   margin: 0;
   padding: 10px;
-  background: #12140fed;
-  border: 1px solid #595440;
+  background: #2b1b16f2;
+  border: 1px solid var(--border);
   border-radius: 8px;
-  color: #ded3b9;
+  color: var(--text);
   font-size: 0.8rem;
   line-height: 1.5;
   pointer-events: none;
@@ -130,7 +167,7 @@ canvas {
   display: flex;
   justify-content: space-between;
   font-size: 0.8rem;
-  color: #cbbf9f;
+  color: var(--muted);
   font-variant-numeric: tabular-nums;
   padding: 0 4px;
 }
@@ -140,7 +177,7 @@ canvas {
   background: transparent;
 }
 button:hover:not(:disabled) {
-  border-color: #d0bb86;
+  border-color: var(--mark);
 }
 button:active:not(:disabled) {
   transform: translateY(1px);
@@ -152,8 +189,8 @@ button:active:not(:disabled) {
   transform: translateX(-50%);
   max-width: 340px;
   width: 90%;
-  background: #303126;
-  border: 1px solid #a99c77;
+  background: var(--panel);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 12px;
   font-size: 0.85rem;
@@ -162,16 +199,16 @@ button:active:not(:disabled) {
 }
 dialog {
   width: min(90vw, 360px);
-  border: 1px solid #8b805e;
-  border-radius: 16px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   padding: 24px;
-  background: #1b1e18;
-  color: #e9e1cc;
+  background: var(--panel);
+  color: var(--text);
   max-height: 90svh;
   overflow: auto;
 }
 dialog::backdrop {
-  background: #050806b8;
+  background: #160b07c7;
   backdrop-filter: blur(3px);
 }
 dialog h2 {
@@ -185,7 +222,7 @@ dialog h2 {
     400 2.8rem Georgia,
     serif;
   margin: 20px 0;
-  color: #e7cb8b;
+  color: var(--sand);
 }
 .results {
   margin: 20px 0;
@@ -195,14 +232,14 @@ dialog h2 {
   display: flex;
   justify-content: space-between;
   padding: 8px 0;
-  border-bottom: 1px solid #454737;
+  border-bottom: 1px solid var(--border);
 }
 .results dd {
   margin: 0;
   font-variant-numeric: tabular-nums;
 }
 .muted {
-  color: #bcb69f;
+  color: var(--muted);
   font-size: 0.8rem;
   line-height: 1.5;
 }
@@ -219,16 +256,16 @@ dialog h2 {
   font-size: 0.8rem;
 }
 #again {
-  background: #d7bf83;
-  color: #171910;
+  background: var(--active);
+  color: var(--active-ink);
 }
 textarea {
   width: 100%;
   min-height: 130px;
-  background: #10150e;
-  border: 1px solid #8b805e;
+  background: var(--scene);
+  border: 1px solid var(--border);
   border-radius: 4px;
-  color: #e9e1cc;
+  color: var(--text);
   padding: 8px;
   font: 0.85rem/1.5 system-ui;
 }

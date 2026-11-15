@@ -1,6 +1,11 @@
 import { chromium } from '@playwright/test';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import assert from 'node:assert/strict';
+import { challenge } from '../src/config/challenge.js';
+
+const { version } = JSON.parse(
+  await readFile(new URL('../package.json', import.meta.url), 'utf8'),
+);
 
 const base = process.env.PLAYWRIGHT_BASE_URL ?? 'http://127.0.0.1:5173';
 const browser = await chromium.launch({
@@ -54,7 +59,7 @@ const report = stressOnly
   ? JSON.parse(await readFile('artifacts/stone-playtest-report.json', 'utf8'))
   : {
       date: new Date().toISOString(),
-      revision: '0.4.0 / stone-offering-v3',
+      revision: `${version} / ${challenge.id}`,
       browser: browser.version(),
       node: process.version,
       viewport: '390 × 844, Linux headless Chromium, emulated touch',
