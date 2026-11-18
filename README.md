@@ -5,6 +5,7 @@ A quiet dust-on-stone browser prototype at the Black Pyramid, in warm umber and 
 **Current revision: 0.11.0, challenge `stone-offering-v8`.** Grains are one fifth the diameter, with five times the variable flow and a gentle seeded breeze. [Fine-dust tuning and performance](docs/fine-dust.md). Free Pour begins with dust already in flight and ready to touch. A broader finger sweeps real sand into banks and carries it along the swipe, with clearer material and bowl feedback. Uncover the stone at your own pace: a small meter leads to “Stone found,” then “New stone,” while you can keep playing on the same creation. Each free run varies its shower and mineral weathering. The slow variable pour, persistent discovery, fading grease, multi-touch, Fringe lettering and worn mechanical controls remain. Sound is optional and starts muted; enabling it adds dry brushing texture and quiet bowl tones. There is no explanation overlay, timer or forced reset.
 
 - Play: <https://dust-offering.sirsean.me>
+- [Top-down welling-dust studies and automated comparisons](docs/upwelling-study.md) · [Try Piles](https://top-down-lab.dust-offering.sirsean.me/lab?goal=gather&seed=48)
 - [Current direction](docs/stone-sand-plan.md) · [Architecture](docs/architecture.md) · [Status](docs/status.md)
 - [Extensive gameplay review, experiments and before/after evidence](docs/gameplay-review.md)
 - [Desert visual direction and screenshots](docs/visual-style.md)

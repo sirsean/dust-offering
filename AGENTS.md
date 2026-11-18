@@ -1,5 +1,9 @@
 # Working on Dust Offering
 
+## Top-down experiment
+
+The owner requests a prospective top-down gameplay study on November 18: dust wells up from the background, no gravity or bowls, and fingers push it into useful arrangements. Keep this isolated on `top-down-lab`, with `/lab` as a separate build entry and a branch preview. Read `src/lab/AGENTS.md` and `docs/upwelling-study.md`. The gravity/bowl rules below continue to describe the existing game; the study uses its own configuration, solver and goals. Preserve existing input defaults and optional-audio behavior when sharing utilities. Compare idle/random/sweep/purposeful policies on matched seeds and actual touch playback. Do not claim automated fit scores measure human fun. Stop local test/dev servers after work.
+
 ## Current direction
 
 The owner's latest gameplay feedback supersedes the original ridge prototype. Read `docs/stone-sand-plan.md`, `docs/status.md`, and `docs/architecture.md` before substantive work. The intended experience is quiet, slow sand accumulating on a stone triangle. There is **one brush action**, available to multiple fingers: brush through that sand, dislodge it, and shape the deposits that later sand runs over. Do not reintroduce Draw/Rub modes or invisible player-drawn barriers.

@@ -28,6 +28,7 @@ export default [
       'scripts/playtest.js',
       'scripts/feel-playtest.js',
       'scripts/dust-playtest.js',
+      'scripts/upwelling-playtest.js',
     ],
     languageOptions: {
       globals: {

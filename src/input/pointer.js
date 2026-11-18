@@ -1,7 +1,15 @@
 import { touchesStone } from '../simulation/geometry.js';
 import { prototype } from '../config/prototype.js';
 
-export function bindPointer(canvas, { edit, brush, canEdit = () => true }) {
+export function bindPointer(
+  canvas,
+  {
+    edit,
+    brush,
+    canEdit = () => true,
+    acceptStroke = (a, b) => touchesStone(a, b, prototype.brushWidth / 2),
+  },
+) {
   const pointers = new Map();
   function point(event) {
     const rect = canvas.getBoundingClientRect();
@@ -23,7 +31,7 @@ export function bindPointer(canvas, { edit, brush, canEdit = () => true }) {
         continue;
       }
       const previous = state.previous ?? p;
-      if (touchesStone(previous, p, prototype.brushWidth / 2)) {
+      if (acceptStroke(previous, p)) {
         edit(previous, p, {
           start: state.previous === null,
           pointerId: event.pointerId,

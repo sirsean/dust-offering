@@ -73,7 +73,7 @@ export class MaterialAudio {
   }
 
   update(sim) {
-    const counts = [sim.left, sim.right];
+    const counts = [sim.left ?? 0, sim.right ?? 0];
     if (this.previousSim !== sim) {
       this.previousSim = sim;
       this.previous = counts;

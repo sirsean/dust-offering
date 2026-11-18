@@ -1,5 +1,7 @@
 # Project status — fine dust and gentle air
 
+A separate top-down experiment on `top-down-lab` compares Level, Clear, Piles and Paths with dust welling up through the stone. See [upwelling-study.md](upwelling-study.md) for the playable preview, controlled comparisons, rejected variants and limits. It has 60 controlled simulations plus native touch sessions. Piles/Paths reach stable completion, and the selected sessions hold roughly 60 fps at 3,600 retained grains in headless Chromium. Full checks pass 80 unit tests and 42 browser cases. It is a prospective mechanics study; the falling-game production release below remains the baseline.
+
 Revision 0.11.0 / `stone-offering-v8` changes the grains from radius 0.65 to 0.13 and nominal flow from 24 to 120 grains/s. A separately seeded breeze and size-dependent drag gently move loose dust. Finger sweeps, hidden-stone discovery, grease, bowls, permanent missed-sand piles, font, controls and quiet Free Pour completion remain.
 
 Current measurements, screenshots, implementation and limits: [fine-dust.md](fine-dust.md). Current design: [stone-sand-plan.md](stone-sand-plan.md). Code structure: [architecture.md](architecture.md). The preceding tactile-play experiment is preserved in [gameplay-review.md](gameplay-review.md), with its baseline reports and artifacts.
