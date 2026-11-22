@@ -19,16 +19,30 @@ export class StudyRenderer {
     this.brushes = new Map();
     this.showGuide = true;
     this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-    this.observer = new ResizeObserver(() => this.resize());
+    this.resizePending = true;
+    // Keep the previous image until draw can resize and repaint together.
+    this.observer = new ResizeObserver(() => {
+      this.resizePending = true;
+    });
     this.observer.observe(canvas);
-    this.resize();
   }
 
-  resize() {
-    const width = Math.max(1, this.canvas.getBoundingClientRect().width);
-    this.canvas.width = Math.round(width * Math.min(devicePixelRatio || 1, 2));
-    this.canvas.height = Math.round(this.canvas.width * 1.25);
-    this.scale = this.canvas.width / 160;
+  resize(seedChanged) {
+    this.resizePending = false;
+    const cssWidth = this.canvas.getBoundingClientRect().width;
+    const width = Math.max(
+      1,
+      Math.round(cssWidth * Math.min(devicePixelRatio || 1, 2)),
+    );
+    const height = Math.round(width * 1.25);
+    const sizeChanged =
+      this.canvas.width !== width || this.canvas.height !== height;
+    if (!sizeChanged && !seedChanged && this.background) return;
+    if (sizeChanged) {
+      this.canvas.width = width;
+      this.canvas.height = height;
+    }
+    this.scale = width / 160;
     this.palette = readPalette(this.canvas);
     const p = this.palette;
     this.background = document.createElement('canvas');
@@ -98,9 +112,10 @@ export class StudyRenderer {
   }
 
   draw(sim, goal, counts) {
-    if (this.seed !== sim.config.seed) {
+    const seedChanged = this.seed !== sim.config.seed;
+    if (this.resizePending || seedChanged) {
       this.seed = sim.config.seed;
-      this.resize();
+      this.resize(seedChanged);
     }
     const c = this.ctx,
       p = this.palette;

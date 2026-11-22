@@ -100,8 +100,8 @@ function start(index) {
   history.replaceState(null, '', url);
   lastFrame = null;
   accumulator = 0;
-  renderer.draw(game.sim, game.guide, game.counts);
   syncUI();
+  renderer.draw(game.sim, game.guide, game.counts);
 }
 
 pileLevels.forEach(({ id, name }, index) =>
@@ -126,7 +126,7 @@ $('#sound').onclick = async (event) => {
     setText(button, enabled ? 'Sound on' : 'Sound off');
     button.setAttribute('aria-pressed', String(enabled));
   } catch {
-    setText(button, 'Sound unavailable');
+    setText(button, 'No audio');
   }
 };
 document.addEventListener('visibilitychange', () => {

@@ -31,8 +31,10 @@
   background: var(--panel);
 }
 .piles .hud {
-  flex-wrap: wrap;
-  gap: 3px 10px;
+  display: grid;
+  grid-template-rows: auto 1lh;
+  align-content: start;
+  gap: 3px;
 }
 .piles .hud p {
   margin: 0;
@@ -47,7 +49,7 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .piles .tools button {
-  padding-inline: 4px;
+  padding: 8px 4px;
   font-size: clamp(8px, 2.33vw, 11px);
 }
 .piles #next:not(:disabled) {

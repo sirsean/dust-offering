@@ -25,10 +25,12 @@ test('native touch completes every stone in order and leaves the arrangement ava
   const next = page.locator('#next');
   const board = page.locator('#field');
   for (const [index, level] of pileLevels.entries()) {
+    if (index === 2) await page.setViewportSize({ width: 520, height: 600 });
     await expect(page.locator('#stone')).toHaveValue(level.id);
     await expect(next).toBeDisabled();
-    await waitForDust(page, 5000 + index * 4500);
     const rect = await board.boundingBox();
+    await waitForDust(page, 5000 + index * 4500);
+    expect(await board.boundingBox()).toEqual(rect);
     const point = (x, y) => ({
       x: rect.x + (x / 160) * rect.width,
       y: rect.y + (y / 200) * rect.height,
@@ -74,6 +76,7 @@ test('native touch completes every stone in order and leaves the arrangement ava
     expect(played.remaining).toBe(0);
     console.log(level.id, played.counts);
     await expect(page.locator('#status')).toHaveText('Stone complete');
+    expect(await board.boundingBox()).toEqual(rect);
     await expect(page.locator('#stone')).toHaveValue(level.id);
     await expect(next).toBeEnabled();
     await page.screenshot({ path: info.outputPath(`${level.id}.png`) });
@@ -81,6 +84,46 @@ test('native touch completes every stone in order and leaves the arrangement ava
   }
   await expect(page.locator('#stone')).toHaveValue(pileLevels[0].id);
   await expect(next).toBeDisabled();
+});
+
+test('a viewport resize keeps the painted board until the new size can be drawn', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 680 });
+  await open(page);
+  await page.clock.runFor(150);
+  const board = page.locator('#field');
+  const before = await board.evaluate((field) => {
+    const cssWidth = field.getBoundingClientRect().width;
+    const bitmap = () => ({
+      width: field.width,
+      pixel: [...field.getContext('2d').getImageData(20, 20, 1, 1).data],
+    });
+    window.resizeSample = new Promise((resolve) => {
+      const observer = new ResizeObserver(() => {
+        if (field.getBoundingClientRect().width === cssWidth) return;
+        observer.disconnect();
+        resolve(bitmap());
+      });
+      observer.observe(field);
+    });
+    return bitmap();
+  });
+  expect(before.pixel[3]).toBe(255);
+
+  await page.setViewportSize({ width: 390, height: 620 });
+  expect(await page.evaluate(() => window.resizeSample)).toEqual(before);
+  await page.clock.runFor(50);
+  const resized = await board.evaluate((field) => ({
+    width: field.width,
+    expectedWidth: Math.round(
+      field.getBoundingClientRect().width * Math.min(devicePixelRatio, 2),
+    ),
+    alpha: field.getContext('2d').getImageData(20, 20, 1, 1).data[3],
+  }));
+  expect(resized.width).toBeLessThan(before.width);
+  expect(resized.width).toBe(resized.expectedWidth);
+  expect(resized.alpha).toBe(255);
 });
 
 test('a direct stone link, replay, pause, and narrow layout work through the playtest page', async ({
