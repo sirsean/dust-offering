@@ -22,7 +22,9 @@ export class UpwellingSimulation {
       releasedTotal: 0,
       time: -Infinity,
     };
-    this.wells = createWells(this.config);
+    this.wells = this.config.wells ?? createWells(this.config);
+    this.wellIndex = 0;
+    this.wellRemaining = this.wells[0]?.grains ?? this.config.wellBatch;
     this.cellSize = 2 * this.config.grainRadius;
     this.columns = Math.ceil(this.config.width / this.cellSize) + 4;
     this.rows = Math.ceil(this.config.height / this.cellSize) + 4;
@@ -36,12 +38,7 @@ export class UpwellingSimulation {
     return this.steps / this.config.stepsPerSecond;
   }
   get activeWell() {
-    return this.wells[
-      Math.min(
-        this.wells.length - 1,
-        Math.floor(this.emitted / this.config.wellBatch),
-      )
-    ];
+    return this.wells[this.wellIndex];
   }
 
   addGrain(x, y, vx = 0, vy = 0) {
@@ -84,6 +81,10 @@ export class UpwellingSimulation {
       );
       this.emitted++;
       this.remaining--;
+      if (--this.wellRemaining === 0 && this.remaining) {
+        this.wellIndex++;
+        this.wellRemaining = this.activeWell.grains ?? this.config.wellBatch;
+      }
     }
   }
 
@@ -236,9 +237,18 @@ export class UpwellingSimulation {
         dy = g.y - point.y,
         distance = Math.hypot(dx, dy);
       if (distance >= radius - 1e-6) continue;
-      const nx = distance > 1e-8 ? dx / distance : Math.cos(g.id * 2.399963);
-      const ny = distance > 1e-8 ? dy / distance : Math.sin(g.id * 2.399963);
-      const push = radius - distance;
+      let nx = distance > 1e-8 ? dx / distance : Math.cos(g.id * 2.399963);
+      let ny = distance > 1e-8 ? dy / distance : Math.sin(g.id * 2.399963);
+      let push = radius - distance;
+      const along = dx * tx + dy * ty;
+      if (this.config.forwardBrush && (tx || ty) && along > -radius / 3) {
+        // Dust caught by a moving finger advances to the front of the disk.
+        // Preserve its sideways offset so a pass can carry or split a mound.
+        const across = dx * ty - dy * tx;
+        push = Math.sqrt(Math.max(0, radius ** 2 - across ** 2)) - along;
+        nx = tx;
+        ny = ty;
+      }
       g.x += nx * push;
       g.y += ny * push;
       g.vx =

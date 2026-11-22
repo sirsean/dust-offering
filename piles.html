@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#241713" />
+    <meta
+      name="description"
+      content="Sweep dust into piles on four stones in Dust Offering."
+    />
+    <title>Piles — Dust Offering</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/src/assets/fonts/FringeV2.otf"
+      as="font"
+      type="font/otf"
+      crossorigin
+    />
+  </head>
+  <body>
+    <main class="app piles">
+      <header>
+        <h1>Dust Offering</h1>
+        <button id="sound" aria-pressed="false">Sound off</button>
+      </header>
+      <div class="modes">
+        <label for="stone">Stone</label>
+        <select id="stone"></select>
+      </div>
+      <div class="hud">
+        <p id="instruction"></p>
+        <p id="status" role="status"></p>
+      </div>
+      <div class="stage">
+        <canvas
+          id="field"
+          aria-label="Stone viewed from above. Sweep the dust into the marked rings. A ring lights up as it fills. Spilled dust can be swept back onto the stone."
+          aria-describedby="piles-progress"
+        ></canvas>
+        <p id="piles-progress" class="sr-only"></p>
+      </div>
+      <div class="tools" aria-label="Stone controls">
+        <button id="pause">Pause wells</button>
+        <button id="restart">Restart</button>
+        <button id="next" disabled>Next stone</button>
+      </div>
+    </main>
+    <script type="module" src="/src/piles/main.js"></script>
+  </body>
+</html>

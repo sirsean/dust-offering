@@ -1,0 +1,55 @@
+.piles .modes {
+  align-items: center;
+  gap: 12px;
+}
+.piles .modes label {
+  margin-inline-start: 6px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.piles select {
+  min-width: 0;
+  min-height: 44px;
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--button-edge);
+  border-radius: 2px;
+  background: linear-gradient(175deg, var(--button-light), var(--button) 70%);
+  color: var(--text);
+  font: inherit;
+  font-size: clamp(9px, 2.65vw, 12px);
+}
+.piles select:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+.piles select option {
+  color: var(--text);
+  background: var(--panel);
+}
+.piles .hud {
+  flex-wrap: wrap;
+  gap: 3px 10px;
+}
+.piles .hud p {
+  margin: 0;
+}
+.piles [data-complete='true'] {
+  color: var(--sand-light);
+}
+.piles .tools {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.piles .tools button {
+  padding-inline: 4px;
+  font-size: clamp(8px, 2.33vw, 11px);
+}
+.piles #next:not(:disabled) {
+  border-color: var(--mark);
+  color: var(--sand-light);
+}
+@media (max-height: 540px) and (min-width: 600px) {
+  .piles .tools button {
+    font-size: 8px;
+  }
+}
