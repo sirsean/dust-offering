@@ -3,6 +3,7 @@ import { insideStone, stone as stoneShape } from '../simulation/geometry.js';
 import { challenge } from '../config/challenge.js';
 import { readPalette } from './palette.js';
 import { DustLayer } from './dust-layer.js';
+import { DiscoveryMask } from './discovery-mask.js';
 
 export class Renderer {
   constructor(canvas) {
@@ -173,33 +174,14 @@ export class Renderer {
     this.stoneComposite.width = this.canvas.width;
     this.stoneComposite.height = this.canvas.height;
     this.stoneContext = this.stoneComposite.getContext('2d');
-    this.discoveryField = null;
+    this.discoveryMask = new DiscoveryMask();
     this.treatmentVersion = -1;
   }
 
   drawStone(sim) {
     const field = sim.discovery;
     if (!field.active.size) return;
-    if (this.discoveryField !== field) {
-      this.discoveryField = field;
-      this.discoveryCanvas = document.createElement('canvas');
-      this.discoveryCanvas.width = field.columns;
-      this.discoveryCanvas.height = field.rows;
-      this.discoveryContext = this.discoveryCanvas.getContext('2d');
-      this.discoveryPixels = this.discoveryContext.createImageData(
-        field.columns,
-        field.rows,
-      );
-      this.discoveryVersion = -1;
-    }
-    const discoveryChanged = this.discoveryVersion !== field.version;
-    if (discoveryChanged) {
-      const data = this.discoveryPixels.data;
-      for (const index of field.active)
-        data[index * 4 + 3] = Math.round(255 * field.levels[index]);
-      this.discoveryContext.putImageData(this.discoveryPixels, 0, 0);
-      this.discoveryVersion = field.version;
-    }
+    const discoveryChanged = this.discoveryMask.update(field);
     // Rebuild only when discovery grows, a brush edits grease, or grease fades.
     // Sand still renders every frame without recompositing the whole stone.
     if (
@@ -215,15 +197,7 @@ export class Renderer {
       c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
       this.drawTreatment(sim.surface, c);
       c.setTransform(1, 0, 0, 1, 0, 0);
-      c.globalCompositeOperation = 'destination-in';
-      c.drawImage(
-        this.discoveryCanvas,
-        0,
-        0,
-        this.canvas.width,
-        this.canvas.height,
-      );
-      c.globalCompositeOperation = 'source-over';
+      this.discoveryMask.apply(c);
       this.compositeSurface = sim.surface;
       this.compositeTreatmentVersion = sim.surface.version;
       this.compositeTime = sim.surface.time;

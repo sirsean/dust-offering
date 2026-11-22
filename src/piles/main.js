@@ -1,6 +1,6 @@
 import '../styles.css';
 import './styles.css';
-import { pileLevels } from '../config/piles.js';
+import { pileLevels, piles } from '../config/piles.js';
 import { bindPointer } from '../input/pointer.js';
 import { StudyRenderer } from '../lab/renderer.js';
 import { MaterialAudio } from '../rendering/audio.js';
@@ -13,7 +13,7 @@ const pause = $('#pause');
 const next = $('#next');
 const status = $('#status');
 const progress = $('#piles-progress');
-const renderer = new StudyRenderer(canvas);
+const renderer = new StudyRenderer(canvas, { stoneSeed: piles.stoneSeed });
 const audio = new MaterialAudio();
 const params = new URLSearchParams(location.search);
 let levelIndex = Math.max(
@@ -87,7 +87,7 @@ function start(index) {
   pointer.cancel();
   audio.quiet();
   levelIndex = index;
-  game = new PileGame(pileLevels[index]);
+  game = new PileGame(pileLevels[index], game?.sim.discovery);
   selector.value = game.level.id;
   setText(
     $('#instruction'),
@@ -164,6 +164,7 @@ start(levelIndex);
 requestAnimationFrame(frame);
 if (params.has('debug'))
   window.pileStudy = {
+    renderer,
     get game() {
       return game;
     },

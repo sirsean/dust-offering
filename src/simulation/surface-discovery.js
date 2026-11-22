@@ -145,6 +145,13 @@ export class SurfaceDiscovery {
     return complete;
   }
 
+  trackGrain(grain, step) {
+    grain.revealX = grain.x;
+    grain.revealY = grain.y;
+    grain.revealStep = step;
+    grain.revealComplete = false;
+  }
+
   updateGrains(grains, step) {
     for (const grain of grains) {
       const stationary = grain.x === grain.revealX && grain.y === grain.revealY;

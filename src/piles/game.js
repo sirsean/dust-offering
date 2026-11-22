@@ -1,6 +1,7 @@
 import { piles } from '../config/piles.js';
 import { UpwellingSimulation } from '../lab/simulation.js';
 import { insideStone } from '../simulation/geometry.js';
+import { SurfaceDiscovery } from '../simulation/surface-discovery.js';
 
 export function measurePiles(grains, targets) {
   const counts = targets.map(() => 0);
@@ -16,7 +17,7 @@ export function measurePiles(grains, targets) {
 }
 
 export class PileGame {
-  constructor(level) {
+  constructor(level, discovery) {
     this.level = level;
     const supply = level.wells.reduce((sum, well) => sum + well.grains, 0);
     this.sim = new UpwellingSimulation({
@@ -43,6 +44,10 @@ export class PileGame {
     ) {
       this.sim.step();
     }
+    this.sim.trackDiscovery(
+      discovery ??
+        new SurfaceDiscovery({ ...this.sim.config, ...piles.discovery }),
+    );
     this.checkArrangement();
   }
 

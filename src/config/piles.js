@@ -53,7 +53,16 @@ export const pileLevels = [
 
 export const piles = Object.freeze({
   id: 'piles-v3',
+  stoneSeed: 48,
   preparationSeconds: 4,
   holdSeconds: 0.4,
   brushCarry: 0.88,
+  discovery: Object.freeze({
+    revealCellSize: 1,
+    revealBrushRadius: 10,
+    revealBrushGain: 0.8,
+    revealGrainRadius: 2,
+    revealGrainRate: 0.016,
+    revealIntervalSteps: 6,
+  }),
 });

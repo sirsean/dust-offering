@@ -2,6 +2,8 @@
 
 Dust wells up through a stone seen from above. Sweep it ahead of your finger into faint, broken rings. The fragments brighten as their ring fills. Rust-colored ticks and an “overfilled” message mark excess dust. Sweep the excess into a ring that still needs it. When dust has stopped surfacing and every ring holds its share after your fingers lift, you can inspect the arrangement or advance. The stone selector makes every level available for playtesting. Restart repeats the current layout and the URL links directly to the selected stone. [Play Piles](https://piles.dust-offering.sirsean.me/piles)
 
+The stone begins hidden. Finger passes and real grain contact gradually uncover its surface and rim, while the rings remain visible as destinations. All four layouts use one stone texture and share the same reveal map. Advancing, selecting a layout, and restarting keep the uncovered areas visible. Each layout has its own dust and temporary grease, and opening the page afresh begins with an undiscovered stone.
+
 | Stone         | Wells | Rings | What the player does                                                    |
 | ------------- | ----: | ----: | ----------------------------------------------------------------------- |
 | First pile    |     1 |     1 | Carry a mound down the length of the face.                              |

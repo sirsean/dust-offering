@@ -1,21 +1,25 @@
 import { readPalette } from '../rendering/palette.js';
+import { DiscoveryMask } from '../rendering/discovery-mask.js';
 import { DustLayer } from '../rendering/dust-layer.js';
 import { drawPileRings } from '../rendering/pile-rings.js';
 import { seededRandom } from '../simulation/random.js';
+import { stone } from '../simulation/geometry.js';
 import { upwelling } from '../config/upwelling.js';
 
 function triangle(c) {
   c.beginPath();
-  c.moveTo(80, 6);
-  c.lineTo(159, 176);
-  c.lineTo(1, 176);
+  c.moveTo(stone.x, stone.top);
+  c.lineTo(stone.x + stone.halfWidth, stone.bottom);
+  c.lineTo(stone.x - stone.halfWidth, stone.bottom);
   c.closePath();
 }
 
 export class StudyRenderer {
-  constructor(canvas) {
+  constructor(canvas, { stoneSeed } = {}) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d', { alpha: false });
+    this.stoneSeed = stoneSeed;
+    this.discoveryMask = new DiscoveryMask();
     this.brushes = new Map();
     this.showGuide = true;
     this.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
@@ -48,7 +52,7 @@ export class StudyRenderer {
     this.background = document.createElement('canvas');
     this.background.width = this.canvas.width;
     this.background.height = this.canvas.height;
-    const c = this.background.getContext('2d');
+    let c = this.background.getContext('2d');
     c.scale(this.scale, this.scale);
     c.fillStyle = p.scene;
     c.fillRect(0, 0, 160, 200);
@@ -57,6 +61,12 @@ export class StudyRenderer {
     ground.addColorStop(1, p.scene);
     c.fillStyle = ground;
     c.fillRect(0, 0, 160, 200);
+
+    this.stoneTexture = document.createElement('canvas');
+    this.stoneTexture.width = width;
+    this.stoneTexture.height = height;
+    c = this.stoneTexture.getContext('2d');
+    c.scale(this.scale, this.scale);
     c.save();
     c.shadowColor = '#100906aa';
     c.shadowBlur = 5 * this.scale;
@@ -107,45 +117,64 @@ export class StudyRenderer {
     this.grease.height = 200;
     this.greaseContext = this.grease.getContext('2d');
     this.greasePixels = this.greaseContext.createImageData(160, 200);
+    this.stoneComposite = document.createElement('canvas');
+    this.stoneComposite.width = width;
+    this.stoneComposite.height = height;
+    this.stoneContext = this.stoneComposite.getContext('2d');
     this.surface = null;
-    this.greaseTime = -Infinity;
+  }
+
+  drawStone({ discovery, surface }) {
+    if (discovery && !discovery.active.size) return;
+    const discoveryChanged = discovery && this.discoveryMask.update(discovery);
+    const greaseChanged =
+      this.surface !== surface ||
+      this.greaseVersion !== surface.version ||
+      (surface.active.size && surface.time - this.greaseTime > 0.1);
+    if (greaseChanged) {
+      const { greaseRGB } = this.palette;
+      const data = this.greasePixels.data;
+      data.fill(0);
+      surface.visitVisibleCells((index, strength) => {
+        const pixel = index * 4;
+        data[pixel] = greaseRGB[0];
+        data[pixel + 1] = greaseRGB[1];
+        data[pixel + 2] = greaseRGB[2];
+        data[pixel + 3] = Math.round(100 * Math.min(1, strength / 3) ** 0.75);
+      });
+      this.greaseContext.putImageData(this.greasePixels, 0, 0);
+      this.surface = surface;
+      this.greaseVersion = surface.version;
+      this.greaseTime = surface.time;
+    }
+    if (greaseChanged || discoveryChanged) {
+      const c = this.stoneContext;
+      c.clearRect(0, 0, c.canvas.width, c.canvas.height);
+      c.drawImage(this.stoneTexture, 0, 0);
+      c.save();
+      c.scale(this.scale, this.scale);
+      triangle(c);
+      c.clip();
+      c.drawImage(this.grease, 0, 0, 160, 200);
+      c.restore();
+      if (discovery) this.discoveryMask.apply(c);
+    }
+    this.ctx.drawImage(this.stoneComposite, 0, 0);
   }
 
   draw(sim, goal, counts) {
-    const seedChanged = this.seed !== sim.config.seed;
+    const seed = this.stoneSeed ?? sim.config.seed;
+    const seedChanged = this.seed !== seed;
     if (this.resizePending || seedChanged) {
-      this.seed = sim.config.seed;
+      this.seed = seed;
       this.resize(seedChanged);
     }
     const c = this.ctx,
       p = this.palette;
     c.setTransform(1, 0, 0, 1, 0, 0);
     c.drawImage(this.background, 0, 0);
+    this.drawStone(sim);
     c.setTransform(this.scale, 0, 0, this.scale, 0, 0);
-    if (
-      this.surface !== sim.surface ||
-      this.greaseVersion !== sim.surface.version ||
-      sim.surface.time - this.greaseTime > 0.1
-    ) {
-      const data = this.greasePixels.data;
-      data.fill(0);
-      sim.surface.visitVisibleCells((index, strength) => {
-        const pixel = index * 4;
-        data[pixel] = p.greaseRGB[0];
-        data[pixel + 1] = p.greaseRGB[1];
-        data[pixel + 2] = p.greaseRGB[2];
-        data[pixel + 3] = Math.round(100 * Math.min(1, strength / 3) ** 0.75);
-      });
-      this.greaseContext.putImageData(this.greasePixels, 0, 0);
-      this.surface = sim.surface;
-      this.greaseVersion = sim.surface.version;
-      this.greaseTime = sim.surface.time;
-    }
-    c.save();
-    triangle(c);
-    c.clip();
-    c.drawImage(this.grease, 0, 0, 160, 200);
-    c.restore();
     if (this.showGuide) {
       c.save();
       c.strokeStyle = p.mark + '88';

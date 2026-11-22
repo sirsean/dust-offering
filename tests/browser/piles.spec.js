@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { pileLevels } from '../../src/config/piles.js';
 import { bankedStrokes } from '../fixtures/piles.js';
+import { stroke } from './helpers.js';
 
 async function open(page, query = '') {
   await page.clock.install({ time: new Date('2026-11-22T00:00:00Z') });
@@ -14,6 +15,78 @@ async function waitForDust(page, duration) {
   await page.clock.runFor(duration);
   await expect(page.locator('#pause')).toHaveText('Wells quiet');
 }
+
+async function discovery(page) {
+  return page.evaluate(() => window.pileStudy.game.sim.discovery.snapshot());
+}
+
+async function stonePixel(page, x, y) {
+  return page.evaluate(
+    ({ x, y }) => {
+      const { renderer, game } = window.pileStudy;
+      const read = (context) => [
+        ...context.getImageData(
+          Math.round(x * renderer.scale),
+          Math.round(y * renderer.scale),
+          1,
+          1,
+        ).data,
+      ];
+      return {
+        level: game.sim.discovery.levelAt(x, y),
+        actual: read(renderer.ctx),
+        ground: read(renderer.background.getContext('2d')),
+        masked: read(renderer.stoneContext),
+      };
+    },
+    { x, y },
+  );
+}
+
+test('sand and fingers uncover only touched stone, which stays visible through selection and restart', async ({
+  page,
+}) => {
+  await open(page);
+  expect(await discovery(page)).toEqual([]);
+  for (const [x, y] of [
+    [80, 7],
+    [80, 50],
+    [80, 175],
+    [153, 175],
+  ]) {
+    const pixel = await stonePixel(page, x, y);
+    expect(pixel.actual).toEqual(pixel.ground);
+  }
+  await page.screenshot({ path: test.info().outputPath('hidden-stone.png') });
+
+  await page.clock.runFor(500);
+  const early = await stonePixel(page, 80, 74);
+  expect(early.level).toBeGreaterThan(0);
+  expect(early.masked[3]).toBeGreaterThan(0);
+  await page.clock.runFor(1500);
+  expect((await stonePixel(page, 80, 74)).level).toBeGreaterThan(early.level);
+  expect((await stonePixel(page, 80, 50)).level).toBe(0);
+
+  await stroke(page, [80, 34], [80, 60]);
+  await page.clock.runFor(50);
+  const swept = await stonePixel(page, 80, 50);
+  expect(swept.level).toBeGreaterThan(0.5);
+  expect(swept.actual).not.toEqual(swept.ground);
+  const untouched = await stonePixel(page, 153, 175);
+  expect(untouched.actual).toEqual(untouched.ground);
+  await page.screenshot({
+    path: test.info().outputPath('uncovered-stone.png'),
+  });
+
+  const before = await discovery(page);
+  await page.locator('#stone').selectOption('two-sides');
+  expect(await discovery(page)).toEqual(before);
+  const selected = await stonePixel(page, 80, 50);
+  expect(selected.actual).not.toEqual(selected.ground);
+  await page.locator('#restart').click();
+  expect(await discovery(page)).toEqual(before);
+  expect(await stonePixel(page, 80, 50)).toEqual(selected);
+});
 
 test('native touch completes every stone in order and leaves the arrangement available for inspection', async ({
   page,
@@ -80,7 +153,10 @@ test('native touch completes every stone in order and leaves the arrangement ava
     await expect(page.locator('#stone')).toHaveValue(level.id);
     await expect(next).toBeEnabled();
     await page.screenshot({ path: info.outputPath(`${level.id}.png`) });
+    const uncovered = await discovery(page);
+    expect(uncovered.length).toBeGreaterThan(100);
     await next.click();
+    expect(await discovery(page)).toEqual(uncovered);
   }
   await expect(page.locator('#stone')).toHaveValue(pileLevels[0].id);
   await expect(next).toBeDisabled();

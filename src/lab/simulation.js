@@ -41,6 +41,12 @@ export class UpwellingSimulation {
     return this.wells[this.wellIndex];
   }
 
+  trackDiscovery(discovery) {
+    this.discovery = discovery;
+    // Start sampling the prepared grains at their visible positions and time.
+    for (const grain of this.grains) discovery.trackGrain(grain, this.steps);
+  }
+
   addGrain(x, y, vx = 0, vy = 0) {
     const grain = {
       id: this.grains.length,
@@ -54,6 +60,7 @@ export class UpwellingSimulation {
       sleeping: false,
       born: this.time,
     };
+    this.discovery?.trackGrain(grain, this.steps);
     this.grains.push(grain);
     return grain;
   }
@@ -227,6 +234,12 @@ export class UpwellingSimulation {
     }
     this.steps++;
     this.surface.advanceTo(this.time);
+    if (
+      this.discovery &&
+      this.steps % this.discovery.config.revealIntervalSteps === 0
+    ) {
+      this.discovery.updateGrains(this.grains, this.steps);
+    }
   }
 
   stamp(point, tx, ty, moved) {
@@ -283,6 +296,7 @@ export class UpwellingSimulation {
   }
 
   brush(a, b, stroke = {}) {
+    this.discovery?.brush(a, b, stroke);
     this.surface.paint(a, b, stroke);
     const id = stroke.pointerId ?? 'direct',
       tracked = stroke.pointerId !== undefined;
