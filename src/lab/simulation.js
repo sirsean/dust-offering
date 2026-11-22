@@ -231,6 +231,7 @@ export class UpwellingSimulation {
 
   stamp(point, tx, ty, moved) {
     const radius = this.config.brushWidth / 2 + this.config.grainRadius;
+    const carry = this.config.brushCarry;
     for (const g of this.grains) {
       // Ground dust remains physical and recoverable in this top-down study.
       const dx = g.x - point.x,
@@ -241,13 +242,21 @@ export class UpwellingSimulation {
       let ny = distance > 1e-8 ? dy / distance : Math.sin(g.id * 2.399963);
       let push = radius - distance;
       const along = dx * tx + dy * ty;
-      if (this.config.forwardBrush && (tx || ty) && along > -radius / 3) {
-        // Dust caught by a moving finger advances to the front of the disk.
-        // Preserve its sideways offset so a pass can carry or split a mound.
-        const across = dx * ty - dy * tx;
-        push = Math.sqrt(Math.max(0, radius ** 2 - across ** 2)) - along;
-        nx = tx;
-        ny = ty;
+      if (carry && (tx || ty) && along > -radius / 3) {
+        // A moving finger rakes dust forward, but the disk still pushes away
+        // from its centre. Dust near the sides can slip out of a long sweep.
+        const carryX = nx + (tx - nx) * carry;
+        const carryY = ny + (ty - ny) * carry;
+        const length = Math.hypot(carryX, carryY);
+        if (length > 1e-8) {
+          nx = carryX / length;
+          ny = carryY / length;
+          // Stop at the edge of the disk along the blended push direction.
+          const projection = dx * nx + dy * ny;
+          push =
+            Math.sqrt(projection ** 2 + radius ** 2 - distance ** 2) -
+            projection;
+        }
       }
       g.x += nx * push;
       g.y += ny * push;

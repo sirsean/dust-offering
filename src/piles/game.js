@@ -24,7 +24,7 @@ export class PileGame {
       seed: level.seed,
       wells: level.wells,
       supply,
-      forwardBrush: piles.forwardBrush,
+      brushCarry: piles.brushCarry,
     });
     const share = supply / level.targets.length;
     this.targets = level.targets.map((target) => ({

@@ -4,7 +4,7 @@ import { pileLevels } from '../src/config/piles.js';
 import { performStroke } from '../src/lab/policy.js';
 import { PileGame, measurePiles } from '../src/piles/game.js';
 import { insideStone } from '../src/simulation/geometry.js';
-import { pileStroke, pileStrokes } from './fixtures/piles.js';
+import { pileStrokes } from './fixtures/piles.js';
 
 test('each authored ring fits the stone, spaces between rings are clear, and the well supply can fill them', () => {
   for (const level of pileLevels) {
@@ -97,37 +97,53 @@ test('each ring needs its own dust, and completion waits for the supply and a st
   assert.equal(game.complete, true);
 });
 
-test('actual brush strokes solve all four stones by transporting and splitting mounds', () => {
+test('the old long sweeps finish with full carry while the new brush leaves dust to recover', () => {
   for (const level of pileLevels) {
-    const game = new PileGame(level);
-    const { sim } = game;
-    const before = sim.emitted;
-    for (let step = 0; step < 1800; step++) game.step();
-    assert.ok(before > 0);
-    assert.equal(sim.remaining, 0, level.id);
-    assert.equal(sim.activeWell, level.wells.at(-1), level.id);
-    assert.equal(game.complete, false, `${level.id} must require a stroke`);
-    for (const stroke of pileStrokes(level)) {
-      performStroke(sim, stroke);
-      for (let step = 0; step < 120; step++) game.step();
+    for (const fullCarry of [true, false]) {
+      const game = new PileGame(level);
+      const { sim } = game;
+      if (fullCarry) sim.config.brushCarry = 1;
+      for (let step = 0; step < 1800; step++) game.step();
+      assert.equal(sim.remaining, 0, level.id);
+      assert.equal(sim.activeWell, level.wells.at(-1), level.id);
+      assert.equal(game.complete, false, `${level.id} must require a stroke`);
+      for (const stroke of pileStrokes(level)) {
+        performStroke(sim, stroke);
+        for (let step = 0; step < 120; step++) game.step();
+      }
+      assert.equal(
+        game.complete,
+        fullCarry,
+        `${level.id}: ${game.counts.join(', ')}`,
+      );
+      assert.ok(
+        game.counts.some((count) => count > 0),
+        level.id,
+      );
+      assert.equal(sim.grains.length, sim.config.supply, level.id);
+      assert.equal(sim.emitted, sim.grains.length, level.id);
     }
-    assert.equal(game.complete, true, `${level.id}: ${game.counts.join(', ')}`);
-    assert.equal(sim.grains.length, sim.config.supply, level.id);
-    assert.equal(sim.emitted, sim.grains.length, level.id);
   }
 });
 
 test('excess dust stays recoverable and can be swept into another ring', () => {
-  const level = pileLevels[1];
+  const level = pileLevels[3];
   const game = new PileGame(level);
-  const [left, right] = game.targets;
-  for (let step = 0; step < 900; step++) game.step();
-  performStroke(game.sim, pileStroke(level.wells[0], left));
+  const [upper, right] = game.targets;
+  for (let step = 0; step < 1500; step++) game.step();
+  performStroke(game.sim, {
+    a: { x: 56.012, y: 122.655 },
+    b: { x: 78.937, y: 67.381 },
+  });
   for (let step = 0; step < 100; step++) game.step();
-  assert.ok(game.counts[0] > left.capacity);
+  assert.ok(game.counts[0] > upper.capacity);
   assert.equal(game.complete, false);
-  performStroke(game.sim, pileStroke(left, right, 7));
+  performStroke(game.sim, {
+    a: { x: 63.071, y: 68.612 },
+    b: { x: 116.587, y: 136.408 },
+  });
   for (let step = 0; step < 100; step++) game.step();
-  assert.equal(game.complete, true);
-  assert.equal(game.sim.grains.length, level.wells[0].grains);
+  assert.ok(game.counts[0] <= upper.capacity);
+  assert.ok(game.counts[1] >= right.required);
+  assert.equal(game.sim.grains.length, game.sim.config.supply);
 });

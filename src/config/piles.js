@@ -52,8 +52,8 @@ export const pileLevels = [
 ];
 
 export const piles = Object.freeze({
-  id: 'piles-v2',
+  id: 'piles-v3',
   preparationSeconds: 4,
   holdSeconds: 0.4,
-  forwardBrush: true,
+  brushCarry: 0.88,
 });

@@ -1,9 +1,10 @@
 import { test, expect } from '@playwright/test';
 import { pileLevels } from '../../src/config/piles.js';
-import { pileStroke, pileStrokes } from '../fixtures/piles.js';
+import { bankedStrokes } from '../fixtures/piles.js';
 
 async function open(page, query = '') {
-  await page.clock.install();
+  await page.clock.install({ time: new Date('2026-11-22T00:00:00Z') });
+  await page.clock.pauseAt(new Date('2026-11-22T00:00:01Z'));
   await page.goto(`/piles.html?debug&${query}`);
   await expect(page.locator('#stone')).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
@@ -33,14 +34,7 @@ test('native touch completes every stone in order and leaves the arrangement ava
       y: rect.y + (y / 200) * rect.height,
       id: 1,
     });
-    const strokes =
-      level.id === 'two-sides'
-        ? [
-            pileStroke(level.wells[0], level.targets[0]),
-            pileStroke(level.targets[0], level.targets[1], 5.6),
-            { a: { x: 59, y: 152 }, b: { x: 108, y: 152 } },
-          ]
-        : pileStrokes(level);
+    const strokes = bankedStrokes(level);
     for (const [strokeIndex, { a, b }] of strokes.entries()) {
       if (await next.isEnabled()) break;
       await client.send('Input.dispatchTouchEvent', {
@@ -62,13 +56,9 @@ test('native touch completes every stone in order and leaves the arrangement ava
         touchPoints: [],
       });
       await page.clock.runFor(900);
-      if (level.id === 'two-sides' && strokeIndex === 0) {
-        await expect(page.locator('#status')).toHaveText('1 overfilled');
-        await expect(page.locator('#piles-progress')).toContainText(
-          'Overfilled.',
-        );
+      if (index === 0 && strokeIndex === 0) {
+        await expect(page.locator('#status')).toHaveText('0 / 1 ready');
         await expect(next).toBeDisabled();
-        await page.screenshot({ path: info.outputPath('overfilled.png') });
       }
     }
     const played = await page.evaluate(() => {

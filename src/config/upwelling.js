@@ -17,6 +17,7 @@ export const upwelling = Object.freeze({
   launchSpeed: 1.5,
   brushWidth: 14,
   brushSpeed: 9,
+  brushCarry: 0,
   traceCellSize: 1,
   tracePassGain: 1,
   traceMaxStrength: 6,
