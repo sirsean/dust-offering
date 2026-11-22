@@ -26,9 +26,11 @@ export class PileGame {
       supply,
       forwardBrush: piles.forwardBrush,
     });
+    const share = supply / level.targets.length;
     this.targets = level.targets.map((target) => ({
       ...target,
-      required: Math.ceil((supply * level.fill) / level.targets.length),
+      required: Math.ceil(share * level.fill),
+      capacity: Math.floor(share * (2 - level.fill)),
     }));
     this.guide = { type: 'piles', targets: this.targets };
     this.complete = false;
@@ -58,7 +60,8 @@ export class PileGame {
   checkArrangement() {
     this.counts = measurePiles(this.sim.grains, this.targets);
     const ready = this.targets.every(
-      (target, index) => this.counts[index] >= target.required,
+      ({ required, capacity }, index) =>
+        this.counts[index] >= required && this.counts[index] <= capacity,
     );
     if (this.complete) return;
     if (this.sim.remaining || this.sim.brushStrokes.size || !ready) {

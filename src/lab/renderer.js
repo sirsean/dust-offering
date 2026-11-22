@@ -1,5 +1,6 @@
 import { readPalette } from '../rendering/palette.js';
 import { DustLayer } from '../rendering/dust-layer.js';
+import { drawPileRings } from '../rendering/pile-rings.js';
 import { seededRandom } from '../simulation/random.js';
 import { upwelling } from '../config/upwelling.js';
 
@@ -153,26 +154,8 @@ export class StudyRenderer {
           c.fill();
           c.stroke();
         }
-      if (goal.type === 'piles') {
-        c.setLineDash([]);
-        goal.targets.forEach(({ x, y, radius, required }, index) => {
-          const fill = Math.min(1, counts[index] / required);
-          c.fillStyle = p.stonePit + '30';
-          c.strokeStyle = p.mark + '6b';
-          c.lineWidth = 0.45;
-          c.beginPath();
-          c.arc(x, y, radius, 0, Math.PI * 2);
-          c.fill();
-          c.stroke();
-          if (fill > 0) {
-            c.strokeStyle = p.sandLight;
-            c.lineWidth = 0.95;
-            c.beginPath();
-            c.arc(x, y, radius, -Math.PI / 2, Math.PI * 2 * fill - Math.PI / 2);
-            c.stroke();
-          }
-        });
-      }
+      if (goal.type === 'piles')
+        drawPileRings(c, p, goal.targets, counts, sim.config.seed);
       if (goal.type === 'paths') {
         c.setLineDash([]);
         c.strokeStyle = p.mark + '14';

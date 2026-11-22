@@ -25,6 +25,7 @@ export function readPalette(canvas) {
     'sandOchre',
     'sandLight',
     'mark',
+    'pileOverflow',
     'text',
   ];
   const palette = {};

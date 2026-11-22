@@ -1,3 +1,6 @@
+.piles {
+  --pile-overflow: #ed9b76;
+}
 .piles .modes {
   align-items: center;
   gap: 12px;
@@ -36,6 +39,9 @@
 }
 .piles [data-complete='true'] {
   color: var(--sand-light);
+}
+.piles [data-overfilled='true'] {
+  color: var(--pile-overflow);
 }
 .piles .tools {
   grid-template-columns: repeat(3, minmax(0, 1fr));

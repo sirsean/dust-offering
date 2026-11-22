@@ -43,14 +43,18 @@ function setText(element, value) {
 
 function syncUI() {
   const { sim, targets, counts, complete } = game;
-  const ready = targets.filter(
-    (target, index) => counts[index] >= target.required,
-  ).length;
-  const message = complete
-    ? 'Stone complete'
-    : `${ready} / ${targets.length} ready`;
+  let ready = 0;
+  let overfilled = 0;
+  for (const [index, { required, capacity }] of targets.entries()) {
+    if (counts[index] > capacity) overfilled++;
+    else if (counts[index] >= required) ready++;
+  }
+  let message = `${ready} / ${targets.length} ready`;
+  if (complete) message = 'Stone complete';
+  if (overfilled) message = `${overfilled} overfilled`;
   setText(status, message);
   status.dataset.complete = String(complete);
+  status.dataset.overfilled = String(overfilled > 0);
   setText(
     pause,
     sim.remaining
@@ -70,10 +74,11 @@ function syncUI() {
   setText(
     progress,
     targets
-      .map(
-        (target, index) =>
-          `Pile ${index + 1}: ${counts[index]} of ${target.required} grains.`,
-      )
+      .map(({ required, capacity }, index) => {
+        const count = counts[index];
+        const warning = count > capacity ? ' Overfilled.' : '';
+        return `Pile ${index + 1} has ${count} grains.${warning} Aim for ${required} to ${capacity}.`;
+      })
       .join(' ') + ` ${sim.remaining} grains still to surface.`,
   );
 }
@@ -88,7 +93,7 @@ function start(index) {
     $('#instruction'),
     index === 0
       ? 'Sweep the dust into the ring.'
-      : 'Sweep dust into every ring.',
+      : 'Share dust across the rings.',
   );
   const url = new URL(location.href);
   url.searchParams.set('stone', game.level.id);

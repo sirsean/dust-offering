@@ -4,7 +4,7 @@ import { pileLevels } from '../src/config/piles.js';
 import { performStroke } from '../src/lab/policy.js';
 import { PileGame, measurePiles } from '../src/piles/game.js';
 import { insideStone } from '../src/simulation/geometry.js';
-import { pileStrokes } from './fixtures/piles.js';
+import { pileStroke, pileStrokes } from './fixtures/piles.js';
 
 test('each authored ring fits the stone, spaces between rings are clear, and the well supply can fill them', () => {
   for (const level of pileLevels) {
@@ -27,6 +27,12 @@ test('each authored ring fits the stone, spaces between rings are clear, and the
           level.id,
         );
       }
+      for (const well of level.wells) {
+        assert.ok(
+          Math.hypot(target.x - well.x, target.y - well.y) >= 36,
+          level.id,
+        );
+      }
     }
     assert.ok(
       targets.reduce((sum, target) => sum + target.required, 0) <=
@@ -37,8 +43,8 @@ test('each authored ring fits the stone, spaces between rings are clear, and the
 });
 
 test('each ring needs its own dust, and completion waits for the supply and a stable arrangement', () => {
-  const game = new PileGame(pileLevels[1]);
-  const [left, right] = game.targets;
+  const game = new PileGame(pileLevels[2]);
+  const [left, right, third] = game.targets;
   assert.deepEqual(
     measurePiles(
       [
@@ -47,16 +53,21 @@ test('each ring needs its own dust, and completion waits for the supply and a st
       ],
       game.targets,
     ),
-    [1, 0],
+    [1, 0, 0],
   );
   const leftPile = Array.from(
     { length: left.required + right.required },
     () => left,
   );
-  assert.deepEqual(measurePiles(leftPile, game.targets), [leftPile.length, 0]);
+  assert.deepEqual(measurePiles(leftPile, game.targets), [
+    leftPile.length,
+    0,
+    0,
+  ]);
   game.sim.grains = [
     ...Array.from({ length: left.required }, () => left),
     ...Array.from({ length: right.required }, () => right),
+    ...Array.from({ length: third.required }, () => third),
   ];
   game.checkArrangement();
   assert.equal(game.readySince, null);
@@ -65,6 +76,16 @@ test('each ring needs its own dust, and completion waits for the supply and a st
   game.checkArrangement();
   assert.equal(game.readySince, null);
   game.sim.brushStrokes.clear();
+  game.sim.grains.push(
+    ...Array.from({ length: left.capacity - left.required + 1 }, () => left),
+  );
+  game.checkArrangement();
+  assert.equal(
+    game.readySince,
+    null,
+    'An overfilled ring blocks completion even when the others are ready',
+  );
+  game.sim.grains.pop();
   game.checkArrangement();
   const readySince = game.readySince;
   assert.notEqual(readySince, null);
@@ -76,7 +97,7 @@ test('each ring needs its own dust, and completion waits for the supply and a st
   assert.equal(game.complete, true);
 });
 
-test('actual brush strokes solve all four stones, including splitting two wells into four piles', () => {
+test('actual brush strokes solve all four stones by transporting and splitting mounds', () => {
   for (const level of pileLevels) {
     const game = new PileGame(level);
     const { sim } = game;
@@ -94,4 +115,19 @@ test('actual brush strokes solve all four stones, including splitting two wells 
     assert.equal(sim.grains.length, sim.config.supply, level.id);
     assert.equal(sim.emitted, sim.grains.length, level.id);
   }
+});
+
+test('excess dust stays recoverable and can be swept into another ring', () => {
+  const level = pileLevels[1];
+  const game = new PileGame(level);
+  const [left, right] = game.targets;
+  for (let step = 0; step < 900; step++) game.step();
+  performStroke(game.sim, pileStroke(level.wells[0], left));
+  for (let step = 0; step < 100; step++) game.step();
+  assert.ok(game.counts[0] > left.capacity);
+  assert.equal(game.complete, false);
+  performStroke(game.sim, pileStroke(left, right, 7));
+  for (let step = 0; step < 100; step++) game.step();
+  assert.equal(game.complete, true);
+  assert.equal(game.sim.grains.length, level.wells[0].grains);
 });

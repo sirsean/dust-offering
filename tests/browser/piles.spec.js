@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { pileLevels } from '../../src/config/piles.js';
-import { pileStrokes } from '../fixtures/piles.js';
+import { pileStroke, pileStrokes } from '../fixtures/piles.js';
 
 async function open(page, query = '') {
   await page.clock.install();
@@ -33,18 +33,28 @@ test('native touch completes every stone in order and leaves the arrangement ava
       y: rect.y + (y / 200) * rect.height,
       id: 1,
     });
-    for (const { a, b } of pileStrokes(level)) {
+    const strokes =
+      level.id === 'two-sides'
+        ? [
+            pileStroke(level.wells[0], level.targets[0]),
+            pileStroke(level.targets[0], level.targets[1], 5.6),
+            { a: { x: 59, y: 152 }, b: { x: 108, y: 152 } },
+          ]
+        : pileStrokes(level);
+    for (const [strokeIndex, { a, b }] of strokes.entries()) {
+      if (await next.isEnabled()) break;
       await client.send('Input.dispatchTouchEvent', {
         type: 'touchStart',
         touchPoints: [point(a.x, a.y)],
       });
-      for (let step = 1; step <= 12; step++) {
-        const t = step / 12;
+      const samples = Math.ceil(Math.hypot(b.x - a.x, b.y - a.y) / 2.5);
+      for (let step = 1; step <= samples; step++) {
+        const t = step / samples;
         await client.send('Input.dispatchTouchEvent', {
           type: 'touchMove',
           touchPoints: [point(a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t)],
         });
-        await page.clock.runFor(36);
+        await page.clock.runFor(18);
       }
       await expect(next).toBeDisabled();
       await client.send('Input.dispatchTouchEvent', {
@@ -52,9 +62,15 @@ test('native touch completes every stone in order and leaves the arrangement ava
         touchPoints: [],
       });
       await page.clock.runFor(900);
+      if (level.id === 'two-sides' && strokeIndex === 0) {
+        await expect(page.locator('#status')).toHaveText('1 overfilled');
+        await expect(page.locator('#piles-progress')).toContainText(
+          'Overfilled.',
+        );
+        await expect(next).toBeDisabled();
+        await page.screenshot({ path: info.outputPath('overfilled.png') });
+      }
     }
-    await expect(page.locator('#status')).toHaveText('Stone complete');
-    await expect(page.locator('#stone')).toHaveValue(level.id);
     const played = await page.evaluate(() => {
       const { game } = window.pileStudy;
       return {
@@ -67,6 +83,8 @@ test('native touch completes every stone in order and leaves the arrangement ava
     expect(played.emitted).toBe(played.retained);
     expect(played.remaining).toBe(0);
     console.log(level.id, played.counts);
+    await expect(page.locator('#status')).toHaveText('Stone complete');
+    await expect(page.locator('#stone')).toHaveValue(level.id);
     await expect(next).toBeEnabled();
     await page.screenshot({ path: info.outputPath(`${level.id}.png`) });
     await next.click();
