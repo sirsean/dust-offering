@@ -27,28 +27,36 @@
         <h1>Dust Offering</h1>
         <button id="sound" aria-pressed="false">Sound off</button>
       </header>
-      <div class="modes">
-        <label for="stone">Stone</label>
-        <select id="stone"></select>
-      </div>
       <div class="hud">
-        <p id="instruction"></p>
+        <p id="offering"></p>
+        <p>Sweep dust into each ring.</p>
         <p id="status" role="status"></p>
       </div>
       <div class="stage">
         <canvas
           id="field"
+          tabindex="-1"
           aria-label="Brush to uncover the stone. Dust reveals it where it rests or passes. Share dust across the marked rings. A ring brightens as it fills. Rust-colored ticks mark a ring with too much dust. Spilled dust can be swept back onto the stone."
           aria-describedby="piles-progress"
         ></canvas>
         <p id="piles-progress" class="sr-only"></p>
       </div>
-      <div class="tools" aria-label="Stone controls">
+      <div class="tools" aria-label="Offering controls">
         <button id="pause">Pause wells</button>
         <button id="restart">Restart</button>
-        <button id="next" disabled>Next stone</button>
+        <button id="next" disabled>Next</button>
       </div>
     </main>
+    <dialog
+      class="piles-record"
+      aria-labelledby="record-title"
+      aria-describedby="record-body"
+    >
+      <p id="record-number"></p>
+      <h2 id="record-title" tabindex="-1" autofocus></h2>
+      <div id="record-body"></div>
+      <button id="continue">Continue</button>
+    </dialog>
     <script type="module" src="/src/piles/main.js"></script>
   </body>
 </html>

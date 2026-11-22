@@ -1,43 +1,23 @@
 .piles {
   --pile-overflow: #ed9b76;
-}
-.piles .modes {
-  align-items: center;
-  gap: 12px;
-}
-.piles .modes label {
-  margin-inline-start: 6px;
-  color: var(--muted);
-  font-size: 9px;
-}
-.piles select {
-  min-width: 0;
-  min-height: 44px;
-  flex: 1;
-  padding: 8px;
-  border: 1px solid var(--button-edge);
-  border-radius: 2px;
-  background: linear-gradient(175deg, var(--button-light), var(--button) 70%);
-  color: var(--text);
-  font: inherit;
-  font-size: clamp(9px, 2.65vw, 12px);
-}
-.piles select:focus-visible {
-  outline: 2px solid var(--focus);
-  outline-offset: 2px;
-}
-.piles select option {
-  color: var(--text);
-  background: var(--panel);
+  grid-template-areas: 'header' 'hud' 'stage' 'tools';
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
 }
 .piles .hud {
   display: grid;
-  grid-template-rows: auto 1lh;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: 1lh auto 1lh;
   align-content: start;
   gap: 3px;
 }
 .piles .hud p {
   margin: 0;
+}
+.piles #offering {
+  color: var(--sand-light);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .piles [data-complete='true'] {
   color: var(--sand-light);
@@ -56,7 +36,35 @@
   border-color: var(--mark);
   color: var(--sand-light);
 }
+.piles-record {
+  width: min(92vw, 480px);
+  padding: clamp(16px, 5vw, 28px);
+  background: linear-gradient(148deg, #3b2a20, var(--panel) 68%);
+  box-shadow:
+    inset 0 2px #bc926a28,
+    0 12px 32px #120a06a0;
+}
+.piles-record #record-number {
+  margin: 0 0 8px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.piles-record h2 {
+  color: var(--sand-light);
+}
+.piles-record #record-body {
+  margin-block: 16px 20px;
+  font-size: clamp(9px, 2.35vw, 11px);
+  line-height: 1.9;
+}
+.piles-record button {
+  width: 100%;
+}
 @media (max-height: 540px) and (min-width: 600px) {
+  .piles {
+    grid-template-areas: 'stage header' 'stage hud' 'stage tools';
+    grid-template-rows: auto minmax(0, 1fr) auto;
+  }
   .piles .tools button {
     font-size: 8px;
   }

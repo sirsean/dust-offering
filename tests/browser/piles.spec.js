@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
-import { pileLevels } from '../../src/config/piles.js';
+import { piles } from '../../src/config/piles.js';
+import { levelFor } from '../../src/piles/levels.js';
 import { bankedStrokes } from '../fixtures/piles.js';
 import { stroke } from './helpers.js';
 
@@ -7,7 +8,7 @@ async function open(page, query = '') {
   await page.clock.install({ time: new Date('2026-11-22T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-11-22T00:00:01Z'));
   await page.goto(`/piles.html?debug&${query}`);
-  await expect(page.locator('#stone')).toBeVisible();
+  await expect(page.locator('#offering')).toBeVisible();
   await page.evaluate(() => document.fonts.ready);
 }
 
@@ -43,7 +44,7 @@ async function stonePixel(page, x, y) {
   );
 }
 
-test('sand and fingers uncover only touched stone, which stays visible through selection and restart', async ({
+test('sand and fingers uncover only touched stone, which stays visible through restart', async ({
   page,
 }) => {
   await open(page);
@@ -79,16 +80,13 @@ test('sand and fingers uncover only touched stone, which stays visible through s
   });
 
   const before = await discovery(page);
-  await page.locator('#stone').selectOption('two-sides');
-  expect(await discovery(page)).toEqual(before);
-  const selected = await stonePixel(page, 80, 50);
-  expect(selected.actual).not.toEqual(selected.ground);
   await page.locator('#restart').click();
   expect(await discovery(page)).toEqual(before);
-  expect(await stonePixel(page, 80, 50)).toEqual(selected);
+  const restarted = await stonePixel(page, 80, 50);
+  expect(restarted.actual).not.toEqual(restarted.ground);
 });
 
-test('native touch completes every stone in order and leaves the arrangement available for inspection', async ({
+test('native touch advances in order through the first generated offering and story record, then resumes after reload', async ({
   page,
   context,
 }, info) => {
@@ -97,12 +95,13 @@ test('native touch completes every stone in order and leaves the arrangement ava
   const client = await context.newCDPSession(page);
   const next = page.locator('#next');
   const board = page.locator('#field');
-  for (const [index, level] of pileLevels.entries()) {
-    if (index === 2) await page.setViewportSize({ width: 520, height: 600 });
-    await expect(page.locator('#stone')).toHaveValue(level.id);
+  for (let number = 1; number <= 5; number++) {
+    const level = levelFor(piles.defaultSeed, number);
+    if (number === 3) await page.setViewportSize({ width: 520, height: 600 });
+    await expect(page.locator('#offering')).toHaveText(`Offering ${number}`);
     await expect(next).toBeDisabled();
     const rect = await board.boundingBox();
-    await waitForDust(page, 5000 + index * 4500);
+    await waitForDust(page, 5000 + (number - 1) * 4500);
     expect(await board.boundingBox()).toEqual(rect);
     const point = (x, y) => ({
       x: rect.x + (x / 160) * rect.width,
@@ -131,7 +130,7 @@ test('native touch completes every stone in order and leaves the arrangement ava
         touchPoints: [],
       });
       await page.clock.runFor(900);
-      if (index === 0 && strokeIndex === 0) {
+      if (number === 1 && strokeIndex === 0) {
         await expect(page.locator('#status')).toHaveText('0 / 1 ready');
         await expect(next).toBeDisabled();
       }
@@ -148,18 +147,44 @@ test('native touch completes every stone in order and leaves the arrangement ava
     expect(played.emitted).toBe(played.retained);
     expect(played.remaining).toBe(0);
     console.log(level.id, played.counts);
-    await expect(page.locator('#status')).toHaveText('Stone complete');
+    await expect(page.locator('#status')).toHaveText('Offering complete');
     expect(await board.boundingBox()).toEqual(rect);
-    await expect(page.locator('#stone')).toHaveValue(level.id);
+    await expect(page.locator('#offering')).toHaveText(`Offering ${number}`);
     await expect(next).toBeEnabled();
     await page.screenshot({ path: info.outputPath(`${level.id}.png`) });
     const uncovered = await discovery(page);
     expect(uncovered.length).toBeGreaterThan(100);
-    await next.click();
+    if (number === 5) {
+      await expect(next).toHaveText('Read record');
+      await next.click();
+      const record = page.getByRole('dialog');
+      await expect(record).toBeVisible();
+      await expect(record.getByRole('heading')).toHaveText('The receipt');
+      await expect(record).toContainText('Pyramid Order');
+      await expect(page.locator('#offering')).toHaveText('Offering 5');
+      const steps = () => page.evaluate(() => window.pileStudy.game.sim.steps);
+      const paused = await steps();
+      await page.clock.runFor(1000);
+      expect(await steps()).toBe(paused);
+      expect(await board.boundingBox()).toEqual(rect);
+      await page.screenshot({ path: info.outputPath('the-receipt.png') });
+      await page.keyboard.press('Escape');
+      await expect(record).toBeHidden();
+      await expect(page.locator('#offering')).toHaveText('Offering 5');
+      await next.click();
+      await record.getByRole('button', { name: 'Continue' }).click();
+      await expect(record).toBeHidden();
+    } else {
+      await next.click();
+    }
     expect(await discovery(page)).toEqual(uncovered);
   }
-  await expect(page.locator('#stone')).toHaveValue(pileLevels[0].id);
+  await expect(page.locator('#offering')).toHaveText('Offering 6');
   await expect(next).toBeDisabled();
+  const saved = await discovery(page);
+  await page.reload();
+  await expect(page.locator('#offering')).toHaveText('Offering 6');
+  expect(await discovery(page)).toEqual(saved);
 });
 
 test('a viewport resize keeps the painted board until the new size can be drawn', async ({
@@ -202,13 +227,16 @@ test('a viewport resize keeps the painted board until the new size can be drawn'
   expect(resized.alpha).toBe(255);
 });
 
-test('a direct stone link, replay, pause, and narrow layout work through the playtest page', async ({
+test('a new seed starts at the beginning, with no selector or URL shortcut, and the controls fit', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 320, height: 568 });
-  await open(page, 'stone=three-islands');
-  await expect(page.locator('#stone')).toHaveValue('three-islands');
-  await expect(page.locator('#status')).toHaveText('0 / 3 ready');
+  await open(page, 'seed=scablands&stone=three-islands&level=5000');
+  await expect(page.locator('select')).toHaveCount(0);
+  await expect(page.getByRole('dialog')).toBeHidden();
+  await expect(page.locator('#offering')).toHaveText('Offering 1');
+  await expect(page.locator('#status')).toHaveText('0 / 1 ready');
+  await expect(page.locator('#next')).toBeDisabled();
   await page.locator('#pause').click();
   const remaining = await page.evaluate(
     () => window.pileStudy.game.sim.remaining,
@@ -219,9 +247,7 @@ test('a direct stone link, replay, pause, and narrow layout work through the pla
   );
   await page.locator('#restart').click();
   await expect(page.locator('#pause')).toHaveText('Pause wells');
-  await page.locator('#stone').selectOption('two-sides');
-  await expect(page.locator('#status')).toHaveText('0 / 2 ready');
-  await expect(page).toHaveURL(/stone=two-sides/);
+  await expect(page.locator('#offering')).toHaveText('Offering 1');
   for (const viewport of [
     { width: 320, height: 568 },
     { width: 844, height: 390 },
@@ -230,7 +256,7 @@ test('a direct stone link, replay, pause, and narrow layout work through the pla
     const layout = await page.evaluate(() => ({
       width: document.documentElement.scrollWidth,
       height: document.querySelector('#field').clientHeight,
-      controlsFit: [...document.querySelectorAll('button,select')].every(
+      controlsFit: [...document.querySelectorAll('.piles button')].every(
         (element) =>
           element.getBoundingClientRect().height >= 44 &&
           element.scrollWidth <= element.clientWidth + 1,

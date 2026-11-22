@@ -53,6 +53,10 @@ export const pileLevels = [
 
 export const piles = Object.freeze({
   id: 'piles-v3',
+  runVersion: 1,
+  defaultSeed: '48',
+  openingLength: 5,
+  chapterLength: 7,
   stoneSeed: 48,
   preparationSeconds: 4,
   holdSeconds: 0.4,

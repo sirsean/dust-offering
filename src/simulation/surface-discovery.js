@@ -173,4 +173,26 @@ export class SurfaceDiscovery {
       .sort((a, b) => a - b)
       .map((index) => [index, this.levels[index]]);
   }
+
+  restore(snapshot) {
+    for (const entry of snapshot) {
+      if (!Array.isArray(entry)) continue;
+      const [index, level] = entry;
+      if (
+        !Number.isInteger(index) ||
+        index < 0 ||
+        index >= this.levels.length ||
+        !Number.isFinite(level) ||
+        level > 1 ||
+        level <= this.levels[index]
+      )
+        continue;
+      const previous = this.levels[index];
+      this.levels[index] = level;
+      this.active.add(index);
+      if (this.coverageMask.cells[index])
+        this.revealed += this.levels[index] - previous;
+    }
+    this.version++;
+  }
 }

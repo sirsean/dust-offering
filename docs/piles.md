@@ -1,20 +1,25 @@
-# Piles
+# Piles at the Black Pyramid
 
-Dust wells up through a stone seen from above. Sweep it ahead of your finger into faint, broken rings. The fragments brighten as their ring fills. Rust-colored ticks and an “overfilled” message mark excess dust. Sweep the excess into a ring that still needs it. When dust has stopped surfacing and every ring holds its share after your fingers lift, you can inspect the arrangement or advance. The stone selector makes every level available for playtesting. Restart repeats the current layout and the URL links directly to the selected stone. [Play Piles](https://piles.dust-offering.sirsean.me/piles)
+Dust wells up through a hidden stone. Fingers and grains uncover the face where they touch it. Sweep the dust into faint, broken rings. The fragments brighten as their ring fills. Rust-colored ticks mark excess dust, which can be recovered and moved into another ring. When the wells are quiet and every ring holds its share after your fingers lift, advance to the next offering. [Play Piles](https://piles.dust-offering.sirsean.me/piles)
 
-The stone begins hidden. Finger passes and real grain contact gradually uncover its surface and rim, while the rings remain visible as destinations. All four layouts use one stone texture and share the same reveal map. Advancing, selecting a layout, and restarting keep the uncovered areas visible. Each layout has its own dust and temporary grease, and opening the page afresh begins with an undiscovered stone.
+## The sequence
 
-| Stone         | Wells | Rings | What the player does                                                    |
-| ------------- | ----: | ----: | ----------------------------------------------------------------------- |
-| First pile    |     1 |     1 | Carry a mound down the length of the face.                              |
-| Two sides     |     1 |     2 | Split an upper mound and move the halves to opposite sides of the base. |
-| Three islands |     1 |     3 | Divide one mound among the upper ring and the two lower corners.        |
-| Four corners  |     2 |     4 | Split both mounds and carry the portions to four separate rings.        |
+The four authored opening layouts teach carrying a pile, dividing it, and recovering banks. The fifth offering is the first generated layout. The run opens on the default seed `48`. A link such as `/piles?seed=scablands` starts or resumes that seed on the current browser. Every seed shares the opening four layouts. The seed and offering number determine the position and size of generated rings, the wells and their supplies, and the independent grain seed.
 
-The Piles brush pushes grains forward and outward. The sides of a mound peel away as the finger moves, so long sweeps leave banks along the route. Follow those banks with another pass to bring the remaining dust into a ring, or branch off toward a ring that still needs it. Taps push radially. Grains settle under friction and spilled dust remains recoverable.
+| Offerings | Generated complexity                   |
+| --------- | -------------------------------------- |
+| 5 to 12   | Four rings and two wells               |
+| 13 to 19  | Five rings and smaller targets         |
+| 20 onward | Six rings and increasingly tight fills |
 
-Add a stone in [piles.js](../src/config/piles.js) with a stable ID, seed, wells with individual grain budgets, and circular targets. Coordinates use the existing 160 × 200 board. The target quantity is an equal share of the total supply with tolerance on either side. For example, a fill fraction of 0.7 accepts 70% to 130% of one share, rounded inward to whole grains. The broken artwork stays close to the circular scoring boundary and is stable through resize and restart. Keep targets inside the triangle and separated. Moving wells farther from targets and using fewer wells than targets call for longer sweeps and deliberate splits.
+The generator chooses among three sets of upper and lower sites, then samples a mix of sites, mirrors the board, and varies positions and radii. It rejects layouts without space for distinct rings, room at the rim, and clearance between wells and goals. Later chapters continue with smaller adjustments toward a practical limit for ring size and fill tolerance. Layouts generate on demand without simulating earlier offerings. A change to the generator or progression format should use a new run version to preserve the meaning of existing checkpoints.
 
-The brush in `piles-v3` blends the stroke direction with outward pressure before pushing each grain to the edge of the finger. The previous full forward carry is the comparison case in the unit test. The former sweep routes finish all four levels at full carry and leave unfinished arrangements with the new brush. The first stone's straight sweep moved 328 of 520 grains into the ring in the numerical comparison. It takes 364 to finish. All grains stay in play.
+Advancing saves the unlocked offering and the reveal map for the current seed in the browser. Restart repeats the current offering with fresh dust and grease. The revealed stone carries forward within each run. On reload the game resumes the last unlocked offering with freshly prepared dust and the reveal saved at that checkpoint.
 
-The emulated-touch playthrough checks that the first sweep leaves work to do and that follow-up sweeps complete all four levels. It verifies that an active finger cannot finish a level, checks grain conservation, and advances with the visible button. Separate checks exercise overfill recovery, direct links, restart, pause and small viewports.
+## The records
+
+The first record follows offering five. After that, a record follows every seven offerings. Read it over the last arrangement and continue at your own pace. The first five records trace a Pyramid Order survey through a receipt dated tomorrow, two columns of losses and returns, a survey that counted faces by date, and a keeper whose print ended up in the stone. The last record leaves the player the witness line. Later entries use seeded combinations of field observations and notes from other keepers. The records are original story material for the prototype. The Order’s scant public history and the Scablands setting come from the Fringe reference pages. [Pyramid Order](https://chatgpt.com/space/page_739e2a9e65cc8191a41bdd629ed27b07) · [Scablands](https://chatgpt.com/space/page_329f295dd5588191af8b0effb8cd9ec6) · [Original Dust Offering plan](https://chatgpt.com/space/page_ad5cbe9d6d2881919e3df3cfb9f08feb)
+
+## Checks
+
+The numerical checks sample repeatability, spacing and cadence across seeds and distant offering numbers. Physical replay uses the same brush API as play to clear representative generated layouts through offering 5,000. The browser suite starts on offering one, follows the opening through the first generated layout and its record, and verifies that a reload restores the next offering and the exact reveal map.

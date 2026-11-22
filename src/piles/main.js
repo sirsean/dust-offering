@@ -1,25 +1,26 @@
 import '../styles.css';
 import './styles.css';
-import { pileLevels, piles } from '../config/piles.js';
+import { piles } from '../config/piles.js';
+import { recordFor } from '../config/piles-story.js';
 import { bindPointer } from '../input/pointer.js';
 import { StudyRenderer } from '../lab/renderer.js';
 import { MaterialAudio } from '../rendering/audio.js';
 import { PileGame } from './game.js';
+import { chapterAt, endsChapter, levelFor } from './levels.js';
+import { loadProgress, saveProgress } from './progress.js';
 
 const $ = (selector) => document.querySelector(selector);
 const canvas = $('#field');
-const selector = $('#stone');
 const pause = $('#pause');
 const next = $('#next');
 const status = $('#status');
 const progress = $('#piles-progress');
+const record = $('.piles-record');
 const renderer = new StudyRenderer(canvas, { stoneSeed: piles.stoneSeed });
 const audio = new MaterialAudio();
 const params = new URLSearchParams(location.search);
-let levelIndex = Math.max(
-  0,
-  pileLevels.findIndex(({ id }) => id === params.get('stone')),
-);
+const seed = params.get('seed')?.trim() || piles.defaultSeed;
+const checkpoint = loadProgress(seed);
 let game;
 let lastFrame = null;
 let lastUpdate = 0;
@@ -50,7 +51,7 @@ function syncUI() {
     else if (counts[index] >= required) ready++;
   }
   let message = `${ready} / ${targets.length} ready`;
-  if (complete) message = 'Stone complete';
+  if (complete) message = 'Offering complete';
   if (overfilled) message = `${overfilled} overfilled`;
   setText(status, message);
   status.dataset.complete = String(complete);
@@ -66,9 +67,7 @@ function syncUI() {
   pause.disabled = sim.remaining === 0;
   setText(
     next,
-    levelIndex === pileLevels.length - 1 && complete
-      ? 'First stone'
-      : 'Next stone',
+    complete && endsChapter(game.level.number) ? 'Read record' : 'Next',
   );
   next.disabled = !complete;
   setText(
@@ -83,37 +82,54 @@ function syncUI() {
   );
 }
 
-function start(index) {
+function start(level, savedDiscovery) {
   pointer.cancel();
   audio.quiet();
-  levelIndex = index;
-  game = new PileGame(pileLevels[index], game?.sim.discovery);
-  selector.value = game.level.id;
-  setText(
-    $('#instruction'),
-    index === 0
-      ? 'Sweep the dust into the ring.'
-      : 'Share dust across the rings.',
-  );
-  const url = new URL(location.href);
-  url.searchParams.set('stone', game.level.id);
-  history.replaceState(null, '', url);
+  game = new PileGame(level, game?.sim.discovery);
+  if (savedDiscovery) game.sim.discovery.restore(savedDiscovery);
+  setText($('#offering'), `Offering ${level.number}`);
   lastFrame = null;
   accumulator = 0;
   syncUI();
   renderer.draw(game.sim, game.guide, game.counts);
 }
 
-pileLevels.forEach(({ id, name }, index) =>
-  selector.add(new Option(`${index + 1}. ${name}`, id)),
-);
-selector.onchange = () => start(selector.selectedIndex);
-$('#restart').onclick = () => start(levelIndex);
+function advance() {
+  const level = levelFor(seed, game.level.number + 1);
+  start(level);
+  saveProgress(seed, level.number, game.sim.discovery);
+  canvas.focus({ preventScroll: true });
+}
+
+$('#restart').onclick = () => start(game.level);
 next.onclick = () => {
-  if (game.complete) {
-    start((levelIndex + 1) % pileLevels.length);
-    selector.focus();
+  if (!game.complete || record.open) return;
+  const { number } = game.level;
+  if (!endsChapter(number)) {
+    advance();
+    return;
   }
+  const chapter = chapterAt(number);
+  const { title, paragraphs } = recordFor(chapter, levelFor(seed, number + 1));
+  setText($('#record-number'), `Pyramid Order / Record ${chapter + 1}`);
+  setText($('#record-title'), title);
+  $('#record-body').replaceChildren(
+    ...paragraphs.map((text) => {
+      const paragraph = document.createElement('p');
+      paragraph.textContent = text;
+      return paragraph;
+    }),
+  );
+  pointer.cancel();
+  audio.quiet();
+  lastFrame = null;
+  accumulator = 0;
+  record.showModal();
+};
+$('#continue').onclick = () => {
+  if (!record.open) return;
+  record.close();
+  advance();
 };
 pause.onclick = () => {
   game.sim.bubbling = !game.sim.bubbling;
@@ -137,7 +153,8 @@ document.addEventListener('visibilitychange', () => {
 });
 
 function frame(time) {
-  if (!document.hidden) {
+  const playing = !document.hidden && !record.open;
+  if (playing) {
     if (lastFrame !== null)
       accumulator += Math.min(0.1, (time - lastFrame) / 1000);
     const startTime = performance.now();
@@ -156,11 +173,11 @@ function frame(time) {
       lastUpdate = time;
     }
   }
-  lastFrame = document.hidden ? null : time;
+  lastFrame = playing ? time : null;
   requestAnimationFrame(frame);
 }
 
-start(levelIndex);
+start(levelFor(seed, checkpoint?.level ?? 1), checkpoint?.discovery);
 requestAnimationFrame(frame);
 if (params.has('debug'))
   window.pileStudy = {
