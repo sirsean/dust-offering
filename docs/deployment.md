@@ -8,7 +8,7 @@
 - Production Worker: `dust-offering`
 - Production custom domain: <https://dust-offering.sirsean.me>
 
-Workers static assets serve `dist/` directly; there is no server handler or database. `wrangler.json` is the production configuration. Asset paths use Vite content hashes; only `/assets/*` gets long immutable caching. Unknown paths return 404, so future challenge URLs should use query parameters unless routing is explicitly changed.
+Workers static assets serve `dist/` directly from the configuration in `wrangler.json`. Piles opens at `/`, the earlier Free Pour and Challenge open at `/pour`, and the top-down study opens at `/lab`. `public/_redirects` redirects `/piles` to `/`, including seeded links. The entry page forwards previously shared Challenge links to `/pour`. Only `/assets/*` gets long immutable caching. Unknown paths return 404.
 
 **Current workflow:** deploy directly from this working environment with Wrangler. The owner has deferred automated GitHub deployments. Leave the Actions deployment secret unconfigured until requested. Use the local commands below for production, branch previews, and preview cleanup; code checks still run in GitHub Actions.
 

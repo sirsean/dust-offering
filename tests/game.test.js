@@ -102,10 +102,10 @@ test('bests are isolated from the old physics, preserve ties and tolerate denied
 
 test('sharing uses the new challenge and handles native, cancellation, clipboard and manual copy', async () => {
   const result = { score: 979, left: 1700, right: 3000 };
-  const base = 'https://dust-offering.sirsean.me/?debug#test';
+  const base = 'https://dust-offering.sirsean.me/pour?debug#test';
   assert.equal(
     challengeUrl(base),
-    'https://dust-offering.sirsean.me/?challenge=stone-offering-v8',
+    'https://dust-offering.sirsean.me/pour?challenge=stone-offering-v8',
   );
   assert.match(shareText(result, base), /1,700 \/ 1,800/);
   assert.equal(

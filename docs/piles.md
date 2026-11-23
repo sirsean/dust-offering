@@ -1,10 +1,10 @@
 # Piles at the Black Pyramid
 
-Dust wells up through a hidden stone. Fingers and grains uncover the face where they touch it. Sweep the dust into faint, broken rings. The fragments brighten as their ring fills. Rust-colored ticks mark excess dust, which can be recovered and moved into another ring. When the wells are quiet and every ring holds its share after your fingers lift, advance to the next offering. [Play Piles](https://piles.dust-offering.sirsean.me/piles)
+Dust wells up through a hidden stone. Fingers and grains uncover the face where they touch it. Sweep the dust into faint, broken rings. The fragments brighten as their ring fills. Rust-colored ticks mark excess dust, which can be recovered and moved into another ring. When the wells are quiet and every ring holds its share after your fingers lift, advance to the next offering. [Play Piles](https://dust-offering.sirsean.me)
 
 ## The sequence
 
-The four authored opening layouts teach carrying a pile, dividing it, and recovering banks. The fifth offering is the first generated layout. The run opens on the default seed `48`. A link such as `/piles?seed=scablands` starts or resumes that seed on the current browser. Every seed shares the opening four layouts. The seed and offering number determine the position and size of generated rings, the wells and their supplies, and the independent grain seed.
+The four authored opening layouts teach carrying a pile, dividing it, and recovering banks. The fifth offering is the first generated layout. The run opens on the default seed `48`. A link such as `/?seed=scablands` starts or resumes that seed on the current browser. Every seed shares the opening four layouts. The seed and offering number determine the position and size of generated rings, the wells and their supplies, and the independent grain seed.
 
 | Offerings | Generated complexity                   |
 | --------- | -------------------------------------- |

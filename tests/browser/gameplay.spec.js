@@ -1,6 +1,14 @@
 import { test, expect } from '@playwright/test';
 import { open, stroke, hidden, state } from './helpers.js';
 
+test('previously shared Challenge links open the falling-sand game', async ({
+  page,
+}) => {
+  await page.goto('/?challenge=stone-offering-v8');
+  await expect(page).toHaveURL(/\/pour\?challenge=stone-offering-v8$/);
+  await expect(page.locator('#pour')).toHaveText('Begin');
+});
+
 test('one gentle brush action shapes actual deposits, without Draw/Rub modes or blank-stone barriers', async ({
   page,
 }) => {
@@ -246,6 +254,8 @@ test('rotation and hidden recovery preserve sand, piles and traces; bowls and sp
   );
   await page.clock.runFor(10000);
   expect((await state(page)).steps).toBe(before.steps);
+  // Measure recovery with the virtual clock paused between browser calls.
+  await page.clock.pauseAt(await page.evaluate(() => Date.now() + 1000));
   await hidden(page, false);
   await page.clock.runFor(100);
   expect((await state(page)).steps - before.steps).toBeLessThanOrEqual(7);

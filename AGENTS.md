@@ -1,14 +1,14 @@
 # Working on Dust Offering
 
-## Top-down experiment
+## Piles
 
-Piles has a dedicated playtest at `/piles` on the `piles` branch. Play starts with four authored layouts from `src/config/piles.js` and continues through a deterministic sequence in `src/piles/levels.js`. Give wells multiple destinations and leave room for long sweeps and recovery. Every ring needs to fall within its own lower and upper bounds. Keep broken, faint marks with a distinct overfill cue. Progress is sequential, with manual advance after a settled arrangement and a story record after offering five and every seven offerings thereafter. Keep generation, save compatibility and story cadence stable within a run version. Verify representative layouts with real brush strokes and browser touch. See [piles.md](docs/piles.md).
+Piles opens at `/` on the production domain. Play starts with four authored layouts from `src/config/piles.js` and continues through a deterministic sequence in `src/piles/levels.js`. Give wells multiple destinations and leave room for long sweeps and recovery. Every ring needs to fall within its own lower and upper bounds. Keep broken, faint marks with a distinct overfill cue. Progress is sequential, with manual advance after a settled arrangement and a story record after offering five and every seven offerings thereafter. Keep generation, save compatibility and story cadence stable within a run version. Verify representative layouts with real brush strokes and browser touch. See [piles.md](docs/piles.md).
 
 Piles starts a new seed on a hidden stone with the target rings visible. Fingers and actual grain contact gradually reveal the face. Keep the same stone texture and discovery map across layouts and Restart. Advancing checkpoints the current layout number and discovery for that seed. Fresh dust and grease are prepared from the layout on resuming. Keep the Black Pyramid records mysterious and treat those in `src/config/piles-story.js` as original prototype fiction grounded in the Fringe references.
 
 The owner requests a prospective top-down gameplay study on November 18: dust wells up from the background, no gravity or bowls, and fingers push it into useful arrangements. Keep this isolated on `top-down-lab`, with `/lab` as a separate build entry and a branch preview. Read `src/lab/AGENTS.md` and `docs/upwelling-study.md`. The gravity/bowl rules below continue to describe the existing game; the study uses its own configuration, solver and goals. Preserve existing input defaults and optional-audio behavior when sharing utilities. Compare idle/random/sweep/purposeful policies on matched seeds and actual touch playback. Do not claim automated fit scores measure human fun. Stop local test/dev servers after work.
 
-## Current direction
+## Falling-sand game at `/pour`
 
 The owner's latest gameplay feedback supersedes the original ridge prototype. Read `docs/stone-sand-plan.md`, `docs/status.md`, and `docs/architecture.md` before substantive work. The intended experience is quiet, slow sand accumulating on a stone triangle. There is **one brush action**, available to multiple fingers: brush through that sand, dislodge it, and shape the deposits that later sand runs over. Do not reintroduce Draw/Rub modes or invisible player-drawn barriers.
 

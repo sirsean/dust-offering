@@ -1,6 +1,8 @@
-# Project status — fine dust and gentle air
+# Project status
 
-A separate top-down experiment on `top-down-lab` compares Level, Clear, Piles and Paths with dust welling up through the stone. See [upwelling-study.md](upwelling-study.md) for the playable preview, controlled comparisons, rejected variants and limits. It has 60 controlled simulations plus native touch sessions. Piles/Paths reach stable completion, and the selected sessions hold roughly 60 fps at 3,600 retained grains in headless Chromium. Full checks pass 80 unit tests and 42 browser cases. It is a prospective mechanics study; the falling-game production release below remains the baseline.
+Piles opens at the production domain. It has sequential seeded offerings, persistent stone discovery and Pyramid Order records between chapters. The falling-sand game is available at `/pour` and the original top-down study is at `/lab`. [Play Dust Offering](https://dust-offering.sirsean.me) · [Piles design and checks](piles.md) · [Top-down study](upwelling-study.md)
+
+## Falling-sand release
 
 Revision 0.11.0 / `stone-offering-v8` changes the grains from radius 0.65 to 0.13 and nominal flow from 24 to 120 grains/s. A separately seeded breeze and size-dependent drag gently move loose dust. Finger sweeps, hidden-stone discovery, grease, bowls, permanent missed-sand piles, font, controls and quiet Free Pour completion remain.
 
@@ -12,4 +14,4 @@ Verification: 69 unit checks and 35 browser scenarios pass (three touch-only des
 
 Fine disks render into one transparent pixel layer. The collision solver clears occupied bins, caches fixed grains and still queries sleeping face grains for adhesion. Brush/adhesion/collection/sleep transitions invalidate the cache. Per-cell grease decay is reused within a simulation timestamp. Physics uses three substeps and two contact passes at 60 Hz, with speed capped at 16 logical units/s.
 
-Repository: <https://github.com/sirsean/dust-offering>. Production: <https://dust-offering.sirsean.me>. This revision is developed on `fine-dust` and integrated into `main`, with preview <https://fine-dust.dust-offering.sirsean.me>. The previous revision remains at <https://gameplay-feel.dust-offering.sirsean.me> for comparison. Use direct Wrangler deployment; automated GitHub deployment remains deferred.
+Revision 0.11.0 is preserved on `fine-dust`. The previous gameplay pass remains available for comparison. [Fine dust](https://fine-dust.dust-offering.sirsean.me) · [Gameplay feel](https://gameplay-feel.dust-offering.sirsean.me)

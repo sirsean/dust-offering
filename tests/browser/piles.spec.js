@@ -7,8 +7,8 @@ import { stroke } from './helpers.js';
 async function open(page, query = '') {
   await page.clock.install({ time: new Date('2026-11-22T00:00:00Z') });
   await page.clock.pauseAt(new Date('2026-11-22T00:00:01Z'));
-  await page.goto(`/piles.html?debug&${query}`);
-  await expect(page.locator('#offering')).toBeVisible();
+  await page.goto(`/?debug&${query}`);
+  await expect(page.locator('#offering')).toHaveText(/^Offering \d+$/);
   await page.evaluate(() => document.fonts.ready);
 }
 

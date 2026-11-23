@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+    <meta name="theme-color" content="#241713" />
+    <meta
+      name="description"
+      content="Slow sand on stone. Brush it gently and shape its flow."
+    />
+    <title>Dust Offering</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link
+      rel="preload"
+      href="/src/assets/fonts/FringeV2.otf"
+      as="font"
+      type="font/otf"
+      crossorigin
+    />
+  </head>
+  <body>
+    <main class="app">
+      <header>
+        <h1>Dust Offering</h1>
+        <button id="sound" aria-pressed="false" aria-label="Enable sound">
+          Sound off
+        </button>
+      </header>
+      <nav class="modes" aria-label="Pour mode">
+        <button id="free" aria-pressed="true">Free Pour</button
+        ><button id="challenge" aria-pressed="false">Challenge</button>
+      </nav>
+      <div id="hud" class="hud">
+        <span id="discovery-status">Uncovered 0%</span>
+        <meter
+          id="discovery-progress"
+          min="0"
+          max="0.82"
+          value="0"
+          aria-label="Stone discovery"
+        ></meter>
+        <span id="supply"></span><span id="best"></span>
+      </div>
+      <div class="stage">
+        <canvas
+          id="field"
+          tabindex="0"
+          aria-label="Dust reveals a hidden stone triangle. Brush with one or more fingers, or a mouse, to uncover the stone, loosen dust and leave fading grease marks that guide it downhill."
+        ></canvas>
+      </div>
+      <div class="tools" aria-label="Pour controls">
+        <button id="pour" title="Stop or resume pouring (Space)">
+          Pause pour
+        </button>
+        <button id="reset">Reset</button>
+      </div>
+      <p id="accessible-state" class="sr-only" aria-live="off"></p>
+      <p id="notice" class="notice" role="status" hidden></p>
+    </main>
+    <dialog id="result" aria-labelledby="result-title">
+      <h2 id="result-title">Your offering</h2>
+      <p id="score" class="score"></p>
+      <dl class="results">
+        <div>
+          <dt>Left bowl</dt>
+          <dd id="result-left"></dd>
+        </div>
+        <div>
+          <dt>Right bowl</dt>
+          <dd id="result-right"></dd>
+        </div>
+        <div>
+          <dt>Best</dt>
+          <dd id="result-best"></dd>
+        </div>
+      </dl>
+      <p id="result-uncollected" class="muted"></p>
+      <button id="share">Share score</button>
+      <p id="share-status" class="muted" role="status"></p>
+      <textarea
+        id="manual-share"
+        readonly
+        aria-label="Score and challenge link for manual copying"
+        hidden
+      ></textarea>
+      <div class="result-actions">
+        <button id="again">Play again</button
+        ><button id="result-close">View board</button>
+      </div>
+    </dialog>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

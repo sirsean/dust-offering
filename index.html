@@ -9,8 +9,26 @@
     <meta name="theme-color" content="#241713" />
     <meta
       name="description"
-      content="Slow sand on stone. Brush it gently and shape its flow."
+      content="On every world with air to breathe, wind blows the sand. In the void, who will push the sand?"
     />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Dust Offering" />
+    <meta
+      property="og:description"
+      content="On every world with air to breathe, wind blows the sand. In the void, who will push the sand?"
+    />
+    <meta
+      property="og:image"
+      content="https://dust-offering.sirsean.me/share.png"
+    />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="The Dust Offering pyramid, outlined in amber against dark umber."
+    />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>Dust Offering</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link
@@ -22,75 +40,41 @@
     />
   </head>
   <body>
-    <main class="app">
+    <main class="app piles">
       <header>
         <h1>Dust Offering</h1>
-        <button id="sound" aria-pressed="false" aria-label="Enable sound">
-          Sound off
-        </button>
+        <button id="sound" aria-pressed="false">Sound off</button>
       </header>
-      <nav class="modes" aria-label="Pour mode">
-        <button id="free" aria-pressed="true">Free Pour</button
-        ><button id="challenge" aria-pressed="false">Challenge</button>
-      </nav>
-      <div id="hud" class="hud">
-        <span id="discovery-status">Uncovered 0%</span>
-        <meter
-          id="discovery-progress"
-          min="0"
-          max="0.82"
-          value="0"
-          aria-label="Stone discovery"
-        ></meter>
-        <span id="supply"></span><span id="best"></span>
+      <div class="hud">
+        <p id="offering"></p>
+        <p>Sweep dust into each ring.</p>
+        <p id="status" role="status"></p>
       </div>
       <div class="stage">
         <canvas
           id="field"
-          tabindex="0"
-          aria-label="Dust reveals a hidden stone triangle. Brush with one or more fingers, or a mouse, to uncover the stone, loosen dust and leave fading grease marks that guide it downhill."
+          tabindex="-1"
+          aria-label="Brush to uncover the stone. Dust reveals it where it rests or passes. Share dust across the marked rings. A ring brightens as it fills. Rust-colored ticks mark a ring with too much dust. Spilled dust can be swept back onto the stone."
+          aria-describedby="piles-progress"
         ></canvas>
+        <p id="piles-progress" class="sr-only"></p>
       </div>
-      <div class="tools" aria-label="Pour controls">
-        <button id="pour" title="Stop or resume pouring (Space)">
-          Pause pour
-        </button>
-        <button id="reset">Reset</button>
+      <div class="tools" aria-label="Offering controls">
+        <button id="pause">Pause wells</button>
+        <button id="restart">Restart</button>
+        <button id="next" disabled>Next</button>
       </div>
-      <p id="accessible-state" class="sr-only" aria-live="off"></p>
-      <p id="notice" class="notice" role="status" hidden></p>
     </main>
-    <dialog id="result" aria-labelledby="result-title">
-      <h2 id="result-title">Your offering</h2>
-      <p id="score" class="score"></p>
-      <dl class="results">
-        <div>
-          <dt>Left bowl</dt>
-          <dd id="result-left"></dd>
-        </div>
-        <div>
-          <dt>Right bowl</dt>
-          <dd id="result-right"></dd>
-        </div>
-        <div>
-          <dt>Best</dt>
-          <dd id="result-best"></dd>
-        </div>
-      </dl>
-      <p id="result-uncollected" class="muted"></p>
-      <button id="share">Share score</button>
-      <p id="share-status" class="muted" role="status"></p>
-      <textarea
-        id="manual-share"
-        readonly
-        aria-label="Score and challenge link for manual copying"
-        hidden
-      ></textarea>
-      <div class="result-actions">
-        <button id="again">Play again</button
-        ><button id="result-close">View board</button>
-      </div>
+    <dialog
+      class="piles-record"
+      aria-labelledby="record-title"
+      aria-describedby="record-body"
+    >
+      <p id="record-number"></p>
+      <h2 id="record-title" tabindex="-1" autofocus></h2>
+      <div id="record-body"></div>
+      <button id="continue">Continue</button>
     </dialog>
-    <script type="module" src="/src/main.js"></script>
+    <script type="module" src="/src/entry.js"></script>
   </body>
 </html>

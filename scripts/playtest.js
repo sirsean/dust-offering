@@ -82,7 +82,7 @@ const report = stressOnly
       errors,
     };
 try {
-  await page.goto(`${base}/?debug&seed=48`);
+  await page.goto(`${base}/pour.html?debug&seed=48`);
   await page.waitForFunction(() => window.dust);
   await page.evaluate(() => document.fonts.ready);
   if (!stressOnly) {

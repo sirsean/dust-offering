@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 
 export async function open(page, query = '') {
   await page.clock.install();
-  await page.goto(`/?debug&seed=48&${query}`);
+  await page.goto(`/pour.html?debug&seed=48&${query}`);
   await expect(page.locator('#field')).toBeVisible();
   await page.waitForFunction(() => window.dust);
   await page.evaluate(() => document.fonts.ready);

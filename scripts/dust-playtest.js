@@ -33,7 +33,7 @@ function summary(values) {
   };
 }
 try {
-  await page.goto(`${base}/?debug&seed=48`);
+  await page.goto(`${base}/pour.html?debug&seed=48`);
   await page.waitForFunction(() => window.dust);
   await page.evaluate(() => document.fonts.ready);
   report.config = await page.evaluate(() => dust.sim.config);
