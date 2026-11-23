@@ -1,83 +1,78 @@
 import { seededRandom } from '../simulation/random.js';
 
-// Original Dust Offering fiction, told through records left at the Black Pyramid.
+// Pyramid Order recruitment records for Dust Offering.
 const records = [
   {
-    title: 'The receipt',
     paragraphs: [
-      'Under the dust is a Pyramid Order receipt. The date is tomorrow. The box for a signature contains the little crescent your thumbnail just left in the grease.',
-      'There is a note in the margin. “We can weigh what came back. Leave room for what is still coming.”',
+      'Wind pushes the sand, all around this world. Around every world with air to breathe, it blows the sand. In the center of the universe there is a pyramid, and in the void who will push the sand?',
     ],
   },
   {
-    title: 'Two columns',
     paragraphs: [
-      'The Order kept two columns for this reach of the Scablands. In one they wrote the names of the people who had returned. In the other they wrote what those people had left behind.',
-      'Someone has drawn a line through the word boots and written the way she walked. You can feel the correction in the stone with your eyes closed.',
+      'We have always kept two columns for this reach of the Scablands. In one, the names of the people who had returned. In the other, what those people had left behind.',
+      'Someone has drawn a line through the word “boots” and scrawled a description of her gait instead.',
     ],
   },
   {
-    title: 'A dry test',
     paragraphs: [
-      'An early survey lists three faces of the Black Pyramid. A later copy lists the same face three times, under different dates. Every copy has the same chipped corner.',
-      'The member who dug beneath the corner came back with an empty sample tin. From inside the tin, someone asked her to keep digging.',
+      'Sit with your back to the door. People will walk past, some you know and some you’ve never met. Raise a finger when you recognize someone. We’ll ask what you heard.',
+      'One evening a woman knew her brother from his first step. She asked him to walk past again. Soon he was walking differently because he knew she was listening.',
     ],
+    title: 'By ear',
   },
   {
+    paragraphs: [
+      'The keeper asks you to choose a ring and move a little sand into it. Afterwards she asks when you chose. If you remember having the thought “there,” show her what your finger was doing at the time. She will watch your hand as many times as you care to try.',
+    ],
     title: 'The keeper',
-    paragraphs: [
-      'The keeper used to press a thumb into each completed measure. It was how the Order could tell a person had done the work. One morning the keeper woke with smooth skin and found his print in every ring.',
-      'There is a rubbing of his last print here. Near its centre the whorls run out to the edge of the page and continue into yours.',
-    ],
   },
   {
-    title: 'The empty line',
     paragraphs: [
-      'At the end of the book is the first receipt. It gives the weight of a hand, down to the dust under the nails. The return address is the stone beneath your wrist.',
-      'The Order left the witness line empty on purpose. Someone had to be able to come along and put a hand there.',
+      'Our first teachers drew the Black Pyramid in the margins beside questions they couldn’t settle about their own minds. It turns up most often next to things any child can do, like deciding which hand to open.',
     ],
+    title: 'The invitation',
   },
 ];
 
 const finds = [
   [
-    'Carbon copy',
-    'A second receipt has come up beneath the first. Its ink is dry. Its paper is wet on the side that faced the stone.',
+    'A room remembered',
+    'Try counting the doors in the room where you slept as a child. One of our members has to walk through it in her head. She says she misses the window more on the days she tries the exercise.',
   ],
   [
-    'Return address',
-    'A surveyor gave the Pyramid a return address. Someone has been maintaining the mailbox, far out in the Scablands, without a road.',
+    'A familiar step',
+    'Some of us came to the Order because we could still hear a familiar tread years after the hall went quiet. We started out asking what a mind can keep. We are still arguing about what it can give back.',
   ],
   [
-    'Borrowed weight',
-    'The Order weighed this dust against an empty boot. Both scales came down. There is a fresh heel print on the ceiling of the weigh room.',
+    'The end of the fire',
+    'Watch a fire go out with someone else. In the morning ask each other when it got dark. One of you will remember watching the coals. The other might remember having to find the door.',
   ],
   [
-    'One copy held',
-    'A keeper heard a page turn in the sealed records room. In the morning the door was still locked. The book was one page longer.',
+    'What your hands know',
+    'On a second visit we ask you to describe a gesture in enough detail for someone else to copy it. Most people choose something they learned as children. We have spent whole evenings on where to put the thumb.',
   ],
   [
-    'Witness mark',
-    'The dust in the outermost ring contains a row of tiny dents. A member has drawn each one at full size. They are the teeth of a key.',
+    'Out of earshot',
+    'Four of us can meet around an ordinary table. By the third meeting you’ll have heard someone describe a thing you’d assumed only happened to you. We ask you to give that person the same patience next time.',
   ],
   [
-    'Field correction',
-    'Two records disagree about which way the wind blew. Each has sand caught beneath its fold, on the side the other record says was sheltered.',
+    'After the shift',
+    'A longhauler told us she could describe each motion of her hands at the end of a shift and could remember choosing almost none of them. We asked her to come back when she was off watch. It took her a year.',
   ],
   [
-    'Unclaimed',
-    'A member tied a tag to something in the dust that kept moving after the wells stopped. In the accession book she has drawn the knot, twice.',
+    'The last thing you heard',
+    'A member spent half a cycle trying to remember the last sound she heard each night. By the end she was telling us what she had been hoping to hear. She brought that account to every meeting for a while. It was the first one she trusted.',
   ],
 ];
 
 const hands = [
-  'Beside it, a later hand has drawn the brush mark you made at the start of this offering.',
-  'A note on the back asks the next keeper to leave one line free for the person who brought it in.',
-  'The grease from the reverse of the paper has already transferred to your thumb.',
-  'The catalogue gives a date half a cycle away. The ink on both copies is still warm.',
-  'Under the last line is a small drawing of the rings you are about to see.',
-  'Someone has put a clean cloth and a fresh ledger beside the stone. One corner of the cloth is worn through.',
-  'The previous keeper has written your next entry number on the back. You can feel it through the paper.',
+  'Take your time with the account. We can wait.',
+  'If you used both hands, try to remember which one you were paying attention to.',
+  'Some of our best accounts begin with “I thought I was waiting.”',
+  'If there is a word you always use to tell this story, try telling it without that word.',
+  'If you come back, you can ask to sit with the same keeper.',
+  'Keep one question to yourself until your next visit.',
+  'Tell us where you lost track. One of us will have been there too.',
 ];
 
 export function recordFor(chapter, nextOffering) {

@@ -159,15 +159,21 @@ test('native touch advances in order through the first generated offering and st
       await next.click();
       const record = page.getByRole('dialog');
       await expect(record).toBeVisible();
-      await expect(record.getByRole('heading')).toHaveText('The receipt');
-      await expect(record).toContainText('Pyramid Order');
+      await expect(record.getByRole('heading')).toHaveText(
+        'Pyramid Order / Record 1',
+      );
+      await expect(record.locator('#record-number')).toBeHidden();
+      await expect(record.locator('#record-body p')).toHaveCount(1);
+      await expect(record.locator('#record-body')).toContainText(
+        'in the void who will push the sand?',
+      );
       await expect(page.locator('#offering')).toHaveText('Offering 5');
       const steps = () => page.evaluate(() => window.pileStudy.game.sim.steps);
       const paused = await steps();
       await page.clock.runFor(1000);
       expect(await steps()).toBe(paused);
       expect(await board.boundingBox()).toEqual(rect);
-      await page.screenshot({ path: info.outputPath('the-receipt.png') });
+      await page.screenshot({ path: info.outputPath('first-record.png') });
       await page.keyboard.press('Escape');
       await expect(record).toBeHidden();
       await expect(page.locator('#offering')).toHaveText('Offering 5');

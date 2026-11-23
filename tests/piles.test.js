@@ -64,8 +64,8 @@ test('a seed selects a repeatable endless sequence with readable geometry and ch
     }
   }
   assert.equal(
-    recordFor(chapterAt(5), levelFor(defaultSeed, 6)).title,
-    'The receipt',
+    recordFor(chapterAt(19), levelFor(defaultSeed, 20)).title,
+    'By ear',
   );
   const lateRecord = recordFor(chapterAt(5003), levelFor(defaultSeed, 5004));
   assert.equal(lateRecord.paragraphs.length, 2);

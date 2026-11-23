@@ -111,8 +111,11 @@ next.onclick = () => {
   }
   const chapter = chapterAt(number);
   const { title, paragraphs } = recordFor(chapter, levelFor(seed, number + 1));
-  setText($('#record-number'), `Pyramid Order / Record ${chapter + 1}`);
-  setText($('#record-title'), title);
+  const label = `Pyramid Order / Record ${chapter + 1}`;
+  const recordNumber = $('#record-number');
+  recordNumber.hidden = !title;
+  setText(recordNumber, label);
+  setText($('#record-title'), title ?? label);
   $('#record-body').replaceChildren(
     ...paragraphs.map((text) => {
       const paragraph = document.createElement('p');
