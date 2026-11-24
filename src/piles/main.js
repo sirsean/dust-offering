@@ -2,6 +2,7 @@ import '../styles.css';
 import './styles.css';
 import { piles } from '../config/piles.js';
 import { recordFor } from '../config/piles-story.js';
+import story from '../config/piles-story.yaml';
 import { bindPointer } from '../input/pointer.js';
 import { StudyRenderer } from '../lab/renderer.js';
 import { MaterialAudio } from '../rendering/audio.js';
@@ -110,8 +111,12 @@ next.onclick = () => {
     return;
   }
   const chapter = chapterAt(number);
-  const { title, paragraphs } = recordFor(chapter, levelFor(seed, number + 1));
-  const label = `Pyramid Order / Record ${chapter + 1}`;
+  const { title, paragraphs } = recordFor(
+    story,
+    chapter,
+    levelFor(seed, number + 1),
+  );
+  const label = `${story.recordLabel} ${chapter + 1}`;
   const recordNumber = $('#record-number');
   recordNumber.hidden = !title;
   setText(recordNumber, label);

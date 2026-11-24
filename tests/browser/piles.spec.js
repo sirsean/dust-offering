@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { piles } from '../../src/config/piles.js';
+import { recordFor } from '../../src/config/piles-story.js';
 import { levelFor } from '../../src/piles/levels.js';
+import { loadPilesStory } from '../../scripts/load-piles-story.js';
 import { bankedStrokes } from '../fixtures/piles.js';
 import { stroke } from './helpers.js';
 
@@ -159,14 +161,21 @@ test('native touch advances in order through the first generated offering and st
       await next.click();
       const record = page.getByRole('dialog');
       await expect(record).toBeVisible();
-      await expect(record.getByRole('heading')).toHaveText(
-        'Pyramid Order / Record 1',
+      const story = loadPilesStory();
+      const { title, paragraphs } = recordFor(
+        story,
+        0,
+        levelFor(piles.defaultSeed, 6),
       );
-      await expect(record.locator('#record-number')).toBeHidden();
-      await expect(record.locator('#record-body p')).toHaveCount(1);
-      await expect(record.locator('#record-body')).toContainText(
-        'in the void who will push the sand?',
-      );
+      const label = `${story.recordLabel} 1`;
+      await expect(record.getByRole('heading')).toHaveText(title ?? label);
+      if (title) {
+        await expect(record.locator('#record-number')).toHaveText(label);
+        await expect(record.locator('#record-number')).toBeVisible();
+      } else {
+        await expect(record.locator('#record-number')).toBeHidden();
+      }
+      await expect(record.locator('#record-body p')).toHaveText(paragraphs);
       await expect(page.locator('#offering')).toHaveText('Offering 5');
       const steps = () => page.evaluate(() => window.pileStudy.game.sim.steps);
       const paused = await steps();

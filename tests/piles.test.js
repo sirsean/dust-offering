@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { pileLevels, piles } from '../src/config/piles.js';
 import { recordFor } from '../src/config/piles-story.js';
+import { loadPilesStory } from '../scripts/load-piles-story.js';
 import { performStroke } from '../src/lab/policy.js';
 import { PileGame, measurePiles } from '../src/piles/game.js';
 import { chapterAt, endsChapter, levelFor } from '../src/piles/levels.js';
@@ -63,16 +64,18 @@ test('a seed selects a repeatable endless sequence with readable geometry and ch
       }
     }
   }
-  assert.equal(
-    recordFor(chapterAt(19), levelFor(defaultSeed, 20)).title,
-    'By ear',
-  );
-  const lateRecord = recordFor(chapterAt(5003), levelFor(defaultSeed, 5004));
+  const story = loadPilesStory();
+  for (const [chapter, record] of story.records.entries()) {
+    assert.deepEqual(
+      recordFor(story, chapter, levelFor(defaultSeed, 6)),
+      record,
+    );
+  }
+  const laterChapter = Math.max(story.records.length, chapterAt(5003));
+  const nextOffering = levelFor(defaultSeed, 5004);
+  const lateRecord = recordFor(story, laterChapter, nextOffering);
   assert.equal(lateRecord.paragraphs.length, 2);
-  assert.deepEqual(
-    lateRecord,
-    recordFor(chapterAt(5003), levelFor(defaultSeed, 5004)),
-  );
+  assert.deepEqual(lateRecord, recordFor(story, laterChapter, nextOffering));
 });
 
 test('physical strokes clear generated layouts at early, harder, and far-future offerings', () => {
